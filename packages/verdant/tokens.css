@@ -183,7 +183,7 @@
 [data-theme="accent"] {
   --surface-widget: var(--color-deep-forest);
   --surface-widget-ink: var(--color-white);
-  --surface-widget-ink-muted: rgba(255, 255, 255, 0.78);
+  --surface-widget-ink-muted: rgba(255, 255, 255, 0.92);
   --surface-widget-border: var(--color-forest);
   --surface-widget-accent: var(--color-fresh-green);
   --surface-widget-accent-ink: var(--color-deep-forest);

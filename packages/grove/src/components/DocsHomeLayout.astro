@@ -78,9 +78,16 @@ const {
     margin: 0 auto;
     padding: 0 var(--v-space-md);
   }
-  .docs-home__header:empty,
-  .docs-home__page-footer:empty,
-  .docs-home__banner:empty { display: none; }
+  /* Allow slots to render; don't collapse via :empty (Astro slot whitespace
+     can confuse :empty). Headers are visually inert when empty anyway. */
+  .docs-home__header > :only-child,
+  .docs-home__page-footer > :only-child {
+    display: block;
+  }
+
+  .docs-home__header {
+    margin-bottom: 0.5rem;
+  }
 
   .docs-home__layout {
     display: grid;
@@ -125,7 +132,10 @@ const {
   }
 
   .docs-home__banner {
-    margin-bottom: var(--v-space-md);
+    margin-bottom: var(--v-space-sm);
+  }
+  .docs-home__banner:empty {
+    margin-bottom: 0;
   }
 
   .docs-home__main {

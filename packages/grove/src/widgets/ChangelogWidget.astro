@@ -18,6 +18,10 @@ interface Props {
   limit?: number;
   viewAllHref?: string;
   viewAllLabel?: string;
+  /** Message shown when entries is empty. */
+  emptyMessage?: string;
+  /** Hide the widget entirely if empty (useful for pages where empty state is noisy). */
+  hideWhenEmpty?: boolean;
 }
 
 const {
@@ -26,14 +30,18 @@ const {
   limit = 4,
   viewAllHref,
   viewAllLabel = 'Full log',
+  emptyMessage = 'First release is coming — we\u2019ll ship details here as they land.',
+  hideWhenEmpty = false,
 } = Astro.props;
 
 const shown = entries.slice(0, limit);
+const shouldRender = !(hideWhenEmpty && shown.length === 0);
 ---
 
+{shouldRender && (
 <Widget title={title} variant="default" class="changelog-widget-container">
   {shown.length === 0 ? (
-    <p class="changelog-widget__empty">No releases yet.</p>
+    <p class="changelog-widget__empty">{emptyMessage}</p>
   ) : (
     <ol class="changelog-widget__list" role="list">
       {shown.map((e) => (
@@ -53,6 +61,7 @@ const shown = entries.slice(0, limit);
     <a href={viewAllHref} class="changelog-widget__all">{viewAllLabel} &rarr;</a>
   )}
 </Widget>
+)}
 
 <style>
   .changelog-widget__list {
