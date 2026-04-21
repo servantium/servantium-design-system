@@ -1,4 +1,4 @@
-name: Publish packages
+name: Publish + notify consumers
 
 on:
   push:
@@ -24,13 +24,39 @@ jobs:
         run: npm ci
 
       - name: Publish @servantium/verdant
+        continue-on-error: true
         run: npm publish --workspace @servantium/verdant --access restricted
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true  # don't fail the job if the current version is already published
 
       - name: Publish @servantium/grove
+        continue-on-error: true
         run: npm publish --workspace @servantium/grove --access restricted
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true
+
+  notify-consumers:
+    # Fires regardless of publish success so even non-package changes (e.g. pure
+    # CSS token tweaks where a package re-publish gets skipped) still propagate.
+    needs: publish
+    if: always()
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        consumer:
+          - servantium/servantium-website
+          - servantium/servantium-help
+    steps:
+      - name: Dispatch update to ${{ matrix.consumer }}
+        env:
+          # Uses a fine-grained PAT stored as secret (DESIGN_SYSTEM_DISPATCH_PAT).
+          # Must have: repo scope (contents, pull_requests) on website + help repos.
+          GH_TOKEN: ${{ secrets.DESIGN_SYSTEM_DISPATCH_PAT }}
+        run: |
+          REF="${GITHUB_REF_NAME:-main}"
+          echo "Dispatching ref=$REF to ${{ matrix.consumer }}"
+          gh api \
+            "/repos/${{ matrix.consumer }}/dispatches" \
+            -X POST \
+            -f event_type=design-system-updated \
+            -F "client_payload[ref]=$REF"
