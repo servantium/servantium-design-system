@@ -1,7 +1,7 @@
 {
   "name": "@servantium/verdant",
-  "version": "0.1.0",
-  "description": "Servantium design tokens — colors, typography, spacing, easing",
+  "version": "0.1.3",
+  "description": "Servantium design tokens \u2014 colors, typography, spacing, easing",
   "type": "module",
   "main": "./tokens.css",
   "exports": {
