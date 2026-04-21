@@ -90,7 +90,7 @@ const gradients: Record<string, string> = {
               <circle cx="75" cy="105" r="3" fill="none"/>
             </svg>
           )}
-          {card.decoration === 'custom' && <slot name={`decoration-${card.title}`} />}
+          {/* custom decoration not yet supported via slot — pass a decoration type instead */}
         </div>
       </Root>
     );
