@@ -1,0 +1,15 @@
+---
+/**
+ * DocsSearch -- Help docs search. Opens a full-page modal instead of an
+ * inline sidebar input, because the sidebar slot is too narrow for useful
+ * result previews.
+ */
+import SearchModal from '@/components/SearchModal.astro';
+---
+
+<SearchModal
+  label="Search help"
+  placeholder="Search docs, glossary, releases..."
+  triggerVariant="full"
+  defaultFilter="Help"
+/>

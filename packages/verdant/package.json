@@ -1,0 +1,26 @@
+{
+  "name": "@servantium/verdant",
+  "version": "0.1.0",
+  "description": "Servantium design tokens — colors, typography, spacing, easing",
+  "type": "module",
+  "main": "./tokens.css",
+  "exports": {
+    ".": "./tokens.css",
+    "./tokens.css": "./tokens.css",
+    "./base.css": "./base.css"
+  },
+  "files": [
+    "tokens.css",
+    "base.css",
+    "README.md"
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/servantium/servantium-design-system.git",
+    "directory": "packages/verdant"
+  },
+  "license": "UNLICENSED"
+}

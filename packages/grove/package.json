@@ -1,0 +1,36 @@
+{
+  "name": "@servantium/grove",
+  "version": "0.1.0",
+  "description": "Grove — Astro documentation components for Servantium surfaces",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./DocsLayout": "./src/components/DocsLayout.astro",
+    "./DocsSidebar": "./src/components/DocsSidebar.astro",
+    "./DocsSearch": "./src/components/DocsSearch.astro",
+    "./DocsAside": "./src/components/DocsAside.astro",
+    "./DocsSteps": "./src/components/DocsSteps.astro",
+    "./DocsTabs": "./src/components/DocsTabs.astro",
+    "./DocsPagination": "./src/components/DocsPagination.astro",
+    "./TableOfContents": "./src/components/TableOfContents.astro",
+    "./ReleaseTimeline": "./src/components/ReleaseTimeline.astro",
+    "./components": "./src/components.ts"
+  },
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "peerDependencies": {
+    "astro": "^5.0.0 || ^6.0.0",
+    "@servantium/verdant": "*"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/servantium/servantium-design-system.git",
+    "directory": "packages/grove"
+  },
+  "license": "UNLICENSED"
+}

@@ -1,0 +1,70 @@
+---
+// DocsSteps: wrap an <ol> to render numbered steps with green circles and a connecting line.
+// Usage: <DocsSteps><ol><li>Step one</li><li>Step two</li></ol></DocsSteps>
+---
+
+<div class="grove-steps my-6 [counter-reset:grove-step]">
+  <slot />
+</div>
+
+<style>
+  .grove-steps :global(ol) {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    position: relative;
+  }
+
+  .grove-steps :global(ol li) {
+    counter-increment: grove-step;
+    position: relative;
+    padding-left: 3rem;
+    padding-bottom: 1.5rem;
+  }
+
+  /* Vertical connecting line */
+  .grove-steps :global(ol li:not(:last-child))::after {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 2rem;
+    bottom: 0;
+    width: 2px;
+    background: var(--color-pale-green);
+  }
+
+  /* Green numbered circle */
+  .grove-steps :global(ol li)::before {
+    content: counter(grove-step);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--color-green);
+    color: white;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  /* Typography inside steps */
+  .grove-steps :global(ol li > *:first-child) {
+    margin-top: 0.25rem;
+  }
+
+  .grove-steps :global(ol li p) {
+    color: var(--color-ink-light);
+    font-size: 1rem;
+    line-height: 1.75;
+    margin-bottom: 0.75rem;
+  }
+
+  .grove-steps :global(ol li strong) {
+    color: var(--color-ink);
+  }
+</style>

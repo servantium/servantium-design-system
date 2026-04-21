@@ -1,0 +1,52 @@
+---
+interface Props {
+  type?: 'tip' | 'note' | 'caution' | 'danger';
+  title?: string;
+}
+
+const { type = 'note', title } = Astro.props;
+
+const config = {
+  tip: {
+    defaultTitle: 'Tip',
+    borderColor: 'border-l-success',
+    bgColor: 'bg-[#E8FBF1]',
+    titleColor: 'text-success',
+    icon: `<svg class="size-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`,
+  },
+  note: {
+    defaultTitle: 'Note',
+    borderColor: 'border-l-info',
+    bgColor: 'bg-[#EFF5F9]',
+    titleColor: 'text-info',
+    icon: `<svg class="size-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`,
+  },
+  caution: {
+    defaultTitle: 'Caution',
+    borderColor: 'border-l-warning',
+    bgColor: 'bg-[#FFF8EB]',
+    titleColor: 'text-[#B87A00]',
+    icon: `<svg class="size-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`,
+  },
+  danger: {
+    defaultTitle: 'Danger',
+    borderColor: 'border-l-danger',
+    bgColor: 'bg-[#FFF0F1]',
+    titleColor: 'text-danger',
+    icon: `<svg class="size-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`,
+  },
+};
+
+const c = config[type];
+const displayTitle = title || c.defaultTitle;
+---
+
+<div class:list={['my-6 rounded-r-lg border-l-4 p-4', c.borderColor, c.bgColor]} role="note">
+  <div class:list={['mb-2 flex items-center gap-2 font-semibold text-sm', c.titleColor]}>
+    <Fragment set:html={c.icon} />
+    {displayTitle}
+  </div>
+  <div class="text-sm leading-relaxed text-ink-light [&>p]:mb-2 [&>p:last-child]:mb-0">
+    <slot />
+  </div>
+</div>

@@ -1,0 +1,675 @@
+---
+import Nav from '@/components/Nav.astro';
+import Footer from '@/components/Footer.astro';
+import CookieConsent from '@/components/CookieConsent.astro';
+import TestEnvBanner from '@/components/TestEnvBanner.astro';
+import DocsSidebar from './DocsSidebar.astro';
+import TableOfContents from './TableOfContents.astro';
+import DocsPagination from './DocsPagination.astro';
+import DocsSearch from './DocsSearch.astro';
+import ShareSidebar from '@/theme/blog/ShareSidebar.astro';
+import ContentMeta from '@/theme/components/ContentMeta.astro';
+import NeedHelp from '@/theme/components/NeedHelp.astro';
+import CopyForAI from '@/theme/components/CopyForAI.astro';
+import CalEmbed from '@/components/CalEmbed.astro';
+import '@/theme/verdant.css';
+import '@/styles/global.css';
+
+import '@fontsource/playfair-display/400.css';
+import '@fontsource/playfair-display/400-italic.css';
+import '@fontsource/playfair-display/500.css';
+import '@fontsource/playfair-display/600.css';
+import '@fontsource/source-sans-3/400.css';
+import '@fontsource/source-sans-3/500.css';
+import '@fontsource/source-sans-3/600.css';
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface PaginationLink {
+  label: string;
+  slug: string;
+}
+
+interface RelatedArticle {
+  title: string;
+  href: string;
+}
+
+interface Props {
+  title: string;
+  description?: string;
+  headings?: Heading[];
+  currentSlug: string;
+  lastUpdated?: string;
+  editUrl?: string;
+  prev?: PaginationLink | null;
+  next?: PaginationLink | null;
+  hideShare?: boolean;
+  date?: string;
+  readingTime?: string;
+  author?: string;
+  authorData?: { name: string; avatar: string; role?: string };
+  relatedArticles?: RelatedArticle[];
+}
+
+const {
+  title,
+  description,
+  headings = [],
+  currentSlug,
+  lastUpdated,
+  editUrl,
+  prev = null,
+  next = null,
+  hideShare = false,
+  date,
+  readingTime,
+  author,
+  authorData,
+  relatedArticles = [],
+} = Astro.props;
+
+const tocHeadings = headings.filter((h) => h.depth === 2);
+const pageUrl = `https://servantium.com${Astro.url.pathname}`;
+
+// Build breadcrumb items from currentSlug
+const slugSegments = currentSlug.split('/').filter(Boolean);
+const breadcrumbItems = [
+  { label: 'Help', href: '/help/' },
+  ...slugSegments.slice(0, -1).map((seg, i) => ({
+    label: seg.charAt(0).toUpperCase() + seg.slice(1).replace(/-/g, ' '),
+    href: '/help/' + slugSegments.slice(0, i + 1).join('/') + '/',
+  })),
+  {
+    label: slugSegments.length > 0
+      ? slugSegments[slugSegments.length - 1].charAt(0).toUpperCase() + slugSegments[slugSegments.length - 1].slice(1).replace(/-/g, ' ')
+      : title,
+  },
+];
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title} | Servantium Help</title>
+  {description && <meta name="description" content={description} />}
+
+  <TestEnvBanner />
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+  <!-- BreadcrumbList structured data -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": breadcrumbItems.map((item, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "name": item.label,
+      ...(item.href ? { "item": `https://servantium.com${item.href}` } : {})
+    }))
+  })} />
+
+  <slot name="head" />
+</head>
+<body class="flex min-h-screen flex-col font-body text-ink bg-white antialiased">
+  <a href="#docs-content" class="skip-link">Skip to content</a>
+
+  <Nav activePage="help" />
+
+  <!-- Mobile sidebar drawer overlay -->
+  <div
+    id="grove-sidebar-drawer"
+    class="fixed inset-0 z-[200] hidden"
+    aria-hidden="true"
+  >
+    <div class="absolute inset-0 bg-black/40 transition-opacity" data-close-drawer></div>
+    <aside class="absolute inset-y-0 left-0 w-[300px] max-w-[85vw] overflow-y-auto bg-white shadow-xl">
+      <div class="flex items-center justify-between border-b border-cloud-grey px-5 py-4">
+        <span class="text-sm font-semibold text-ink">Documentation</span>
+        <button
+          class="flex size-8 items-center justify-center rounded-md text-ink-muted hover:bg-mist-grey hover:text-ink"
+          data-close-drawer
+          aria-label="Close menu"
+        >
+          <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="px-4 pt-4 pb-2">
+        <DocsSearch id="docs-pagefind-search-mobile" />
+      </div>
+      <div class="px-4 pb-8">
+        <DocsSidebar currentSlug={currentSlug} />
+      </div>
+    </aside>
+  </div>
+
+  <!-- Mobile sidebar toggle (visible below lg breakpoint) -->
+  <button
+    id="grove-sidebar-toggle"
+    class="fixed bottom-5 left-5 z-[150] flex items-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-semibold text-ink shadow-lg border border-cloud-grey lg:hidden"
+    aria-label="Open documentation menu"
+    type="button"
+  >
+    <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+    Menu
+  </button>
+
+  <!-- Main docs layout: sidebar | content | toc -->
+  <div class="flex-1 pt-[72px]">
+    <div class="mx-auto flex max-w-[90rem]">
+
+      <!-- Desktop sidebar -->
+      <aside class="hidden lg:block w-80 shrink-0 border-r border-cloud-grey" data-pagefind-ignore>
+        <div class="sticky top-[72px] h-[calc(100vh-72px)] overflow-y-auto overscroll-contain px-5 pt-6 pb-8">
+          <div class="mb-5">
+            <DocsSearch />
+          </div>
+          <DocsSidebar currentSlug={currentSlug} />
+        </div>
+      </aside>
+
+      <!-- Content area -->
+      <main id="docs-content" class="min-w-0 flex-1 px-6 py-4 md:px-10 md:py-6 lg:px-16" tabindex="-1">
+        <article class="mx-auto max-w-3xl">
+          <!-- Breadcrumbs -->
+          <nav aria-label="Breadcrumb" class="mb-3">
+            <ol class="flex flex-wrap items-center gap-1 text-xs text-[var(--color-ink-muted)]">
+              {breadcrumbItems.map((item, index) => (
+                <li class="flex items-center gap-1">
+                  {index > 0 && <span aria-hidden="true">&gt;</span>}
+                  {item.href && index < breadcrumbItems.length - 1 ? (
+                    <a href={item.href} class="hover:text-[var(--color-green)] transition-colors">{item.label}</a>
+                  ) : (
+                    <span aria-current={index === breadcrumbItems.length - 1 ? 'page' : undefined}>{item.label}</span>
+                  )}
+                </li>
+              ))}
+            </ol>
+          </nav>
+
+          <!-- Page title -->
+          <header class="mb-4">
+            <h1 class="font-display text-[2rem] font-semibold leading-tight tracking-tight text-ink sm:text-[2.25rem]">{title}</h1>
+            {description && (
+              <p class="mt-1 text-base leading-relaxed text-ink-muted">{description}</p>
+            )}
+            <div class="mt-3">
+              <ContentMeta date={date} readingTime={readingTime} author={author} authorData={authorData} />
+            </div>
+          </header>
+
+          <!-- Prose content -->
+          <div class="grove-prose" data-pagefind-body data-pagefind-filter="section:Help" data-pagefind-meta="section:Help">
+            <slot />
+          </div>
+
+          <!-- Need help CTA -->
+          <NeedHelp />
+
+          <!-- Pagination -->
+          <DocsPagination prev={prev} next={next} />
+
+          <!-- Edit link + last updated -->
+          {(editUrl || lastUpdated) && (
+            <footer class="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-cloud-grey pt-6 text-sm text-ink-muted">
+              {editUrl && (
+                <a
+                  href={editUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-1.5 transition-colors hover:text-green"
+                >
+                  <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                  </svg>
+                  Edit this page
+                </a>
+              )}
+              {lastUpdated && (
+                <span>Last updated: <time>{lastUpdated}</time></span>
+              )}
+            </footer>
+          )}
+        </article>
+
+        <!-- Share sidebar for help articles (hidden on index/landing pages) -->
+        {!hideShare && <ShareSidebar url={pageUrl} title={title} description={description || ''} variant="help" />}
+      </main>
+
+      <!-- Table of Contents + sidebar widgets (xl screens only) -->
+      {tocHeadings.length > 0 && (
+        <aside class="hidden xl:block w-[220px] shrink-0 pl-4">
+          <div class="sticky top-[80px] max-h-[calc(100vh-100px)] overflow-y-auto overscroll-contain py-8">
+            {/* Copy for AI button */}
+            <div class="mb-5">
+              <CopyForAI title={title} section={breadcrumbItems.length > 1 ? breadcrumbItems[breadcrumbItems.length - 2].label : undefined} url={pageUrl} />
+            </div>
+
+            <TableOfContents headings={tocHeadings} />
+
+            {/* Related articles */}
+            {relatedArticles.length > 0 && (
+              <div class="mt-8 pt-6 border-t border-[var(--color-cloud-grey)]">
+                <h3 class="text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-muted)] mb-3">Related articles</h3>
+                <ul class="space-y-2">
+                  {relatedArticles.slice(0, 3).map((article) => (
+                    <li>
+                      <a
+                        href={article.href}
+                        class="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-green)] transition-colors leading-snug block"
+                      >
+                        {article.title}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </aside>
+      )}
+    </div>
+  </div>
+
+  <Footer />
+  <CookieConsent />
+
+  <!-- Mobile drawer script -->
+  <script>
+    document.addEventListener('astro:page-load', () => {
+      const drawer = document.getElementById('grove-sidebar-drawer');
+      const toggleBtn = document.getElementById('grove-sidebar-toggle');
+      if (!drawer) return;
+
+      function openDrawer() {
+        drawer!.classList.remove('hidden');
+        drawer!.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeDrawer() {
+        drawer!.classList.add('hidden');
+        drawer!.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+
+      toggleBtn?.addEventListener('click', openDrawer);
+
+      drawer.querySelectorAll('[data-close-drawer]').forEach((el) => {
+        el.addEventListener('click', closeDrawer);
+      });
+
+      drawer.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', closeDrawer);
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !drawer.classList.contains('hidden')) {
+          closeDrawer();
+        }
+      });
+    });
+  </script>
+
+  <CalEmbed />
+</body>
+</html>
+
+<style>
+  /* ── Prose typography ─────────────────────────────── */
+
+  /* Headings */
+  .grove-prose :global(h1) {
+    font-family: var(--font-display);
+    font-size: 2.25rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+    margin-bottom: 1rem;
+  }
+
+  .grove-prose :global(h2) {
+    font-family: var(--font-body);
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-cloud-grey);
+    scroll-margin-top: 5rem;
+  }
+
+  .grove-prose :global(h2:first-child) {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+  }
+
+  .grove-prose :global(h3) {
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--color-ink);
+    margin-top: 1.75rem;
+    margin-bottom: 0.5rem;
+    scroll-margin-top: 5rem;
+  }
+
+  .grove-prose :global(h4) {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-ink);
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Body text */
+  .grove-prose :global(p) {
+    color: var(--color-ink-light);
+    font-size: 0.9375rem; /* 15px — slightly smaller for dense docs */
+    line-height: 1.8;
+    margin-bottom: 1.125rem;
+  }
+
+  /* Links — no underline, ever. Color + weight carries the affordance,
+     subtle background tint on hover gives feedback. */
+  .grove-prose :global(a) {
+    color: var(--color-green);
+    font-weight: 500;
+    text-decoration: none !important;
+    border-radius: 3px;
+    padding: 0 2px;
+    margin: 0 -2px;
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+
+  .grove-prose :global(a:hover) {
+    color: var(--color-green-hover);
+    background: var(--color-soft-mint, #E8FBF1);
+    text-decoration: none !important;
+  }
+
+  /* Lists */
+  .grove-prose :global(ul),
+  .grove-prose :global(ol) {
+    margin-bottom: 1.25rem;
+    padding-left: 1.5rem;
+    color: var(--color-ink-light);
+    font-size: 1rem;
+    line-height: 1.75;
+  }
+
+  .grove-prose :global(ul) {
+    list-style-type: disc;
+  }
+
+  .grove-prose :global(ol) {
+    list-style-type: decimal;
+  }
+
+  .grove-prose :global(li) {
+    margin-bottom: 0.35rem;
+  }
+
+  .grove-prose :global(li > ul),
+  .grove-prose :global(li > ol) {
+    margin-top: 0.35rem;
+    margin-bottom: 0;
+  }
+
+  /* Inline code */
+  .grove-prose :global(code) {
+    font-size: 0.875em;
+    background: var(--color-mist-grey);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    color: var(--color-ink);
+    font-weight: 500;
+  }
+
+  /* Code blocks — relative for copy button positioning */
+  .grove-prose :global(pre) {
+    position: relative;
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 1rem 1.25rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+    line-height: 1.7;
+    border: 1px solid var(--color-cloud-grey);
+  }
+
+  .grove-prose :global(.code-copy-btn) {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    background: rgba(255,255,255,0.1);
+    color: #94a3b8;
+    font-size: 0.7rem;
+    font-family: var(--font-body);
+    border: none;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+  .grove-prose :global(pre:hover .code-copy-btn) {
+    opacity: 1;
+  }
+  .grove-prose :global(.code-copy-btn:hover) {
+    background: rgba(255,255,255,0.2);
+    color: #e2e8f0;
+  }
+  .grove-prose :global(.code-copy-btn.copied) {
+    color: var(--color-green);
+  }
+
+  .grove-prose :global(pre code) {
+    background: none;
+    padding: 0;
+    color: inherit;
+    font-size: inherit;
+    font-weight: 400;
+    border-radius: 0;
+  }
+
+  /* Blockquotes */
+  .grove-prose :global(blockquote) {
+    border-left: 3px solid var(--color-green);
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    color: var(--color-ink-muted);
+    font-style: italic;
+  }
+
+  .grove-prose :global(blockquote p) {
+    color: var(--color-ink-muted);
+  }
+
+  /* Horizontal rules */
+  .grove-prose :global(hr) {
+    border: none;
+    border-top: 1px solid var(--color-cloud-grey);
+    margin: 2.5rem 0;
+  }
+
+  /* Tables */
+  .grove-prose :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+    border: 1px solid var(--color-cloud-grey);
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  .grove-prose :global(thead) {
+    background: var(--color-mist-grey);
+  }
+
+  .grove-prose :global(th) {
+    text-align: left;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+    border-bottom: 2px solid var(--color-cloud-grey);
+    color: var(--color-ink);
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+
+  .grove-prose :global(td) {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-cloud-grey);
+    color: var(--color-ink-light);
+  }
+
+  .grove-prose :global(tbody tr:nth-child(even)) {
+    background: var(--color-mist-grey);
+  }
+
+  .grove-prose :global(tbody tr:last-child td) {
+    border-bottom: none;
+  }
+
+  /* Images */
+  .grove-prose :global(img) {
+    max-width: 100%;
+    border-radius: 0.5rem;
+    margin: 1.5rem 0;
+    border: 1px solid var(--color-cloud-grey);
+  }
+
+  /* Strong */
+  .grove-prose :global(strong) {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+
+  /* Anchored headings: offset for fixed nav */
+  .grove-prose :global(h2[id]),
+  .grove-prose :global(h3[id]),
+  .grove-prose :global(h4[id]) {
+    scroll-margin-top: 6rem;
+  }
+
+  /* Heading anchor deep link icon */
+  .grove-prose :global(h2 .heading-anchor),
+  .grove-prose :global(h3 .heading-anchor) {
+    opacity: 0;
+    position: absolute;
+    left: -1.75em;
+    top: 0.15em;
+    color: var(--color-ink-muted);
+    text-decoration: none;
+    font-size: 0.75em;
+    line-height: inherit;
+    transition: opacity 0.15s ease;
+  }
+  .grove-prose :global(h2:hover .heading-anchor),
+  .grove-prose :global(h3:hover .heading-anchor) {
+    opacity: 0.5;
+  }
+  .grove-prose :global(h2 .heading-anchor:hover),
+  .grove-prose :global(h3 .heading-anchor:hover) {
+    opacity: 1;
+    color: var(--color-green);
+  }
+
+  /* Anchor link hover styling */
+  .grove-prose :global(h2 a:not(.heading-anchor)),
+  .grove-prose :global(h3 a:not(.heading-anchor)),
+  .grove-prose :global(h4 a:not(.heading-anchor)) {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .grove-prose :global(h2 a:not(.heading-anchor):hover),
+  .grove-prose :global(h3 a:not(.heading-anchor):hover),
+  .grove-prose :global(h4 a:not(.heading-anchor):hover) {
+    color: var(--color-green);
+  }
+</style>
+
+<!-- Code block copy buttons + Linear-style sidebar animation -->
+<script is:inline>
+  function initDocEnhancements() {
+    // Heading anchor deep links
+    var article = document.querySelector('.grove-prose');
+    if (article) {
+      var headings = article.querySelectorAll('h2[id], h3[id]');
+      headings.forEach(function(heading) {
+        var id = heading.getAttribute('id');
+        if (!id || heading.querySelector('.heading-anchor')) return;
+        var anchor = document.createElement('a');
+        anchor.href = '#' + id;
+        anchor.className = 'heading-anchor';
+        anchor.setAttribute('aria-label', 'Link to ' + heading.textContent);
+        anchor.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>';
+        heading.style.position = 'relative';
+        heading.insertBefore(anchor, heading.firstChild);
+      });
+    }
+
+    // Code copy buttons
+    document.querySelectorAll('.grove-prose pre').forEach(function(pre) {
+      if (pre.querySelector('.code-copy-btn')) return;
+      var btn = document.createElement('button');
+      btn.className = 'code-copy-btn';
+      btn.textContent = 'Copy';
+      btn.setAttribute('aria-label', 'Copy code');
+      btn.addEventListener('click', function() {
+        var code = pre.querySelector('code');
+        var text = code ? code.textContent : pre.textContent;
+        navigator.clipboard.writeText(text).then(function() {
+          btn.textContent = '✓ Copied';
+          btn.classList.add('copied');
+          setTimeout(function() {
+            btn.textContent = 'Copy';
+            btn.classList.remove('copied');
+          }, 2000);
+        });
+      });
+      pre.appendChild(btn);
+    });
+
+    // Linear-style active section indicator on sidebar
+    var sidebarLinks = document.querySelectorAll('[aria-current="page"]');
+    sidebarLinks.forEach(function(link) {
+      link.style.transition = 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDocEnhancements);
+  } else {
+    initDocEnhancements();
+  }
+  document.addEventListener('astro:page-load', initDocEnhancements);
+</script>

@@ -1,0 +1,18 @@
+{
+  "name": "servantium-design-system",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Servantium design system monorepo — Verdant tokens + Grove components",
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "version:patch": "npm version patch --workspaces --include-workspace-root false",
+    "version:minor": "npm version minor --workspaces --include-workspace-root false",
+    "version:major": "npm version major --workspaces --include-workspace-root false"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/servantium/servantium-design-system.git"
+  },
+  "license": "UNLICENSED"
+}

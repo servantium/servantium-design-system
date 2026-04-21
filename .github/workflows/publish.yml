@@ -1,0 +1,36 @@
+name: Publish packages
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@servantium'
+
+      - name: Install
+        run: npm ci
+
+      - name: Publish @servantium/verdant
+        run: npm publish --workspace @servantium/verdant --access restricted
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true  # don't fail the job if the current version is already published
+
+      - name: Publish @servantium/grove
+        run: npm publish --workspace @servantium/grove --access restricted
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true

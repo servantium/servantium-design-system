@@ -1,0 +1,70 @@
+/* ===========================
+   Verdant — The Servantium Design System
+   Tailwind v4 @theme tokens + base styles
+   =========================== */
+
+@import "tailwindcss";
+
+@theme {
+  /* ── Brand Colors ── */
+  --color-green: #00C26D;
+  --color-green-hover: #00A95E;
+  --color-deep-forest: #023E25;
+  --color-forest: #045F37;
+  --color-emerald: #037A47;
+  --color-fresh-green: #36D993;
+  --color-jade: #6FE7B0;
+  --color-light-jade: #A1EEC8;
+  --color-pale-green: #C8F5DE;
+  --color-soft-mint: #E8FBF1;
+  --color-mint-tint: #F3FCF8;
+
+  /* ── Accent Colors ── */
+  --color-coral: #FF5C70;
+  --color-slate-blue: #4C82A7;
+  --color-amber: #FFB02E;
+  --color-deep-teal: #26A899;
+  --color-slate: #64748B;
+
+  /* ── Semantic Colors ── */
+  --color-success: #00C26D;
+  --color-warning: #FFB02E;
+  --color-danger: #FF5C70;
+  --color-info: #4C82A7;
+
+  /* ── Neutrals ── */
+  --color-ink: #0D0D0D;
+  --color-ink-light: #3d3d3d;
+  --color-ink-muted: #6b6b6b;
+  --color-white: #FFFFFF;
+  --color-mist-grey: #F5F6F7;
+  --color-cloud-grey: #E1E3E6;
+
+  /* ── Typography ── */
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* ── Verdant Spacing Scale ──
+     Namespaced to avoid colliding with Tailwind's built-in spacing.
+     Use as: gap-[var(--v-space-lg)], p-[var(--v-space-xl)], etc.
+     Tailwind's default spacing (p-4, gap-8, max-w-2xl) stays untouched. */
+  --v-space-xs: 0.5rem;
+  --v-space-sm: 1rem;
+  --v-space-md: 1.5rem;
+  --v-space-lg: 2.5rem;
+  --v-space-xl: 4rem;
+  --v-space-2xl: 6rem;
+  --v-space-3xl: 8rem;
+
+  /* ── Animation Easing (Foxi Pro-inspired) ── */
+  --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);      /* snappy settle */
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);           /* spring-like overshoot */
+  --ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275); /* card lift with overshoot */
+
+}
+
+/* ── Layout variables (outside @theme to avoid Tailwind collision) ── */
+:root {
+  --max-width: 1320px;
+  --content-width: 1140px;
+}

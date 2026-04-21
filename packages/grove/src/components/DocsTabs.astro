@@ -1,0 +1,94 @@
+---
+/**
+ * DocsTabs — Tab switcher component for Grove documentation.
+ * Uses a single default slot. Tab content is separated by <!-- tab: Tab Name --> comments
+ * or by wrapping each tab's content in a div with data-tab-content="Tab Name".
+ *
+ * Usage in MDX:
+ *   <Tabs tabs={['JavaScript', 'Python']}>
+ *     <div data-tab-content="JavaScript">
+ *       ```js
+ *       console.log('hello');
+ *       ```
+ *     </div>
+ *     <div data-tab-content="Python">
+ *       ```python
+ *       print('hello')
+ *       ```
+ *     </div>
+ *   </Tabs>
+ */
+interface Props {
+  tabs: string[];
+}
+
+const { tabs } = Astro.props;
+const id = `grove-tabs-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<div data-grove-tabs class="border border-[var(--color-cloud-grey)] rounded-xl overflow-hidden" id={id}>
+  <!-- Tab buttons -->
+  <div role="tablist" class="flex border-b border-[var(--color-cloud-grey)] bg-[var(--color-mist-grey)]">
+    {tabs.map((tab, i) => (
+      <button
+        role="tab"
+        aria-selected={i === 0 ? 'true' : 'false'}
+        aria-controls={`${id}-panel-${i}`}
+        id={`${id}-tab-${i}`}
+        class:list={[
+          'px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px',
+          i === 0
+            ? 'border-[var(--color-green)] text-[var(--color-green)] bg-white'
+            : 'border-transparent text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]',
+        ]}
+        data-tab-index={i}
+      >
+        {tab}
+      </button>
+    ))}
+  </div>
+
+  <!-- Tab panels (single slot, JS shows/hides based on data-tab-content) -->
+  <div class="p-4">
+    <slot />
+  </div>
+</div>
+
+<script is:inline>
+  document.addEventListener('astro:page-load', function() {
+    document.querySelectorAll('[data-grove-tabs]').forEach(function(container) {
+      var tabs = container.querySelectorAll('[role="tab"]');
+      var panels = container.querySelectorAll('[data-tab-content]');
+
+      // Initially show only first panel
+      panels.forEach(function(p, i) {
+        p.style.display = i === 0 ? 'block' : 'none';
+      });
+
+      tabs.forEach(function(tab) {
+        tab.addEventListener('click', function() {
+          var index = parseInt(tab.getAttribute('data-tab-index'));
+
+          // Update tab states
+          tabs.forEach(function(t, i) {
+            var isActive = i === index;
+            t.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            t.className = t.className.replace(/border-\[var\(--color-green\)\]|border-transparent/g, '');
+            t.className = t.className.replace(/text-\[var\(--color-green\)\]|text-\[var\(--color-ink-muted\)\]/g, '');
+            t.className = t.className.replace(/bg-white/g, '');
+            if (isActive) {
+              t.classList.add('border-[var(--color-green)]', 'text-[var(--color-green)]', 'bg-white');
+            } else {
+              t.classList.add('border-transparent', 'text-[var(--color-ink-muted)]');
+            }
+          });
+
+          // Show/hide panels
+          panels.forEach(function(p, i) {
+            p.style.display = i === index ? 'block' : 'none';
+          });
+        });
+      });
+    });
+  });
+</script>

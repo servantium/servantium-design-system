@@ -1,0 +1,49 @@
+---
+interface PaginationLink {
+  label: string;
+  slug: string;
+}
+
+interface Props {
+  prev?: PaginationLink | null;
+  next?: PaginationLink | null;
+}
+
+const { prev = null, next = null } = Astro.props;
+
+if (!prev && !next) return;
+---
+
+<nav aria-label="Pagination" class="mt-16 grid grid-cols-1 gap-4 sm:grid-cols-2">
+  {prev ? (
+    <a
+      href={`/help/${prev.slug}/`}
+      class="group flex flex-col rounded-lg border border-cloud-grey p-4 transition-all duration-150 hover:-translate-y-0.5 hover:border-green hover:shadow-md"
+    >
+      <span class="mb-1 text-xs font-medium text-slate-400">
+        &larr; Previous
+      </span>
+      <span class="text-sm font-semibold text-ink transition-colors duration-150 group-hover:text-green">
+        {prev.label}
+      </span>
+    </a>
+  ) : (
+    <div></div>
+  )}
+
+  {next ? (
+    <a
+      href={`/help/${next.slug}/`}
+      class="group flex flex-col items-end rounded-lg border border-cloud-grey p-4 text-right transition-all duration-150 hover:-translate-y-0.5 hover:border-green hover:shadow-md"
+    >
+      <span class="mb-1 text-xs font-medium text-slate-400">
+        Next &rarr;
+      </span>
+      <span class="text-sm font-semibold text-ink transition-colors duration-150 group-hover:text-green">
+        {next.label}
+      </span>
+    </a>
+  ) : (
+    <div></div>
+  )}
+</nav>

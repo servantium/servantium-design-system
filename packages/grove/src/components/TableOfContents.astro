@@ -1,0 +1,158 @@
+---
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  headings: Heading[];
+}
+
+const { headings } = Astro.props;
+---
+
+{headings.length > 0 && (
+  <nav aria-label="On this page" class="toc-nav">
+    <h2 class="mb-3 text-[11px] font-semibold uppercase tracking-widest text-slate-400" style="font-family: var(--font-body);">
+      On this page
+    </h2>
+    <div class="relative">
+      {/* Green progress bar that spans from first item to active item */}
+      <div class="toc-progress-track absolute left-0 top-0 bottom-0 w-[2px] bg-slate-200 rounded-full" />
+      <div class="toc-progress-bar absolute left-0 w-[2px] bg-[#00C26D] rounded-full transition-all duration-300" style="height: 0; top: 0;" id="toc-progress" />
+
+      <ul class="space-y-1 pl-3 text-[13px]" role="list">
+        {headings.map((heading) => (
+          <li>
+            <a
+              href={`#${heading.slug}`}
+              class="grove-toc-link block py-1 transition-all duration-200 text-slate-500 hover:text-slate-800 border-l-2 border-transparent pl-3"
+              data-toc-link
+              data-toc-slug={heading.slug}
+            >
+              {heading.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </nav>
+)}
+
+<style>
+  .grove-toc-passed {
+    color: #00C26D !important;
+    opacity: 0.6;
+  }
+</style>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const tocLinks = document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]');
+    if (tocLinks.length === 0) return;
+
+    const slugs = Array.from(tocLinks).map((link) => link.dataset.tocSlug!);
+    const headingElements = slugs
+      .map((slug) => document.getElementById(slug))
+      .filter(Boolean) as HTMLElement[];
+
+    if (headingElements.length === 0) return;
+
+    let activeSlug = '';
+
+    const progressBar = document.getElementById('toc-progress');
+
+    function setActive(slug: string) {
+      if (slug === activeSlug) return;
+      activeSlug = slug;
+
+      const activeIdx = Array.from(tocLinks).findIndex(l => l.dataset.tocSlug === slug);
+      tocLinks.forEach((link, i) => {
+        if (i === activeIdx) {
+          link.style.color = '#00C26D';
+          link.style.opacity = '1';
+          link.style.fontWeight = '600';
+          link.style.borderLeftColor = '#00C26D';
+        } else if (i < activeIdx) {
+          link.style.color = '#00C26D';
+          link.style.opacity = '0.55';
+          link.style.fontWeight = '400';
+          link.style.borderLeftColor = '#00C26D';
+        } else {
+          link.style.color = '';
+          link.style.opacity = '';
+          link.style.fontWeight = '';
+          link.style.borderLeftColor = 'transparent';
+        }
+      });
+
+      // Calculate progress bar height from first link to active link
+      const firstLink = tocLinks[0];
+      const activeLink = Array.from(tocLinks).find(l => l.dataset.tocSlug === slug);
+      if (firstLink && activeLink && progressBar) {
+        const navRect = firstLink.closest('nav')?.getBoundingClientRect();
+        const firstRect = firstLink.getBoundingClientRect();
+        const activeRect = activeLink.getBoundingClientRect();
+        if (navRect) {
+          const startY = firstRect.top - navRect.top;
+          const endY = activeRect.top - navRect.top + activeRect.height;
+          progressBar.style.top = startY + 'px';
+          progressBar.style.height = (endY - startY) + 'px';
+        }
+      }
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Find first heading currently in viewport
+        let active: string | null = null;
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            active = entry.target.id;
+            break;
+          }
+        }
+
+        if (active) {
+          setActive(active);
+          history.replaceState(null, '', '#' + active);
+        } else {
+          // Fallback: find the last heading that scrolled past the top
+          let lastAbove: string | null = null;
+          for (const el of headingElements) {
+            if (el.getBoundingClientRect().top < 120) {
+              lastAbove = el.id;
+            }
+          }
+          if (lastAbove) setActive(lastAbove);
+        }
+      },
+      {
+        rootMargin: '-80px 0px -70% 0px',
+        threshold: 0,
+      }
+    );
+
+    headingElements.forEach((el) => observer.observe(el));
+
+    // Set initial active state
+    if (slugs.length > 0) {
+      setActive(slugs[0]);
+    }
+
+    // Smooth scroll on click
+    tocLinks.forEach((link) => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const slug = link.dataset.tocSlug!;
+        const target = document.getElementById(slug);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          history.replaceState(null, '', `#${slug}`);
+          setActive(slug);
+        }
+      });
+    });
+  });
+</script>
