@@ -1,6 +1,6 @@
 {
   "name": "@servantium/grove",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Grove \u2014 Astro documentation components for Servantium surfaces",
   "type": "module",
   "exports": {
@@ -21,7 +21,9 @@
     "./ThemeProvider": "./src/components/ThemeProvider.astro",
     "./components": "./src/components/index.ts",
     "./widgets": "./src/widgets/index.ts",
-    "./api": "./src/api/index.ts"
+    "./api": "./src/api/index.ts",
+    "./HeroCards": "./src/components/HeroCards.astro",
+    "./WhatsNewGrid": "./src/components/WhatsNewGrid.astro"
   },
   "files": [
     "src",

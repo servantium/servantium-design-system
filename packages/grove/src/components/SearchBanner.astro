@@ -222,11 +222,64 @@ const {
         el.textContent = isMac ? '\u2318K' : 'Ctrl+K';
       });
     }
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', applyShortcut);
-    } else {
-      applyShortcut();
+
+    function wireChips() {
+      document.querySelectorAll('[data-example-query]').forEach(function (btn) {
+        if (btn.dataset.chipInit) return;
+        btn.dataset.chipInit = '1';
+        btn.addEventListener('click', function () {
+          var q = btn.dataset.exampleQuery || '';
+          var banner = btn.closest('.search-banner');
+          var input = banner && banner.querySelector('[data-search-banner-input]');
+          if (input) {
+            input.value = q;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            input.focus();
+          }
+          // If a Pagefind search modal exists, trigger it with the query.
+          var modal = document.querySelector('[data-pagefind-ui-input]');
+          if (modal) {
+            modal.value = q;
+            modal.dispatchEvent(new Event('input', { bubbles: true }));
+          }
+        });
+      });
     }
-    document.addEventListener('astro:page-load', applyShortcut);
+
+    function wireSearchFocus() {
+      document.querySelectorAll('[data-search-banner-input]').forEach(function (input) {
+        if (input.dataset.searchInit) return;
+        input.dataset.searchInit = '1';
+        input.addEventListener('keydown', function (e) {
+          if (e.key === '/' && document.activeElement !== input) {
+            e.preventDefault();
+            input.focus();
+          }
+        });
+      });
+      // ⌘K / Ctrl+K global shortcut
+      document.addEventListener('keydown', function (e) {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+          var input = document.querySelector('[data-search-banner-input]');
+          if (input) {
+            e.preventDefault();
+            input.focus();
+          }
+        }
+      });
+    }
+
+    function init() {
+      applyShortcut();
+      wireChips();
+      wireSearchFocus();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+    document.addEventListener('astro:page-load', init);
   })();
 </script>

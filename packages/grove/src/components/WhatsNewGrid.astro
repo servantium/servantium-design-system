@@ -1,0 +1,165 @@
+---
+/**
+ * WhatsNewGrid — colorful icon cards for the "What's new" section.
+ * Each card has a gradient background, icon, title, version + date.
+ */
+export interface WhatsNewItem {
+  title: string;
+  href: string;
+  version?: string;
+  date?: string;
+  icon?: 'grid' | 'sparkle' | 'search' | 'calendar' | 'doc' | 'bulb' | 'phone' | 'database';
+  accent?: 'green' | 'blue' | 'amber' | 'purple' | 'coral' | 'teal' | 'slate';
+}
+
+interface Props {
+  items: WhatsNewItem[];
+  class?: string;
+}
+const { items = [], class: className = '' } = Astro.props;
+
+const gradients: Record<string, string> = {
+  green:  'linear-gradient(135deg, #0E8A52 0%, #045F37 100%)',
+  blue:   'linear-gradient(135deg, #3E6E9A 0%, #1E3850 100%)',
+  amber:  'linear-gradient(135deg, #D88B2A 0%, #8C521B 100%)',
+  purple: 'linear-gradient(135deg, #6B47B5 0%, #3B2570 100%)',
+  coral:  'linear-gradient(135deg, #D95266 0%, #8B2D3D 100%)',
+  teal:   'linear-gradient(135deg, #1A8A7F 0%, #0E4F49 100%)',
+  slate:  'linear-gradient(135deg, #3E4D5C 0%, #1E2932 100%)',
+};
+
+// Auto-assign accents if not specified (cycle through palette).
+const palette: Array<WhatsNewItem['accent']> = ['green', 'blue', 'teal', 'amber', 'coral', 'purple', 'teal', 'slate'];
+const resolved = items.map((item, i) => ({
+  ...item,
+  accent: item.accent || palette[i % palette.length],
+}));
+---
+
+<div class:list={['whats-new-grid', className]}>
+  {resolved.map((item) => (
+    <a href={item.href} class="whats-new-grid__card" style={`background: ${gradients[item.accent || 'green']};`}>
+      <div class="whats-new-grid__icon" aria-hidden="true">
+        {item.icon === 'grid' && (
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
+          </svg>
+        )}
+        {item.icon === 'sparkle' && (
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3l2 5.5L19.5 11l-5.5 2.5L12 19l-2-5.5L4.5 11l5.5-2.5z"/>
+          </svg>
+        )}
+        {item.icon === 'search' && (
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        )}
+        {item.icon === 'calendar' && (
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        )}
+        {item.icon === 'doc' && (
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+          </svg>
+        )}
+        {item.icon === 'bulb' && (
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>
+          </svg>
+        )}
+        {item.icon === 'phone' && (
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18"/>
+          </svg>
+        )}
+        {item.icon === 'database' && (
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/>
+          </svg>
+        )}
+        {!item.icon && (
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3l2 5.5L19.5 11l-5.5 2.5L12 19l-2-5.5L4.5 11l5.5-2.5z"/>
+          </svg>
+        )}
+      </div>
+      <div class="whats-new-grid__text">
+        <h3 class="whats-new-grid__title">{item.title}</h3>
+        {(item.version || item.date) && (
+          <p class="whats-new-grid__meta">
+            {item.version && <span>{item.version}</span>}
+            {item.version && item.date && <span aria-hidden="true"> · </span>}
+            {item.date && <time>{item.date}</time>}
+          </p>
+        )}
+      </div>
+      <div class="whats-new-grid__decoration" aria-hidden="true">
+        <svg viewBox="0 0 100 100" fill="none">
+          <circle cx="80" cy="20" r="24" fill="rgba(255,255,255,0.06)"/>
+          <circle cx="95" cy="80" r="16" fill="rgba(255,255,255,0.04)"/>
+        </svg>
+      </div>
+    </a>
+  ))}
+</div>
+
+<style>
+  .whats-new-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.75rem;
+  }
+  .whats-new-grid__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.875rem;
+    min-height: 150px;
+    padding: 1.125rem;
+    border-radius: var(--r-xl);
+    color: var(--color-white);
+    overflow: hidden;
+    text-decoration: none;
+    transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
+  }
+  .whats-new-grid__card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+  }
+  .whats-new-grid__icon {
+    position: relative;
+    z-index: 2;
+    color: rgba(255, 255, 255, 0.92);
+  }
+  .whats-new-grid__text {
+    position: relative;
+    z-index: 2;
+  }
+  .whats-new-grid__title {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-white);
+    margin: 0 0 0.25rem;
+    line-height: 1.3;
+  }
+  .whats-new-grid__meta {
+    font-size: var(--type-meta);
+    color: rgba(255, 255, 255, 0.72);
+    margin: 0;
+  }
+  .whats-new-grid__decoration {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .whats-new-grid__decoration svg {
+    width: 100%;
+    height: 100%;
+  }
+</style>

@@ -3,47 +3,73 @@
  * DocsHomeLayout — landing page layout for docs sites.
  *
  * Structure (composable via slots):
- *   [header (optional)]
- *   [banner]      ← consumer drops SearchBanner here
- *   [content] | [sidebar widgets]
- *   [footer (optional)]
- *
- * Chrome (top Nav, bottom Footer) is provided by the consumer's own
- * BaseLayout wrapping this component. DocsHomeLayout only renders
- * the docs-shaped inner content.
+ *   [header (optional tabs)]
+ *   [banner]
+ *   [sidebar (docs nav)] | [main content] | [right rail (widgets, optional)]
+ *   [footer (optional — e.g. "Need more help?" banner)]
  */
+import DocsSidebar from './DocsSidebar.astro';
+import DocsSearch from './DocsSearch.astro';
+
 interface Props {
   title?: string;
   description?: string;
+  currentSlug?: string;
+  /** Hide the docs nav sidebar (e.g. for a centered landing). */
+  hideSidebar?: boolean;
+  /** Hide the right rail (widgets). Main content gets full width. */
+  hideRail?: boolean;
   class?: string;
 }
-const { title, description, class: className = '' } = Astro.props;
+const {
+  title,
+  description,
+  currentSlug = '',
+  hideSidebar = false,
+  hideRail = false,
+  class: className = '',
+} = Astro.props;
 ---
 
-<div class:list={['docs-home', className]}>
+<div class:list={['docs-home', hideSidebar && 'docs-home--no-sidebar', hideRail && 'docs-home--no-rail', className]}>
   <header class="docs-home__header">
     <slot name="tabs" />
   </header>
 
-  <div class="docs-home__banner">
-    <slot name="banner" />
+  <div class="docs-home__layout">
+    {!hideSidebar && (
+      <aside class="docs-home__nav" data-pagefind-ignore>
+        <div class="docs-home__nav-sticky">
+          <div class="docs-home__nav-search">
+            <DocsSearch />
+          </div>
+          <DocsSidebar currentSlug={currentSlug} />
+        </div>
+      </aside>
+    )}
+
+    <div class="docs-home__center">
+      <div class="docs-home__banner">
+        <slot name="banner" />
+      </div>
+
+      <main class="docs-home__main" data-article-content>
+        {title && <h1 class="docs-home__title">{title}</h1>}
+        {description && <p class="docs-home__description">{description}</p>}
+        <slot />
+      </main>
+
+      <footer class="docs-home__page-footer">
+        <slot name="footer" />
+      </footer>
+    </div>
+
+    {!hideRail && (
+      <aside class="docs-home__sidebar" data-pagefind-ignore>
+        <slot name="sidebar" />
+      </aside>
+    )}
   </div>
-
-  <div class="docs-home__body">
-    <main class="docs-home__main" data-article-content>
-      {title && <h1 class="docs-home__title">{title}</h1>}
-      {description && <p class="docs-home__description">{description}</p>}
-      <slot />
-    </main>
-
-    <aside class="docs-home__sidebar" data-pagefind-ignore>
-      <slot name="sidebar" />
-    </aside>
-  </div>
-
-  <footer class="docs-home__footer">
-    <slot name="footer" />
-  </footer>
 </div>
 
 <style>
@@ -51,29 +77,55 @@ const { title, description, class: className = '' } = Astro.props;
     max-width: var(--max-width);
     margin: 0 auto;
     padding: 0 var(--v-space-md);
-    display: flex;
-    flex-direction: column;
-    gap: var(--v-space-md);
   }
-
   .docs-home__header:empty,
-  .docs-home__footer:empty,
+  .docs-home__page-footer:empty,
   .docs-home__banner:empty { display: none; }
 
-  .docs-home__banner {
-    margin-bottom: var(--v-space-md);
-  }
-
-  .docs-home__body {
+  .docs-home__layout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
+    grid-template-columns: minmax(220px, 260px) minmax(0, 1fr) minmax(260px, 300px);
     gap: var(--v-space-lg);
     align-items: start;
   }
+  .docs-home--no-sidebar .docs-home__layout {
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 300px);
+  }
+  .docs-home--no-rail .docs-home__layout {
+    grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+  }
+  .docs-home--no-sidebar.docs-home--no-rail .docs-home__layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
   @media (max-width: 1024px) {
-    .docs-home__body {
-      grid-template-columns: minmax(0, 1fr);
+    .docs-home__layout {
+      grid-template-columns: minmax(0, 1fr) !important;
     }
+    .docs-home__nav,
+    .docs-home__sidebar {
+      display: none;
+    }
+  }
+
+  .docs-home__nav {
+    position: sticky;
+    top: var(--v-space-md);
+    max-height: calc(100vh - var(--v-space-md) * 2);
+    overflow-y: auto;
+  }
+  .docs-home__nav-sticky {
+    padding-right: 0.5rem;
+  }
+  .docs-home__nav-search {
+    margin-bottom: var(--v-space-sm);
+  }
+
+  .docs-home__center {
+    min-width: 0;
+  }
+
+  .docs-home__banner {
+    margin-bottom: var(--v-space-md);
   }
 
   .docs-home__main {
@@ -93,7 +145,6 @@ const { title, description, class: className = '' } = Astro.props;
     font-size: 1.125rem;
     line-height: 1.55;
     margin: 0 0 var(--v-space-md);
-    max-width: 680px;
   }
 
   .docs-home__sidebar {
@@ -102,10 +153,5 @@ const { title, description, class: className = '' } = Astro.props;
     gap: var(--v-space-sm);
     position: sticky;
     top: var(--v-space-md);
-  }
-  @media (max-width: 1024px) {
-    .docs-home__sidebar {
-      position: static;
-    }
   }
 </style>
