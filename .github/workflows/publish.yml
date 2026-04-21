@@ -1,4 +1,9 @@
-name: Publish + notify consumers
+name: Publish packages
+
+# Publishes @servantium/verdant + @servantium/grove to GitHub Packages on tag push.
+# Consumer auto-notification was removed while the portal pipeline is being
+# rewritten — consumers will pick up updates via manual PR or a future
+# reintroduced notify-consumers job.
 
 on:
   push:
@@ -34,29 +39,3 @@ jobs:
         run: npm publish --workspace @servantium/grove --access restricted
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  notify-consumers:
-    # Fires regardless of publish success so even non-package changes (e.g. pure
-    # CSS token tweaks where a package re-publish gets skipped) still propagate.
-    needs: publish
-    if: always()
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        consumer:
-          - servantium/servantium-website
-          - servantium/servantium-help
-    steps:
-      - name: Dispatch update to ${{ matrix.consumer }}
-        env:
-          # Uses a fine-grained PAT stored as secret (DESIGN_SYSTEM_DISPATCH_PAT).
-          # Must have: repo scope (contents, pull_requests) on website + help repos.
-          GH_TOKEN: ${{ secrets.DESIGN_SYSTEM_DISPATCH_PAT }}
-        run: |
-          REF="${GITHUB_REF_NAME:-main}"
-          echo "Dispatching ref=$REF to ${{ matrix.consumer }}"
-          gh api \
-            "/repos/${{ matrix.consumer }}/dispatches" \
-            -X POST \
-            -f event_type=design-system-updated \
-            -F "client_payload[ref]=$REF"
