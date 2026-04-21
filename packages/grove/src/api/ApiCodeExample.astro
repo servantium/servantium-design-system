@@ -1,0 +1,57 @@
+---
+/**
+ * ApiCodeExample — labelled code block for request examples.
+ * Use under an ApiEndpoint to show curl / TypeScript / Python samples.
+ */
+interface Props {
+  title?: string;
+  lang?: string;
+}
+const { title = 'Example', lang = 'bash' } = Astro.props;
+---
+
+<div class="api-code">
+  <div class="api-code__header">
+    <span class="api-code__title">{title}</span>
+    <span class="api-code__lang">{lang}</span>
+  </div>
+  <pre class={`api-code__pre language-${lang}`}><code><slot /></code></pre>
+</div>
+
+<style>
+  .api-code {
+    margin: 1rem 0;
+    border: 1px solid var(--surface-widget-border);
+    border-radius: var(--r-md);
+    overflow: hidden;
+  }
+  .api-code__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.625rem 0.875rem;
+    background: var(--color-mist-grey);
+    border-bottom: 1px solid var(--surface-widget-border);
+    font-size: var(--type-meta);
+  }
+  .api-code__title {
+    font-weight: 600;
+    color: var(--surface-page-ink);
+  }
+  .api-code__lang {
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--surface-page-ink-muted);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .api-code__pre {
+    margin: 0;
+    padding: 1rem;
+    background: var(--color-dark-bg);
+    color: var(--color-dark-ink-1);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    overflow-x: auto;
+  }
+</style>

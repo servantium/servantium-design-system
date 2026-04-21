@@ -1,0 +1,72 @@
+---
+/**
+ * ApiResponse — labelled code block for response samples.
+ */
+interface Props {
+  status?: number | string;
+  title?: string;
+  lang?: string;
+}
+const { status = 200, title, lang = 'json' } = Astro.props;
+const statusClass =
+  typeof status === 'number' && status >= 200 && status < 300 ? 'success'
+  : typeof status === 'number' && status >= 400 ? 'danger'
+  : 'note';
+---
+
+<div class="api-response">
+  <div class="api-response__header">
+    <span class={`api-response__status api-response__status--${statusClass}`}>{status}</span>
+    <span class="api-response__title">{title || 'Response'}</span>
+    <span class="api-response__lang">{lang}</span>
+  </div>
+  <pre class={`api-response__code language-${lang}`}><code><slot /></code></pre>
+</div>
+
+<style>
+  .api-response {
+    margin: 1rem 0;
+    border: 1px solid var(--surface-widget-border);
+    border-radius: var(--r-md);
+    overflow: hidden;
+  }
+  .api-response__header {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.625rem 0.875rem;
+    background: var(--color-mist-grey);
+    border-bottom: 1px solid var(--surface-widget-border);
+    font-size: var(--type-meta);
+  }
+  .api-response__status {
+    padding: 0.125rem 0.5rem;
+    border-radius: var(--r-pill);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-weight: 700;
+  }
+  .api-response__status--success { background: var(--color-green-soft); color: var(--color-green); }
+  .api-response__status--danger  { background: var(--color-coral-soft); color: var(--color-coral); }
+  .api-response__status--note    { background: var(--color-slate-blue-soft); color: var(--color-slate-blue); }
+  .api-response__title {
+    font-weight: 600;
+    color: var(--surface-page-ink);
+  }
+  .api-response__lang {
+    margin-left: auto;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--surface-page-ink-muted);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .api-response__code {
+    margin: 0;
+    padding: 1rem;
+    background: var(--color-dark-bg);
+    color: var(--color-dark-ink-1);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    overflow-x: auto;
+  }
+</style>

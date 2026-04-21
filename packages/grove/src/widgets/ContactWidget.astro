@@ -1,0 +1,51 @@
+---
+/**
+ * ContactWidget — simple contact card with one primary action.
+ * Use for "Talk to sales", "Email the team", or any single-CTA block.
+ */
+import Widget from './Widget.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+  variant?: 'default' | 'accent';
+}
+
+const {
+  title = 'Talk to us',
+  description = 'Questions? We respond within 24 hours.',
+  ctaLabel = 'Email the team',
+  ctaHref = 'mailto:hello@servantium.com',
+  variant = 'default',
+} = Astro.props;
+---
+
+<Widget title={title} variant={variant}>
+  <p class="contact-widget__desc">{description}</p>
+  <a href={ctaHref} class="contact-widget__cta">{ctaLabel}</a>
+</Widget>
+
+<style>
+  .contact-widget__desc {
+    font-size: 0.875rem;
+    margin: 0 0 0.875rem;
+  }
+  .contact-widget__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.875rem;
+    background: var(--surface-widget-accent);
+    color: var(--surface-widget-accent-ink) !important;
+    border-radius: var(--r-md);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none !important;
+    transition: transform 0.15s var(--ease-out);
+  }
+  .contact-widget__cta:hover {
+    transform: translateY(-1px);
+  }
+</style>

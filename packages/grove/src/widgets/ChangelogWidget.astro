@@ -1,0 +1,132 @@
+---
+/**
+ * ChangelogWidget — compact list of recent releases for sidebar use.
+ */
+import Widget from './Widget.astro';
+
+export interface ChangelogEntry {
+  title: string;
+  date?: string;
+  version?: string;
+  href: string;
+  excerpt?: string;
+}
+
+interface Props {
+  title?: string;
+  entries: ChangelogEntry[];
+  limit?: number;
+  viewAllHref?: string;
+  viewAllLabel?: string;
+}
+
+const {
+  title = 'Changelog',
+  entries = [],
+  limit = 4,
+  viewAllHref,
+  viewAllLabel = 'Full log',
+} = Astro.props;
+
+const shown = entries.slice(0, limit);
+---
+
+<Widget title={title} variant="default" class="changelog-widget-container">
+  {shown.length === 0 ? (
+    <p class="changelog-widget__empty">No releases yet.</p>
+  ) : (
+    <ol class="changelog-widget__list" role="list">
+      {shown.map((e) => (
+        <li class="changelog-widget__item">
+          <a href={e.href} class="changelog-widget__link">
+            {e.version && <span class="changelog-widget__version">{e.version}</span>}
+            <strong class="changelog-widget__title">{e.title}</strong>
+            {e.date && <time class="changelog-widget__date">{e.date}</time>}
+            {e.excerpt && <span class="changelog-widget__excerpt">{e.excerpt}</span>}
+          </a>
+        </li>
+      ))}
+    </ol>
+  )}
+
+  {viewAllHref && shown.length > 0 && (
+    <a href={viewAllHref} class="changelog-widget__all">{viewAllLabel} &rarr;</a>
+  )}
+</Widget>
+
+<style>
+  .changelog-widget__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .changelog-widget__item {
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--surface-widget-border);
+  }
+  .changelog-widget__item:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+  .changelog-widget__link {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    gap: 0.125rem 0.5rem;
+    color: inherit !important;
+    text-decoration: none !important;
+  }
+  .changelog-widget__version {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    align-self: start;
+    font-family: var(--font-body);
+    font-size: var(--type-meta);
+    font-weight: 700;
+    color: var(--surface-widget-accent);
+    padding: 0.125rem 0.375rem;
+    background: var(--color-green-soft);
+    border-radius: var(--r-sm);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+  .changelog-widget__title {
+    grid-column: 2;
+    grid-row: 1;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--surface-widget-ink);
+  }
+  .changelog-widget__date {
+    grid-column: 2;
+    grid-row: 2;
+    font-size: var(--type-meta);
+    color: var(--surface-widget-ink-muted);
+  }
+  .changelog-widget__excerpt {
+    grid-column: 1 / -1;
+    font-size: 0.8125rem;
+    color: var(--surface-widget-ink-muted);
+    margin-top: 0.25rem;
+  }
+  .changelog-widget__empty {
+    font-size: 0.875rem;
+    color: var(--surface-widget-ink-muted);
+    margin: 0;
+  }
+  .changelog-widget__all {
+    display: inline-block;
+    margin-top: 0.75rem;
+    font-size: var(--type-meta);
+    font-weight: 600;
+    color: var(--surface-widget-accent);
+    text-decoration: none;
+  }
+  .changelog-widget__all:hover {
+    text-decoration: underline;
+  }
+</style>

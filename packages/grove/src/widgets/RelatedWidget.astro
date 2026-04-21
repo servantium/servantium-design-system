@@ -1,0 +1,95 @@
+---
+/**
+ * RelatedWidget — related articles list for sidebar use.
+ * Consumers pass a pre-filtered list (by tag, section, or frontmatter);
+ * the widget only renders — it doesn't query content itself.
+ */
+import Widget from './Widget.astro';
+
+export interface RelatedItem {
+  title: string;
+  href: string;
+  readingTime?: string;
+  section?: string;
+}
+
+interface Props {
+  title?: string;
+  items: RelatedItem[];
+  limit?: number;
+}
+
+const {
+  title = 'Related',
+  items = [],
+  limit = 5,
+} = Astro.props;
+
+const shown = items.slice(0, limit);
+---
+
+<Widget title={title} variant="default">
+  {shown.length === 0 ? (
+    <p class="related-widget__empty">Nothing related yet.</p>
+  ) : (
+    <ul class="related-widget__list" role="list">
+      {shown.map((item) => (
+        <li>
+          <a href={item.href} class="related-widget__link">
+            <span class="related-widget__title">{item.title}</span>
+            {(item.section || item.readingTime) && (
+              <span class="related-widget__meta">
+                {item.section && <span>{item.section}</span>}
+                {item.section && item.readingTime && <span aria-hidden="true"> · </span>}
+                {item.readingTime && <time>{item.readingTime}</time>}
+              </span>
+            )}
+          </a>
+        </li>
+      ))}
+    </ul>
+  )}
+</Widget>
+
+<style>
+  .related-widget__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+  .related-widget__link {
+    display: block;
+    padding: 0.5rem 0;
+    color: inherit !important;
+    text-decoration: none !important;
+    border-bottom: 1px solid var(--surface-widget-border);
+  }
+  .related-widget__link:last-child,
+  li:last-child .related-widget__link {
+    border-bottom: none;
+  }
+  .related-widget__title {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--surface-widget-ink);
+  }
+  .related-widget__link:hover .related-widget__title {
+    color: var(--surface-widget-accent);
+  }
+  .related-widget__meta {
+    display: block;
+    font-size: var(--type-meta);
+    color: var(--surface-widget-ink-muted);
+    margin-top: 0.125rem;
+  }
+  .related-widget__empty {
+    font-size: 0.875rem;
+    color: var(--surface-widget-ink-muted);
+    margin: 0;
+  }
+</style>

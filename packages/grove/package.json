@@ -1,20 +1,27 @@
 {
   "name": "@servantium/grove",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "Grove \u2014 Astro documentation components for Servantium surfaces",
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
     "./DocsLayout": "./src/components/DocsLayout.astro",
+    "./DocsHomeLayout": "./src/components/DocsHomeLayout.astro",
+    "./DocsArticleLayout": "./src/components/DocsArticleLayout.astro",
     "./DocsSidebar": "./src/components/DocsSidebar.astro",
     "./DocsSearch": "./src/components/DocsSearch.astro",
+    "./DocsHeaderTabs": "./src/components/DocsHeaderTabs.astro",
     "./DocsAside": "./src/components/DocsAside.astro",
     "./DocsSteps": "./src/components/DocsSteps.astro",
     "./DocsTabs": "./src/components/DocsTabs.astro",
     "./DocsPagination": "./src/components/DocsPagination.astro",
     "./TableOfContents": "./src/components/TableOfContents.astro",
     "./ReleaseTimeline": "./src/components/ReleaseTimeline.astro",
-    "./components": "./src/components/index.ts"
+    "./SearchBanner": "./src/components/SearchBanner.astro",
+    "./ThemeProvider": "./src/components/ThemeProvider.astro",
+    "./components": "./src/components/index.ts",
+    "./widgets": "./src/widgets/index.ts",
+    "./api": "./src/api/index.ts"
   },
   "files": [
     "src",

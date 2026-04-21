@@ -1,0 +1,111 @@
+---
+/**
+ * DocsHomeLayout — landing page layout for docs sites.
+ *
+ * Structure (composable via slots):
+ *   [header (optional)]
+ *   [banner]      ← consumer drops SearchBanner here
+ *   [content] | [sidebar widgets]
+ *   [footer (optional)]
+ *
+ * Chrome (top Nav, bottom Footer) is provided by the consumer's own
+ * BaseLayout wrapping this component. DocsHomeLayout only renders
+ * the docs-shaped inner content.
+ */
+interface Props {
+  title?: string;
+  description?: string;
+  class?: string;
+}
+const { title, description, class: className = '' } = Astro.props;
+---
+
+<div class:list={['docs-home', className]}>
+  <header class="docs-home__header">
+    <slot name="tabs" />
+  </header>
+
+  <div class="docs-home__banner">
+    <slot name="banner" />
+  </div>
+
+  <div class="docs-home__body">
+    <main class="docs-home__main" data-article-content>
+      {title && <h1 class="docs-home__title">{title}</h1>}
+      {description && <p class="docs-home__description">{description}</p>}
+      <slot />
+    </main>
+
+    <aside class="docs-home__sidebar" data-pagefind-ignore>
+      <slot name="sidebar" />
+    </aside>
+  </div>
+
+  <footer class="docs-home__footer">
+    <slot name="footer" />
+  </footer>
+</div>
+
+<style>
+  .docs-home {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--v-space-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--v-space-md);
+  }
+
+  .docs-home__header:empty,
+  .docs-home__footer:empty,
+  .docs-home__banner:empty { display: none; }
+
+  .docs-home__banner {
+    margin-bottom: var(--v-space-md);
+  }
+
+  .docs-home__body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
+    gap: var(--v-space-lg);
+    align-items: start;
+  }
+  @media (max-width: 1024px) {
+    .docs-home__body {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  .docs-home__main {
+    min-width: 0;
+  }
+
+  .docs-home__title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin: 0 0 var(--v-space-xs);
+    color: var(--surface-page-ink);
+  }
+  .docs-home__description {
+    color: var(--surface-page-ink-muted);
+    font-size: 1.125rem;
+    line-height: 1.55;
+    margin: 0 0 var(--v-space-md);
+    max-width: 680px;
+  }
+
+  .docs-home__sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--v-space-sm);
+    position: sticky;
+    top: var(--v-space-md);
+  }
+  @media (max-width: 1024px) {
+    .docs-home__sidebar {
+      position: static;
+    }
+  }
+</style>

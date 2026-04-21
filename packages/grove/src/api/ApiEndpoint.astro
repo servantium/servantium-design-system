@@ -1,0 +1,73 @@
+---
+/**
+ * ApiEndpoint — METHOD + path chip. Theme-aware.
+ */
+interface Props {
+  method: 'GET' | 'POST' | 'PATCH' | 'DELETE' | 'PUT';
+  path: string;
+  description?: string;
+  version?: string;
+}
+const { method, path, description, version } = Astro.props;
+---
+
+<div class="api-endpoint">
+  <div class="api-endpoint__row">
+    <span class={`api-endpoint__method api-endpoint__method--${method.toLowerCase()}`}>{method}</span>
+    <code class="api-endpoint__path">{path}</code>
+    {version && <span class="api-endpoint__version">v{version}</span>}
+  </div>
+  {description && <p class="api-endpoint__desc">{description}</p>}
+</div>
+
+<style>
+  .api-endpoint {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: var(--surface-widget);
+    border: 1px solid var(--surface-widget-border);
+    border-radius: var(--r-md);
+  }
+  .api-endpoint__row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .api-endpoint__method {
+    padding: 0.25rem 0.625rem;
+    border: 1px solid transparent;
+    border-radius: var(--r-sm);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .api-endpoint__method--get    { background: var(--color-green-soft); color: var(--color-green); border-color: var(--color-green-line); }
+  .api-endpoint__method--post   { background: var(--color-slate-blue-soft); color: var(--color-slate-blue); border-color: rgba(76,130,167,0.28); }
+  .api-endpoint__method--patch  { background: var(--color-amber-soft); color: var(--color-amber); border-color: rgba(255,176,46,0.28); }
+  .api-endpoint__method--delete { background: var(--color-coral-soft); color: var(--color-coral); border-color: rgba(255,92,112,0.28); }
+  .api-endpoint__method--put    { background: rgba(38,168,153,0.14); color: var(--color-deep-teal); border-color: rgba(38,168,153,0.28); }
+
+  .api-endpoint__path {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.9375rem;
+    color: var(--surface-widget-ink);
+  }
+  .api-endpoint__version {
+    margin-left: auto;
+    padding: 0.125rem 0.5rem;
+    background: var(--color-green-soft);
+    color: var(--color-green);
+    border-radius: var(--r-pill);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: var(--type-meta);
+    font-weight: 600;
+  }
+  .api-endpoint__desc {
+    font-size: 0.875rem;
+    color: var(--surface-widget-ink-muted);
+    margin: 0.625rem 0 0;
+  }
+</style>

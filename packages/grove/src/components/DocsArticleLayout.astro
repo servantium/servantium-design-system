@@ -1,0 +1,108 @@
+---
+/**
+ * DocsArticleLayout — single-column long-form article layout.
+ *
+ * Use for: glossary, key-concepts, blog-style standalone pages.
+ * No sidebar nav (unlike DocsLayout); optional right-rail widgets only.
+ */
+interface Props {
+  title?: string;
+  description?: string;
+  readingTime?: string;
+  date?: string;
+  class?: string;
+}
+const { title, description, readingTime, date, class: className = '' } = Astro.props;
+---
+
+<div class:list={['docs-article', className]}>
+  <header class="docs-article__header">
+    <slot name="tabs" />
+    <slot name="breadcrumbs" />
+    {title && <h1 class="docs-article__title">{title}</h1>}
+    {description && <p class="docs-article__description">{description}</p>}
+    {(readingTime || date) && (
+      <div class="docs-article__meta">
+        {date && <time>{date}</time>}
+        {date && readingTime && <span aria-hidden="true"> · </span>}
+        {readingTime && <span>{readingTime}</span>}
+      </div>
+    )}
+  </header>
+
+  <div class="docs-article__body">
+    <article class="docs-article__content" data-article-content>
+      <slot />
+    </article>
+    <aside class="docs-article__sidebar" data-pagefind-ignore>
+      <slot name="sidebar" />
+    </aside>
+  </div>
+
+  <footer class="docs-article__footer">
+    <slot name="footer" />
+  </footer>
+</div>
+
+<style>
+  .docs-article {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--v-space-md);
+  }
+  .docs-article__header {
+    max-width: 760px;
+    margin: 0 auto var(--v-space-md);
+  }
+  .docs-article__title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0 0 var(--v-space-xs);
+    color: var(--surface-page-ink);
+  }
+  .docs-article__description {
+    color: var(--surface-page-ink-muted);
+    font-size: 1.125rem;
+    line-height: 1.55;
+    margin: 0 0 var(--v-space-sm);
+  }
+  .docs-article__meta {
+    font-size: var(--type-meta);
+    color: var(--surface-page-ink-muted);
+  }
+
+  .docs-article__body {
+    display: grid;
+    grid-template-columns: minmax(0, 760px) minmax(240px, 300px);
+    gap: var(--v-space-lg);
+    justify-content: center;
+    align-items: start;
+  }
+  @media (max-width: 1024px) {
+    .docs-article__body {
+      grid-template-columns: minmax(0, 1fr);
+      max-width: 760px;
+      margin: 0 auto;
+    }
+  }
+
+  .docs-article__content {
+    min-width: 0;
+  }
+
+  .docs-article__sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--v-space-sm);
+    position: sticky;
+    top: var(--v-space-md);
+  }
+  @media (max-width: 1024px) {
+    .docs-article__sidebar {
+      position: static;
+    }
+  }
+</style>

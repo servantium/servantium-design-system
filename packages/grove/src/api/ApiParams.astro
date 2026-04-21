@@ -1,0 +1,98 @@
+---
+/**
+ * ApiParams — parameter table with type chips. Used under an ApiEndpoint.
+ */
+export interface ApiParam {
+  name: string;
+  type: string;
+  required?: boolean;
+  description?: string;
+}
+interface Props {
+  title?: string;
+  params: ApiParam[];
+}
+const { title = 'Parameters', params = [] } = Astro.props;
+---
+
+{params.length > 0 && (
+  <section class="api-params">
+    <h4 class="api-params__title">{title}</h4>
+    <table class="api-params__table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        {params.map((p) => (
+          <tr>
+            <td>
+              <code class="api-params__name">{p.name}</code>
+              {p.required && <span class="api-params__required">required</span>}
+            </td>
+            <td><code class="api-params__type">{p.type}</code></td>
+            <td class="api-params__desc">{p.description}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </section>
+)}
+
+<style>
+  .api-params { margin: 1.5rem 0; }
+  .api-params__title {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    margin: 0 0 0.75rem;
+    color: var(--surface-page-ink);
+  }
+  .api-params__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+  .api-params__table th,
+  .api-params__table td {
+    text-align: left;
+    padding: 0.625rem 0.75rem;
+    border-bottom: 1px solid var(--surface-page-border);
+    vertical-align: top;
+  }
+  .api-params__table th {
+    font-weight: 600;
+    font-size: var(--type-meta);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--surface-page-ink-muted);
+  }
+  .api-params__name {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.8125rem;
+    color: var(--surface-page-ink);
+  }
+  .api-params__type {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.75rem;
+    padding: 0.125rem 0.375rem;
+    background: var(--color-green-soft);
+    color: var(--color-green);
+    border-radius: var(--r-sm);
+  }
+  .api-params__required {
+    display: inline-block;
+    margin-left: 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--color-coral);
+    letter-spacing: 0.04em;
+  }
+  .api-params__desc {
+    color: var(--surface-page-ink-muted);
+  }
+</style>

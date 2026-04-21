@@ -1,0 +1,63 @@
+---
+/**
+ * ApiVersionSelector — "Viewing v3.0  [Switch to v3.1]" control.
+ * Consumer provides the list of versions available for the current page.
+ */
+interface Props {
+  current: string;
+  versions: Array<{ version: string; href: string }>;
+}
+const { current, versions = [] } = Astro.props;
+---
+
+<div class="api-version">
+  <span class="api-version__label">Viewing</span>
+  <span class="api-version__current">v{current}</span>
+  {versions.length > 1 && (
+    <select class="api-version__select" aria-label="API version" data-version-select>
+      {versions.map((v) => (
+        <option value={v.href} selected={v.version === current}>v{v.version}</option>
+      ))}
+    </select>
+  )}
+</div>
+
+<style>
+  .api-version {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.625rem;
+    background: var(--color-green-soft);
+    border-radius: var(--r-md);
+    font-size: var(--type-meta);
+  }
+  .api-version__label {
+    color: var(--surface-page-ink-muted);
+  }
+  .api-version__current {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-weight: 700;
+    color: var(--color-green);
+  }
+  .api-version__select {
+    font-family: var(--font-body);
+    font-size: var(--type-meta);
+    background: transparent;
+    border: 1px solid var(--color-green-line);
+    border-radius: var(--r-sm);
+    padding: 0.125rem 0.375rem;
+    color: var(--surface-page-ink);
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    document.querySelectorAll('[data-version-select]').forEach(function (el) {
+      el.addEventListener('change', function (e) {
+        var url = e.target.value;
+        if (url) window.location.href = url;
+      });
+    });
+  })();
+</script>

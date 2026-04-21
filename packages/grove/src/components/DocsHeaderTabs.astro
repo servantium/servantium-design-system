@@ -1,0 +1,70 @@
+---
+/**
+ * DocsHeaderTabs — top-level navigation for docs sites with multiple
+ * content types (Guides / API / Changelog). Renders an underlined
+ * tab bar above the page content.
+ */
+export interface DocsTab {
+  id: string;
+  label: string;
+  href: string;
+}
+
+interface Props {
+  tabs: DocsTab[];
+  active?: string;
+  class?: string;
+}
+
+const { tabs = [], active, class: className = '' } = Astro.props;
+---
+
+<nav class:list={['docs-header-tabs', className]} aria-label="Documentation sections">
+  <ul class="docs-header-tabs__list" role="list">
+    {tabs.map((tab) => (
+      <li>
+        <a
+          href={tab.href}
+          class="docs-header-tabs__tab"
+          aria-current={active === tab.id ? 'page' : undefined}
+        >
+          {tab.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  .docs-header-tabs {
+    border-bottom: 1px solid var(--surface-page-border);
+    margin-bottom: var(--v-space-md);
+  }
+  .docs-header-tabs__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 1.5rem;
+  }
+  .docs-header-tabs__tab {
+    display: inline-block;
+    padding: 0.75rem 0;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--surface-page-ink-muted);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.15s var(--ease-out), border-color 0.15s var(--ease-out);
+  }
+  .docs-header-tabs__tab:hover {
+    color: var(--surface-page-ink);
+  }
+  .docs-header-tabs__tab[aria-current="page"] {
+    color: var(--color-green);
+    border-bottom-color: var(--color-green);
+    font-weight: 600;
+  }
+</style>
