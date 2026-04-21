@@ -187,6 +187,11 @@ const breadcrumbItems = [
       <!-- Content area -->
       <main id="docs-content" class="min-w-0 flex-1 px-6 py-4 md:px-10 md:py-6 lg:px-16" tabindex="-1">
         <article class="mx-auto max-w-3xl">
+          <!-- Optional header tabs (Guides / API / Changelog) — consumer fills via slot -->
+          <div class="grove-doc-tabs-slot mb-3">
+            <slot name="tabs" />
+          </div>
+
           <!-- Breadcrumbs -->
           <nav aria-label="Breadcrumb" class="mb-3">
             <ol class="flex flex-wrap items-center gap-1 text-xs text-[var(--color-ink-muted)]">
