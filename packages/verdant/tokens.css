@@ -8,7 +8,7 @@
 /* Auto-scan Grove's Astro components for Tailwind class usage so
    consumer CSS builds include utilities that Grove uses (hidden/lg
    breakpoints, w-80, grid, etc.). Path is relative from THIS file. */
-@source "../../grove/src/**/*.{astro,ts,tsx}";
+@source "../grove/src/**/*.{astro,ts,tsx}";
 
 @theme {
   /* ── Brand Colors ── */
