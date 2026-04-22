@@ -18,6 +18,8 @@ interface Props {
   label?: string;
   placeholder?: string;
   id?: string;
+  /** Filter tabs to show. Help defaults to Help/Blog/Glossary; website passes Resources/Blog. */
+  sections?: Array<'Help' | 'Blog' | 'Glossary' | 'Resources'>;
   mergeIndex?: Array<{ bundlePath: string; indexWeight?: number; label?: string }>;
 }
 
@@ -25,6 +27,7 @@ const {
   label = 'Search help',
   placeholder = 'Search docs, glossary, releases…',
   id,
+  sections = ['Help', 'Blog', 'Glossary'],
   mergeIndex = [],
 } = Astro.props;
 ---
@@ -34,5 +37,6 @@ const {
   placeholder={placeholder}
   triggerVariant="full"
   defaultFilter="Help"
+  sections={sections}
   mergeIndex={mergeIndex}
 />
