@@ -1,0 +1,72 @@
+<div id="cookie-consent" role="dialog" aria-label="Cookie consent" style="display: none; position: fixed; bottom: 0; left: 0; right: 0; background: var(--color-ink, #1a1a2e); padding: 16px 24px; z-index: 999999; box-shadow: 0 -4px 20px rgba(0,0,0,0.3);">
+  <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px;">
+    <p style="margin: 0; flex: 1; min-width: 280px; font-size: 14px; line-height: 1.5; color: var(--color-cloud-grey, #d1d5db);">
+      We use cookies to analyze site traffic and improve your experience. By clicking "Accept All", you consent to our use of analytics cookies.
+      <a href="/privacy" style="color: var(--color-green, #00C26D); text-decoration: underline;">Privacy Policy</a>
+    </p>
+    <div style="display: flex; gap: 12px; flex-shrink: 0;">
+      <button id="cookie-decline" style="padding: 10px 20px; background: transparent; border: 1px solid var(--color-cloud-grey, #9ca3af); color: var(--color-white, #ffffff); border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.2s;">Decline All</button>
+      <button id="cookie-accept" style="padding: 10px 20px; background: var(--color-green, #00C26D); border: none; color: var(--color-white, #ffffff); border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.2s;">Accept All</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const GA_ID = 'G-6EFX4FNH6H';
+
+  function loadGA() {
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
+    document.head.appendChild(script);
+    window.dataLayer = window.dataLayer || [];
+    function gtag(...args: any[]) { window.dataLayer.push(args); }
+    (window as any).gtag = gtag;
+    gtag('js', new Date());
+    gtag('config', GA_ID);
+  }
+
+  const consent = localStorage.getItem('servantium_cookie_consent');
+  const isTestEnv = window.location.hostname === 'test.servantium.com';
+
+  // Show banner if no consent recorded
+  if (!consent) {
+    const banner = document.getElementById('cookie-consent');
+    if (banner) {
+      banner.style.display = 'block';
+      document.body.style.paddingBottom = '80px';
+    }
+  }
+
+  // Load GA if already accepted and not test env
+  if (consent === 'accepted' && !isTestEnv) {
+    loadGA();
+  }
+
+  document.getElementById('cookie-accept')?.addEventListener('click', () => {
+    localStorage.setItem('servantium_cookie_consent', 'accepted');
+    const banner = document.getElementById('cookie-consent');
+    if (banner) banner.style.display = 'none';
+    document.body.style.paddingBottom = '';
+    if (!isTestEnv) loadGA();
+  });
+
+  document.getElementById('cookie-decline')?.addEventListener('click', () => {
+    localStorage.setItem('servantium_cookie_consent', 'declined');
+    const banner = document.getElementById('cookie-consent');
+    if (banner) banner.style.display = 'none';
+    document.body.style.paddingBottom = '';
+  });
+
+  // Escape key declines cookies
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const banner = document.getElementById('cookie-consent');
+      if (banner && banner.style.display !== 'none') {
+        localStorage.setItem('servantium_cookie_consent', 'declined');
+        banner.style.display = 'none';
+        document.body.style.paddingBottom = '';
+      }
+    }
+  });
+</script>
