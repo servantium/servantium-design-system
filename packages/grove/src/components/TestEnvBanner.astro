@@ -1,0 +1,59 @@
+<!-- Test environment detection: noindex + orange banner with dismiss -->
+<script>
+  (function() {
+    // Matches test.servantium.com, qa.help.servantium.com, any *.pages.dev preview, etc.
+    const h = window.location.hostname;
+    const isTestEnv = /^test\.|^qa\./.test(h) || h.endsWith('.pages.dev');
+    if (isTestEnv) {
+      // Block indexing
+      const noindex = document.createElement('meta');
+      noindex.name = 'robots';
+      noindex.content = 'noindex, nofollow';
+      document.head.appendChild(noindex);
+
+      // Show banner
+      document.addEventListener('DOMContentLoaded', function() {
+        // Check if previously dismissed this session
+        if (sessionStorage.getItem('test-banner-dismissed') === 'true') return;
+
+        const banner = document.createElement('div');
+        banner.setAttribute('role', 'alert');
+        banner.id = 'test-env-banner';
+        banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#ff6b35;color:#fff;text-align:center;padding:8px 40px 8px 16px;font-size:14px;font-weight:600;z-index:99999;display:flex;align-items:center;justify-content:center;gap:8px;';
+
+        // Drag handle bar
+        const handle = document.createElement('div');
+        handle.style.cssText = 'width:32px;height:4px;border-radius:2px;background:rgba(255,255,255,0.4);flex-shrink:0;';
+        banner.appendChild(handle);
+
+        // Text
+        const text = document.createElement('span');
+        text.textContent = 'TEST ENVIRONMENT — Changes here do not affect production';
+        banner.appendChild(text);
+
+        // Close button
+        const closeBtn = document.createElement('button');
+        closeBtn.setAttribute('aria-label', 'Dismiss test banner');
+        closeBtn.style.cssText = 'position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:#fff;font-size:20px;cursor:pointer;padding:4px 8px;line-height:1;opacity:0.8;';
+        closeBtn.innerHTML = '&times;';
+        closeBtn.addEventListener('click', function() {
+          sessionStorage.setItem('test-banner-dismissed', 'true');
+          banner.style.display = 'none';
+          document.body.style.paddingTop = '0';
+          const nav = document.querySelector('nav');
+          if (nav) (nav as HTMLElement).style.top = '0';
+          const mobileMenu = document.getElementById('mobile-menu');
+          if (mobileMenu) mobileMenu.style.paddingTop = '80px';
+        });
+        banner.appendChild(closeBtn);
+
+        document.body.prepend(banner);
+        document.body.style.paddingTop = '40px';
+        const nav = document.querySelector('nav');
+        if (nav) (nav as HTMLElement).style.top = '40px';
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileMenu) mobileMenu.style.paddingTop = '120px';
+      });
+    }
+  })();
+</script>
