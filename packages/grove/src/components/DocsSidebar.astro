@@ -5,9 +5,18 @@ import { getCollection } from 'astro:content';
 
 interface Props {
   currentSlug: string;
+  /**
+   * URL prefix for doc links. Defaults to '' (so slug 'quick-start' -> '/quick-start/').
+   * When docs are hosted under a subpath (e.g. '/help/'), pass that prefix.
+   */
+  hrefPrefix?: string;
 }
 
-const { currentSlug } = Astro.props;
+const { currentSlug, hrefPrefix = '' } = Astro.props;
+
+// Normalize: ensure prefix ends with a slash (or is empty)
+const prefix = hrefPrefix === '' ? '' : (hrefPrefix.endsWith('/') ? hrefPrefix : hrefPrefix + '/');
+const rootHref = prefix === '' ? '/' : prefix;
 
 // Fetch all docs for autogenerate sections
 const allDocs = await getCollection('docs');
@@ -41,37 +50,37 @@ function getAutogenerateEntries(directory: string) {
 ---
 
 <div class="mb-6 space-y-1.5">
-  <a href="/help/quick-start/" class="group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm no-underline transition-colors hover:bg-slate-50">
+  <a href={`${prefix}quick-start/`} class="group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm no-underline transition-colors hover:bg-slate-50">
     <span class="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#00C26D]/15">
       <svg class="size-3 text-[#00C26D]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/><path d="M8 7h6"/><path d="M8 11h8"/></svg>
     </span>
     <span class="font-medium text-slate-600 group-hover:text-slate-900 transition-colors">Documentation</span>
   </a>
-  <a href="/help/guides/engagements/" class="group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm no-underline transition-colors hover:bg-slate-50">
+  <a href={`${prefix}guides/engagements/`} class="group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm no-underline transition-colors hover:bg-slate-50">
     <span class="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#4C82A7]/15">
       <svg class="size-3 text-[#4C82A7]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
     </span>
     <span class="font-medium text-slate-600 group-hover:text-slate-900 transition-colors">Guides</span>
   </a>
-  <a href="/help/guides/ai-features/" class="group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm no-underline transition-colors hover:bg-slate-50">
+  <a href={`${prefix}guides/ai-features/`} class="group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm no-underline transition-colors hover:bg-slate-50">
     <span class="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#8B5CF6]/15">
       <svg class="size-3 text-[#8B5CF6]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.2H22l-6 4.8 2.4 7.2L12 16.4 5.6 21.2 8 14 2 9.2h7.6z"/><circle cx="12" cy="12" r="3"/></svg>
     </span>
     <span class="font-medium text-slate-600 group-hover:text-slate-900 transition-colors">AI & Intelligence</span>
   </a>
-  <a href="/help/release-notes/" class="group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm no-underline transition-colors hover:bg-slate-50">
+  <a href={`${prefix}release-notes/`} class="group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm no-underline transition-colors hover:bg-slate-50">
     <span class="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#FFB02E]/15">
       <svg class="size-3 text-[#d49500]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
     </span>
     <span class="font-medium text-slate-600 group-hover:text-slate-900 transition-colors">Release Notes</span>
   </a>
-  <a href="/blog/" class="group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm no-underline transition-colors hover:bg-slate-50">
+  <a href="https://servantium.com/blog/" class="group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm no-underline transition-colors hover:bg-slate-50">
     <span class="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#26A899]/15">
       <svg class="size-3 text-[#26A899]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
     </span>
     <span class="font-medium text-slate-600 group-hover:text-slate-900 transition-colors">Blog</span>
   </a>
-  <a href="/help/support/faq/" class="group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm no-underline transition-colors hover:bg-slate-50">
+  <a href={`${prefix}support/faq/`} class="group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm no-underline transition-colors hover:bg-slate-50">
     <span class="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#FF5C70]/15">
       <svg class="size-3 text-[#FF5C70]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
     </span>
@@ -103,7 +112,7 @@ function getAutogenerateEntries(directory: string) {
               return (
                 <li>
                   <a
-                    href={item.slug === '' ? '/help/' : `/help/${item.slug}/`}
+                    href={item.slug === '' ? rootHref : `${prefix}${item.slug}/`}
                     class:list={[
                       'block rounded-r-md border-l-2 py-1.5 pl-4 pr-2 text-sm leading-snug transition-colors duration-100',
                       active
