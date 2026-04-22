@@ -32,7 +32,7 @@ const {
 ---
 
 <div class:list={['docs-home', hideSidebar && 'docs-home--no-sidebar', hideRail && 'docs-home--no-rail', className]}>
-  <header class="docs-home__header">
+  <header class="docs-home__header" data-pagefind-ignore>
     <slot name="tabs" />
   </header>
 
@@ -77,6 +77,8 @@ const {
     max-width: var(--max-width);
     margin: 0 auto;
     padding: 0 var(--v-space-md);
+    /* Clear the 72px sticky top nav so tabs + banner are visible below it. */
+    padding-top: calc(72px + var(--v-space-sm));
   }
   /* Allow slots to render; don't collapse via :empty (Astro slot whitespace
      can confuse :empty). Headers are visually inert when empty anyway. */
