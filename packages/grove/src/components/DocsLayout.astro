@@ -60,6 +60,14 @@ interface Props {
    * so the docs search also returns results from the marketing site.
    */
   searchMergeIndex?: Array<{ bundlePath: string; indexWeight?: number; label?: string }>;
+  /**
+   * URL prefix for docs links — passed through to DocsSidebar and used for
+   * breadcrumbs. Default '' (docs live at site root, e.g. help.servantium.com).
+   * Set to '/help/' if docs are mounted at /help/ on a larger site.
+   */
+  hrefPrefix?: string;
+  /** Root label shown as the first breadcrumb. Default 'Help'. */
+  rootLabel?: string;
 }
 
 const {
@@ -78,7 +86,11 @@ const {
   authorData,
   relatedArticles = [],
   searchMergeIndex = [],
+  hrefPrefix = '',
+  rootLabel = 'Help',
 } = Astro.props;
+
+const prefix = hrefPrefix === '' ? '/' : (hrefPrefix.endsWith('/') ? hrefPrefix : hrefPrefix + '/');
 
 const tocHeadings = headings.filter((h) => h.depth === 2);
 const pageUrl = `https://servantium.com${Astro.url.pathname}`;
@@ -86,10 +98,10 @@ const pageUrl = `https://servantium.com${Astro.url.pathname}`;
 // Build breadcrumb items from currentSlug
 const slugSegments = currentSlug.split('/').filter(Boolean);
 const breadcrumbItems = [
-  { label: 'Help', href: '/help/' },
+  { label: rootLabel, href: prefix },
   ...slugSegments.slice(0, -1).map((seg, i) => ({
     label: seg.charAt(0).toUpperCase() + seg.slice(1).replace(/-/g, ' '),
-    href: '/help/' + slugSegments.slice(0, i + 1).join('/') + '/',
+    href: prefix + slugSegments.slice(0, i + 1).join('/') + '/',
   })),
   {
     label: slugSegments.length > 0
@@ -157,7 +169,7 @@ const breadcrumbItems = [
         <DocsSearch id="docs-pagefind-search-mobile" mergeIndex={searchMergeIndex} />
       </div>
       <div class="px-4 pb-8">
-        <DocsSidebar currentSlug={currentSlug} />
+        <DocsSidebar currentSlug={currentSlug} hrefPrefix={hrefPrefix} />
       </div>
     </aside>
   </div>
@@ -187,13 +199,18 @@ const breadcrumbItems = [
           <div class="mb-5">
             <DocsSearch mergeIndex={searchMergeIndex} />
           </div>
-          <DocsSidebar currentSlug={currentSlug} />
+          <DocsSidebar currentSlug={currentSlug} hrefPrefix={hrefPrefix} />
         </div>
       </aside>
 
       <!-- Content area -->
       <main id="docs-content" class="min-w-0 flex-1 px-6 py-4 md:px-10 md:py-6 lg:px-16" tabindex="-1">
         <article class="mx-auto max-w-3xl">
+          <!-- Optional header tabs (Guides / API / Changelog) — consumer fills via slot -->
+          <div class="grove-doc-tabs-slot mb-3">
+            <slot name="tabs" />
+          </div>
+
           <!-- Breadcrumbs -->
           <nav aria-label="Breadcrumb" class="mb-3">
             <ol class="flex flex-wrap items-center gap-1 text-xs text-[var(--color-ink-muted)]">
@@ -263,11 +280,15 @@ const breadcrumbItems = [
       <!-- Table of Contents + sidebar widgets (xl screens only) -->
       {tocHeadings.length > 0 && (
         <aside class="hidden xl:block w-[220px] shrink-0 pl-4">
-          <div class="sticky top-[80px] max-h-[calc(100vh-100px)] overflow-y-auto overscroll-contain py-8">
-            {/* Copy for AI button */}
-            <div class="mb-5">
+          <div class="sticky top-[80px] py-8">
+            {/* Copy for AI button — rendered OUTSIDE the TOC's scroll
+                container so its dropdown popover isn't clipped by
+                overflow-y-auto. */}
+            <div class="mb-5 relative z-10">
               <CopyForAI title={title} section={breadcrumbItems.length > 1 ? breadcrumbItems[breadcrumbItems.length - 2].label : undefined} url={pageUrl} />
             </div>
+
+            <div class="max-h-[calc(100vh-200px)] overflow-y-auto overscroll-contain">
 
             <TableOfContents headings={tocHeadings} />
 
@@ -289,6 +310,7 @@ const breadcrumbItems = [
                 </ul>
               </div>
             )}
+            </div>
           </div>
         </aside>
       )}
@@ -299,40 +321,49 @@ const breadcrumbItems = [
   <CookieConsent />
 
   <!-- Mobile drawer script -->
-  <script>
-    document.addEventListener('astro:page-load', () => {
-      const drawer = document.getElementById('grove-sidebar-drawer');
-      const toggleBtn = document.getElementById('grove-sidebar-toggle');
-      if (!drawer) return;
+  <script is:inline>
+    // Wire the mobile drawer toggle. Must work on both the initial page
+    // load AND on Astro client-side navigations — previously only listened
+    // to astro:page-load, so first-load hits on mobile had a dead button.
+    (function () {
+      function initDrawer() {
+        var drawer = document.getElementById('grove-sidebar-drawer');
+        var toggleBtn = document.getElementById('grove-sidebar-toggle');
+        if (!drawer || drawer.dataset.drawerInit === '1') return;
+        drawer.dataset.drawerInit = '1';
 
-      function openDrawer() {
-        drawer!.classList.remove('hidden');
-        drawer!.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
-      }
-
-      function closeDrawer() {
-        drawer!.classList.add('hidden');
-        drawer!.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-      }
-
-      toggleBtn?.addEventListener('click', openDrawer);
-
-      drawer.querySelectorAll('[data-close-drawer]').forEach((el) => {
-        el.addEventListener('click', closeDrawer);
-      });
-
-      drawer.querySelectorAll('a').forEach((link) => {
-        link.addEventListener('click', closeDrawer);
-      });
-
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !drawer.classList.contains('hidden')) {
-          closeDrawer();
+        function openDrawer() {
+          drawer.classList.remove('hidden');
+          drawer.setAttribute('aria-hidden', 'false');
+          document.body.style.overflow = 'hidden';
         }
-      });
-    });
+        function closeDrawer() {
+          drawer.classList.add('hidden');
+          drawer.setAttribute('aria-hidden', 'true');
+          document.body.style.overflow = '';
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', openDrawer);
+        drawer.querySelectorAll('[data-close-drawer]').forEach(function (el) {
+          el.addEventListener('click', closeDrawer);
+        });
+        drawer.querySelectorAll('a').forEach(function (link) {
+          link.addEventListener('click', closeDrawer);
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape' && !drawer.classList.contains('hidden')) {
+            closeDrawer();
+          }
+        });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initDrawer);
+      } else {
+        initDrawer();
+      }
+      document.addEventListener('astro:page-load', initDrawer);
+    })();
   </script>
 
   <CalEmbed />

@@ -1,0 +1,34 @@
+---
+/**
+ * ThemeProvider
+ *
+ * Wraps children in a container with `data-theme="..."` so any descendant
+ * Grove widget picks up the correct semantic surface tokens.
+ *
+ * Usage:
+ *   <ThemeProvider theme="dark">
+ *     <StillStuckWidget />
+ *   </ThemeProvider>
+ *
+ * Themes shipped: "light" (default), "dark", "accent", "portal".
+ * Custom brand themes can be added in @servantium/verdant tokens.css
+ * under [data-theme="customer-{slug}"] and used the same way.
+ */
+interface Props {
+  theme?: 'light' | 'dark' | 'accent' | 'portal' | (string & {});
+  /**
+   * When true, renders as a <div>. When false (default), renders as
+   * a fragment-like wrapper on the parent element via CSS scope.
+   * Use `as` to pick a semantic tag instead.
+   */
+  as?: string;
+  class?: string;
+}
+
+const { theme = 'light', as = 'div', class: className = '' } = Astro.props;
+const Tag = as;
+---
+
+<Tag data-theme={theme} class={className}>
+  <slot />
+</Tag>

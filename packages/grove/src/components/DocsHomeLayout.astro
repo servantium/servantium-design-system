@@ -1,0 +1,167 @@
+---
+/**
+ * DocsHomeLayout — landing page layout for docs sites.
+ *
+ * Structure (composable via slots):
+ *   [header (optional tabs)]
+ *   [banner]
+ *   [sidebar (docs nav)] | [main content] | [right rail (widgets, optional)]
+ *   [footer (optional — e.g. "Need more help?" banner)]
+ */
+import DocsSidebar from './DocsSidebar.astro';
+import DocsSearch from './DocsSearch.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  currentSlug?: string;
+  /** Hide the docs nav sidebar (e.g. for a centered landing). */
+  hideSidebar?: boolean;
+  /** Hide the right rail (widgets). Main content gets full width. */
+  hideRail?: boolean;
+  class?: string;
+}
+const {
+  title,
+  description,
+  currentSlug = '',
+  hideSidebar = false,
+  hideRail = false,
+  class: className = '',
+} = Astro.props;
+---
+
+<div class:list={['docs-home', hideSidebar && 'docs-home--no-sidebar', hideRail && 'docs-home--no-rail', className]}>
+  <header class="docs-home__header">
+    <slot name="tabs" />
+  </header>
+
+  <div class="docs-home__layout">
+    {!hideSidebar && (
+      <aside class="docs-home__nav" data-pagefind-ignore>
+        <div class="docs-home__nav-sticky">
+          <div class="docs-home__nav-search">
+            <DocsSearch />
+          </div>
+          <DocsSidebar currentSlug={currentSlug} />
+        </div>
+      </aside>
+    )}
+
+    <div class="docs-home__center">
+      <div class="docs-home__banner">
+        <slot name="banner" />
+      </div>
+
+      <main class="docs-home__main" data-article-content>
+        {title && <h1 class="docs-home__title">{title}</h1>}
+        {description && <p class="docs-home__description">{description}</p>}
+        <slot />
+      </main>
+
+      <footer class="docs-home__page-footer">
+        <slot name="footer" />
+      </footer>
+    </div>
+
+    {!hideRail && (
+      <aside class="docs-home__sidebar" data-pagefind-ignore>
+        <slot name="sidebar" />
+      </aside>
+    )}
+  </div>
+</div>
+
+<style>
+  .docs-home {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--v-space-md);
+  }
+  /* Allow slots to render; don't collapse via :empty (Astro slot whitespace
+     can confuse :empty). Headers are visually inert when empty anyway. */
+  .docs-home__header > :only-child,
+  .docs-home__page-footer > :only-child {
+    display: block;
+  }
+
+  .docs-home__header {
+    margin-bottom: 0.5rem;
+  }
+
+  .docs-home__layout {
+    display: grid;
+    grid-template-columns: minmax(220px, 260px) minmax(0, 1fr) minmax(260px, 300px);
+    gap: var(--v-space-lg);
+    align-items: start;
+  }
+  .docs-home--no-sidebar .docs-home__layout {
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 300px);
+  }
+  .docs-home--no-rail .docs-home__layout {
+    grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+  }
+  .docs-home--no-sidebar.docs-home--no-rail .docs-home__layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  @media (max-width: 1024px) {
+    .docs-home__layout {
+      grid-template-columns: minmax(0, 1fr) !important;
+    }
+    .docs-home__nav,
+    .docs-home__sidebar {
+      display: none;
+    }
+  }
+
+  .docs-home__nav {
+    position: sticky;
+    top: var(--v-space-md);
+    max-height: calc(100vh - var(--v-space-md) * 2);
+    overflow-y: auto;
+  }
+  .docs-home__nav-sticky {
+    padding-right: 0.5rem;
+  }
+  .docs-home__nav-search {
+    margin-bottom: var(--v-space-sm);
+  }
+
+  .docs-home__center {
+    min-width: 0;
+  }
+
+  .docs-home__banner {
+    margin-bottom: var(--v-space-sm);
+  }
+  .docs-home__banner:empty {
+    margin-bottom: 0;
+  }
+
+  .docs-home__main {
+    min-width: 0;
+  }
+
+  .docs-home__title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin: 0 0 var(--v-space-xs);
+    color: var(--surface-page-ink);
+  }
+  .docs-home__description {
+    color: var(--surface-page-ink-muted);
+    font-size: 1.125rem;
+    line-height: 1.55;
+    margin: 0 0 var(--v-space-md);
+  }
+
+  .docs-home__sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--v-space-sm);
+    position: sticky;
+    top: var(--v-space-md);
+  }
+</style>

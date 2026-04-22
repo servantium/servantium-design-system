@@ -1,0 +1,92 @@
+---
+/**
+ * CopyForAIWidget — "Copy this page for LLM" button.
+ * Copies the current article's plain text + frontmatter-style context
+ * to the clipboard so users can paste into ChatGPT / Claude / etc.
+ */
+import Widget from './Widget.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** CSS selector for the article root to copy. Defaults to <main> content. */
+  target?: string;
+}
+
+const {
+  title = 'Copy for AI',
+  description = 'Grab this page as clean markdown for your LLM.',
+  target = '[data-article-content], main article, main',
+} = Astro.props;
+---
+
+<Widget title={title} variant="default" compact>
+  <p class="copy-ai__desc">{description}</p>
+  <button type="button" class="copy-ai__btn" data-copy-for-ai data-copy-target={target}>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="9" y="9" width="13" height="13" rx="2"/>
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+    </svg>
+    <span data-copy-label>Copy page</span>
+  </button>
+</Widget>
+
+<style>
+  .copy-ai__desc {
+    font-size: 0.875rem;
+    margin: 0 0 0.75rem;
+  }
+  .copy-ai__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.875rem;
+    background: transparent;
+    color: var(--surface-widget-ink);
+    border: 1px solid var(--surface-widget-border);
+    border-radius: var(--r-md);
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s var(--ease-out), border-color 0.15s var(--ease-out);
+  }
+  .copy-ai__btn:hover {
+    background: var(--color-green-soft);
+    border-color: var(--color-green-line);
+    color: var(--surface-widget-accent);
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    function initCopyAI() {
+      document.querySelectorAll('[data-copy-for-ai]').forEach(function (btn) {
+        if (btn.dataset.copyInit) return;
+        btn.dataset.copyInit = '1';
+        btn.addEventListener('click', function () {
+          var targetSel = btn.dataset.copyTarget || 'main';
+          var el = document.querySelector(targetSel);
+          if (!el) return;
+          var clone = el.cloneNode(true);
+          clone.querySelectorAll('nav, aside, script, style, .widget').forEach(function (n) { n.remove(); });
+          var text = 'Title: ' + document.title + '\nURL: ' + window.location.href + '\n\n' + clone.innerText;
+          if (navigator.clipboard) {
+            navigator.clipboard.writeText(text).then(function () {
+              var label = btn.querySelector('[data-copy-label]');
+              if (label) {
+                var orig = label.textContent;
+                label.textContent = 'Copied!';
+                setTimeout(function () { label.textContent = orig; }, 2400);
+              }
+            });
+          }
+        });
+      });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initCopyAI);
+    } else { initCopyAI(); }
+    document.addEventListener('astro:page-load', initCopyAI);
+  })();
+</script>

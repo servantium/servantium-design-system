@@ -1,6 +1,7 @@
 /* ===========================
    Verdant — The Servantium Design System
-   Tailwind v4 @theme tokens + base styles
+   Tailwind v4 @theme tokens + semantic surface layer
+   v0.2.0 — adds themes (light/dark/accent) + customer-brand hooks
    =========================== */
 
 @import "tailwindcss";
@@ -11,9 +12,17 @@
 @source "../grove/src/**/*.{astro,ts,tsx}";
 
 @theme {
+  /* ─────────────────────────────────────────────
+     RAW TOKENS — stable identifiers for hex values.
+     These never change meaning across themes.
+     Semantic tokens (below) point at these.
+     ───────────────────────────────────────────── */
+
   /* ── Brand Colors ── */
   --color-green: #00C26D;
   --color-green-hover: #00A95E;
+  --color-green-soft: rgba(0, 194, 109, 0.12);
+  --color-green-line: rgba(0, 194, 109, 0.28);
   --color-deep-forest: #023E25;
   --color-forest: #045F37;
   --color-emerald: #037A47;
@@ -26,8 +35,11 @@
 
   /* ── Accent Colors ── */
   --color-coral: #FF5C70;
+  --color-coral-soft: rgba(255, 92, 112, 0.12);
   --color-slate-blue: #4C82A7;
+  --color-slate-blue-soft: rgba(76, 130, 167, 0.12);
   --color-amber: #FFB02E;
+  --color-amber-soft: rgba(255, 176, 46, 0.14);
   --color-deep-teal: #26A899;
   --color-slate: #64748B;
 
@@ -37,22 +49,37 @@
   --color-danger: #FF5C70;
   --color-info: #4C82A7;
 
-  /* ── Neutrals ── */
+  /* ── Neutrals (numbered + named aliases) ── */
   --color-ink: #0D0D0D;
-  --color-ink-light: #3d3d3d;
-  --color-ink-muted: #6b6b6b;
+  --color-ink-1: #1a1a1a;
+  --color-ink-2: #3d3d3d;
+  --color-ink-3: #6b6b6b;
+  --color-ink-4: #8a8a8a;
+  --color-ink-light: #3d3d3d;   /* alias for ink-2 */
+  --color-ink-muted: #6b6b6b;   /* alias for ink-3 */
   --color-white: #FFFFFF;
   --color-mist-grey: #F5F6F7;
+  --color-mist-2: #FAFAFB;
   --color-cloud-grey: #E1E3E6;
+  --color-cloud-2: #EDEEF0;
+
+  /* ── Dark surfaces (for portal chrome, marketing heroes) ── */
+  --color-dark-bg: #0F1A14;
+  --color-dark-surface: #16221C;
+  --color-dark-surface-2: #1E2C25;
+  --color-dark-border: rgba(255, 255, 255, 0.1);
+  --color-dark-ink-1: #ffffff;
+  --color-dark-ink-2: rgba(255, 255, 255, 0.72);
+  --color-dark-ink-3: rgba(255, 255, 255, 0.5);
 
   /* ── Typography ── */
   --font-display: 'Playfair Display', Georgia, serif;
   --font-body: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+  --type-meta: 0.75rem;
+  --type-base: 1rem;
+  --type-list: 0.9375rem;
 
-  /* ── Verdant Spacing Scale ──
-     Namespaced to avoid colliding with Tailwind's built-in spacing.
-     Use as: gap-[var(--v-space-lg)], p-[var(--v-space-xl)], etc.
-     Tailwind's default spacing (p-4, gap-8, max-w-2xl) stays untouched. */
+  /* ── Spacing (namespaced to avoid Tailwind collision) ── */
   --v-space-xs: 0.5rem;
   --v-space-sm: 1rem;
   --v-space-md: 1.5rem;
@@ -61,12 +88,150 @@
   --v-space-2xl: 6rem;
   --v-space-3xl: 8rem;
 
-  /* ── Animation Easing (Foxi Pro-inspired) ── */
-  --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);      /* snappy settle */
-  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);           /* spring-like overshoot */
-  --ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275); /* card lift with overshoot */
+  /* ── Border radius scale ── */
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+  --r-2xl: 28px;
+  --r-pill: 9999px;
 
+  /* ── Shadows ── */
+  --sh-sm: 0 1px 2px rgba(13, 13, 13, 0.05);
+  --sh-md: 0 4px 12px rgba(13, 13, 13, 0.08);
+  --sh-lg: 0 12px 40px rgba(13, 13, 13, 0.12);
+  --sh-brand: 0 12px 40px rgba(0, 194, 109, 0.22);
+
+  /* ── Animation Easing ── */
+  --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
+
+/* ─────────────────────────────────────────────────────────────
+   SEMANTIC SURFACE LAYER — components only reference these.
+   Swap via [data-theme="..."] attribute on any container.
+   New themes (e.g. customer white-label) go in this block.
+   ───────────────────────────────────────────────────────────── */
+
+:root,
+[data-theme="light"] {
+  /* Page */
+  --surface-page: var(--color-white);
+  --surface-page-ink: var(--color-ink-1);
+  --surface-page-ink-muted: var(--color-ink-3);
+  --surface-page-border: var(--color-cloud-grey);
+
+  /* Widget (default card) */
+  --surface-widget: var(--color-white);
+  --surface-widget-ink: var(--color-ink-1);
+  --surface-widget-ink-muted: var(--color-ink-3);
+  --surface-widget-border: var(--color-cloud-grey);
+  --surface-widget-accent: var(--color-green);
+  --surface-widget-accent-ink: var(--color-white);
+  --surface-widget-shadow: var(--sh-md);
+
+  /* Banner (hero / search banner background) */
+  --surface-banner: var(--color-deep-forest);
+  --surface-banner-ink: var(--color-white);
+  --surface-banner-muted: rgba(255, 255, 255, 0.72);
+  --surface-banner-border: rgba(255, 255, 255, 0.1);
+  --surface-banner-input: rgba(255, 255, 255, 0.08);
+  --surface-banner-input-ink: var(--color-white);
+  --surface-banner-input-placeholder: rgba(255, 255, 255, 0.5);
+  --surface-banner-chip: rgba(255, 255, 255, 0.1);
+  --surface-banner-chip-ink: var(--color-white);
+
+  /* Accent surface (prominent CTA block like Still-Stuck) */
+  --surface-accent: var(--color-soft-mint);
+  --surface-accent-ink: var(--color-deep-forest);
+  --surface-accent-cta: var(--color-green);
+  --surface-accent-cta-ink: var(--color-white);
+}
+
+[data-theme="dark"] {
+  --surface-page: var(--color-dark-bg);
+  --surface-page-ink: var(--color-dark-ink-1);
+  --surface-page-ink-muted: var(--color-dark-ink-3);
+  --surface-page-border: var(--color-dark-border);
+
+  --surface-widget: var(--color-dark-surface);
+  --surface-widget-ink: var(--color-dark-ink-1);
+  --surface-widget-ink-muted: var(--color-dark-ink-3);
+  --surface-widget-border: var(--color-dark-border);
+  --surface-widget-accent: var(--color-fresh-green);
+  --surface-widget-accent-ink: var(--color-dark-bg);
+  --surface-widget-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+
+  --surface-banner: var(--color-dark-bg);
+  --surface-banner-ink: var(--color-dark-ink-1);
+  --surface-banner-muted: var(--color-dark-ink-3);
+  --surface-banner-border: var(--color-dark-border);
+  --surface-banner-input: rgba(255, 255, 255, 0.06);
+  --surface-banner-input-ink: var(--color-dark-ink-1);
+  --surface-banner-input-placeholder: var(--color-dark-ink-3);
+  --surface-banner-chip: rgba(255, 255, 255, 0.08);
+  --surface-banner-chip-ink: var(--color-dark-ink-2);
+
+  --surface-accent: var(--color-dark-surface-2);
+  --surface-accent-ink: var(--color-dark-ink-1);
+  --surface-accent-cta: var(--color-fresh-green);
+  --surface-accent-cta-ink: var(--color-dark-bg);
+}
+
+/* Accent theme: for prominent CTA blocks (e.g., Still-Stuck on light pages) */
+[data-theme="accent"] {
+  --surface-widget: var(--color-deep-forest);
+  --surface-widget-ink: var(--color-white);
+  --surface-widget-ink-muted: rgba(255, 255, 255, 0.92);
+  --surface-widget-border: var(--color-forest);
+  --surface-widget-accent: var(--color-fresh-green);
+  --surface-widget-accent-ink: var(--color-deep-forest);
+  --surface-widget-shadow: var(--sh-brand);
+}
+
+/* Portal theme: portal-specific chrome (deeper, denser than public dark) */
+[data-theme="portal"] {
+  --surface-page: var(--color-dark-bg);
+  --surface-page-ink: var(--color-dark-ink-1);
+  --surface-page-ink-muted: var(--color-dark-ink-2);
+  --surface-page-border: var(--color-dark-border);
+
+  --surface-widget: var(--color-dark-surface);
+  --surface-widget-ink: var(--color-dark-ink-1);
+  --surface-widget-ink-muted: var(--color-dark-ink-2);
+  --surface-widget-border: var(--color-dark-border);
+  --surface-widget-accent: var(--color-green);
+  --surface-widget-accent-ink: var(--color-white);
+  --surface-widget-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+
+  --surface-banner: var(--color-dark-bg);
+  --surface-banner-ink: var(--color-dark-ink-1);
+  --surface-banner-muted: var(--color-dark-ink-2);
+  --surface-banner-border: var(--color-dark-border);
+  --surface-banner-input: rgba(255, 255, 255, 0.06);
+  --surface-banner-input-ink: var(--color-dark-ink-1);
+  --surface-banner-input-placeholder: var(--color-dark-ink-3);
+  --surface-banner-chip: rgba(255, 255, 255, 0.08);
+  --surface-banner-chip-ink: var(--color-dark-ink-2);
+
+  --surface-accent: var(--color-dark-surface-2);
+  --surface-accent-ink: var(--color-dark-ink-1);
+  --surface-accent-cta: var(--color-fresh-green);
+  --surface-accent-cta-ink: var(--color-dark-bg);
+}
+
+/* Customer-brand hook pattern (future use):
+
+   [data-theme="customer-acme"] {
+     --surface-widget-accent: #FF6633;       // Acme's orange
+     --surface-widget-accent-ink: #ffffff;
+     --surface-banner: linear-gradient(135deg, #FF6633, #CC3300);
+   }
+
+   Consumers opt in with <div data-theme="customer-acme">...</div>.
+   Only override the tokens you want different; others fall through
+   to the light/dark base. */
 
 /* ── Layout variables (outside @theme to avoid Tailwind collision) ── */
 :root {

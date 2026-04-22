@@ -1,0 +1,117 @@
+---
+/**
+ * SubscribeWidget — email signup for release announcements, newsletter, etc.
+ * Consumers provide a `formAction` (e.g. their ConvertKit endpoint) or
+ * listen for a CustomEvent('subscribe-submit', { detail: { email } }) on window.
+ */
+import Widget from './Widget.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  placeholder?: string;
+  ctaLabel?: string;
+  formAction?: string;
+  formMethod?: string;
+  variant?: 'default' | 'accent';
+}
+
+const {
+  title = 'Stay in the loop',
+  description = 'Release notes and major updates, emailed when they ship.',
+  placeholder = 'you@company.com',
+  ctaLabel = 'Subscribe',
+  formAction,
+  formMethod = 'POST',
+  variant = 'default',
+} = Astro.props;
+---
+
+<Widget title={title} variant={variant}>
+  <p class="subscribe-widget__desc">{description}</p>
+  <form class="subscribe-widget__form" action={formAction} method={formMethod} data-subscribe-form>
+    <input
+      type="email"
+      name="email"
+      class="subscribe-widget__input"
+      placeholder={placeholder}
+      required
+      aria-label={placeholder}
+    />
+    <button type="submit" class="subscribe-widget__cta">{ctaLabel}</button>
+  </form>
+  <p class="subscribe-widget__status" data-subscribe-status aria-live="polite"></p>
+</Widget>
+
+<style>
+  .subscribe-widget__desc {
+    font-size: 0.875rem;
+    margin: 0 0 0.75rem;
+  }
+  .subscribe-widget__form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .subscribe-widget__input {
+    padding: 0.5rem 0.75rem;
+    background: var(--surface-widget);
+    color: var(--surface-widget-ink);
+    border: 1px solid var(--surface-widget-border);
+    border-radius: var(--r-md);
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+  }
+  .subscribe-widget__input:focus {
+    outline: none;
+    border-color: var(--surface-widget-accent);
+    box-shadow: 0 0 0 3px var(--color-green-soft);
+  }
+  .subscribe-widget__cta {
+    padding: 0.5rem 0.875rem;
+    background: var(--surface-widget-accent);
+    color: var(--surface-widget-accent-ink);
+    border: none;
+    border-radius: var(--r-md);
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s var(--ease-out);
+  }
+  .subscribe-widget__cta:hover {
+    transform: translateY(-1px);
+  }
+  .subscribe-widget__status {
+    font-size: var(--type-meta);
+    color: var(--surface-widget-ink-muted);
+    min-height: 1.1em;
+    margin: 0.5rem 0 0;
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    function initSubscribe() {
+      document.querySelectorAll('[data-subscribe-form]').forEach(function (form) {
+        if (form.dataset.subscribeInit) return;
+        form.dataset.subscribeInit = '1';
+        form.addEventListener('submit', function (e) {
+          if (!form.action) {
+            e.preventDefault();
+            var email = form.querySelector('input[name="email"]').value;
+            window.dispatchEvent(new CustomEvent('subscribe-submit', { detail: { email: email, form: form } }));
+            var status = form.parentElement.querySelector('[data-subscribe-status]');
+            if (status) status.textContent = 'Thanks — we\'ll be in touch.';
+            form.reset();
+          }
+          // If form.action is set, browser handles the POST naturally.
+        });
+      });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSubscribe);
+    } else { initSubscribe(); }
+    document.addEventListener('astro:page-load', initSubscribe);
+  })();
+</script>
