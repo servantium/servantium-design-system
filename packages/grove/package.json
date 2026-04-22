@@ -1,6 +1,6 @@
 {
   "name": "@servantium/grove",
-  "version": "0.1.4",
+  "version": "0.3.0",
   "description": "Grove \u2014 Astro documentation components for Servantium surfaces",
   "type": "module",
   "exports": {
@@ -14,7 +14,12 @@
     "./DocsPagination": "./src/components/DocsPagination.astro",
     "./TableOfContents": "./src/components/TableOfContents.astro",
     "./ReleaseTimeline": "./src/components/ReleaseTimeline.astro",
-    "./components": "./src/components/index.ts"
+    "./components": "./src/components/index.ts",
+    "./SiteNav": "./src/components/SiteNav.astro",
+    "./SiteFooter": "./src/components/SiteFooter.astro",
+    "./ResourceIcons": "./src/components/ResourceIcons.astro",
+    "./CookieConsent": "./src/components/CookieConsent.astro",
+    "./TestEnvBanner": "./src/components/TestEnvBanner.astro"
   },
   "files": [
     "src",
