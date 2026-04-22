@@ -1,6 +1,6 @@
 {
   "name": "@servantium/grove",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Grove \u2014 Astro documentation components for Servantium surfaces",
   "type": "module",
   "exports": {

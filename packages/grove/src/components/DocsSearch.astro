@@ -1,15 +1,38 @@
 ---
 /**
- * DocsSearch -- Help docs search. Opens a full-page modal instead of an
- * inline sidebar input, because the sidebar slot is too narrow for useful
- * result previews.
+ * DocsSearch — help docs search trigger + modal. Opens a full-page modal
+ * instead of an inline sidebar input (the sidebar slot is too narrow for
+ * useful result previews).
+ *
+ * Federation (Pagefind multi-site):
+ *   Pass `mergeIndex` to pull in additional Pagefind indexes from other
+ *   origins. Each target origin must serve /pagefind/* with CORS headers
+ *   (Access-Control-Allow-Origin: *). Help.servantium.com federates with
+ *   servantium.com this way so one search spans both sites.
+ *
+ *   <DocsSearch mergeIndex={[{ bundlePath: 'https://servantium.com/pagefind/', indexWeight: 0.8 }]} />
  */
 import SearchModal from '@/components/SearchModal.astro';
+
+interface Props {
+  label?: string;
+  placeholder?: string;
+  id?: string;
+  mergeIndex?: Array<{ bundlePath: string; indexWeight?: number; label?: string }>;
+}
+
+const {
+  label = 'Search help',
+  placeholder = 'Search docs, glossary, releases…',
+  id,
+  mergeIndex = [],
+} = Astro.props;
 ---
 
 <SearchModal
-  label="Search help"
-  placeholder="Search docs, glossary, releases..."
+  label={label}
+  placeholder={placeholder}
   triggerVariant="full"
   defaultFilter="Help"
+  mergeIndex={mergeIndex}
 />
