@@ -54,6 +54,12 @@ interface Props {
   author?: string;
   authorData?: { name: string; avatar: string; role?: string };
   relatedArticles?: RelatedArticle[];
+  /**
+   * Pagefind merge-index sources for federated search. Pass e.g.
+   *   [{ bundlePath: 'https://servantium.com/pagefind/' }]
+   * so the docs search also returns results from the marketing site.
+   */
+  searchMergeIndex?: Array<{ bundlePath: string; indexWeight?: number; label?: string }>;
 }
 
 const {
@@ -71,6 +77,7 @@ const {
   author,
   authorData,
   relatedArticles = [],
+  searchMergeIndex = [],
 } = Astro.props;
 
 const tocHeadings = headings.filter((h) => h.depth === 2);
@@ -147,7 +154,7 @@ const breadcrumbItems = [
         </button>
       </div>
       <div class="px-4 pt-4 pb-2">
-        <DocsSearch id="docs-pagefind-search-mobile" />
+        <DocsSearch id="docs-pagefind-search-mobile" mergeIndex={searchMergeIndex} />
       </div>
       <div class="px-4 pb-8">
         <DocsSidebar currentSlug={currentSlug} />
@@ -178,7 +185,7 @@ const breadcrumbItems = [
       <aside class="hidden lg:block w-80 shrink-0 border-r border-cloud-grey" data-pagefind-ignore>
         <div class="sticky top-[72px] h-[calc(100vh-72px)] overflow-y-auto overscroll-contain px-5 pt-6 pb-8">
           <div class="mb-5">
-            <DocsSearch />
+            <DocsSearch mergeIndex={searchMergeIndex} />
           </div>
           <DocsSidebar currentSlug={currentSlug} />
         </div>
