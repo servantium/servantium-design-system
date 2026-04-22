@@ -14,9 +14,14 @@ interface Props {
 
 const { currentSlug, hrefPrefix = '' } = Astro.props;
 
-// Normalize: ensure prefix ends with a slash (or is empty)
-const prefix = hrefPrefix === '' ? '' : (hrefPrefix.endsWith('/') ? hrefPrefix : hrefPrefix + '/');
-const rootHref = prefix === '' ? '/' : prefix;
+// Normalize to an always-absolute prefix that ends with a slash.
+// '' -> '/' (site-root docs, e.g. help.servantium.com/quick-start/)
+// '/help' -> '/help/'
+// '/help/' -> '/help/'
+const prefix = hrefPrefix === ''
+  ? '/'
+  : (hrefPrefix.endsWith('/') ? hrefPrefix : hrefPrefix + '/');
+const rootHref = prefix;
 
 // Fetch all docs for autogenerate sections
 const allDocs = await getCollection('docs');
