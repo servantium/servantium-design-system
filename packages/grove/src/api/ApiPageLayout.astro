@@ -1,0 +1,161 @@
+---
+/**
+ * ApiPageLayout — three-column shell for API mega-pages.
+ *
+ * Structure:
+ *   [left: ApiNavTree (sticky)] | [center: endpoints + params + responses] | [right: code panel (sticky)]
+ *
+ * Slots:
+ *   - nav        (required): left-column navigation (usually <ApiNavTree />)
+ *   - default    (required): center column content (endpoints, headings, prose)
+ *   - code       (optional): right-column pinned code panel
+ *   - header     (optional): full-width area above the three columns (title, version selector)
+ *
+ * At narrow widths (<1024px) collapses to single column; nav + code stack above content.
+ *
+ * Example:
+ *   <ApiPageLayout title="API reference" description="Version 1.2">
+ *     <Fragment slot="header">
+ *       <ApiVersionSelector ... />
+ *     </Fragment>
+ *     <Fragment slot="nav">
+ *       <ApiNavTree groups={navGroups} searchable />
+ *     </Fragment>
+ *     <Fragment slot="code">
+ *       <ApiCodePanel title="Request" samples={[...]} />
+ *     </Fragment>
+ *
+ *     <ApiEndpoint id="..." method="GET" path="..." />
+ *     <ApiParams params={[...]} />
+ *     <ApiResponse ... />
+ *     ...
+ *   </ApiPageLayout>
+ */
+interface Props {
+  title?: string;
+  description?: string;
+  /** Hide the code (right) column entirely. Useful for an overview page. */
+  hideCode?: boolean;
+  /** Hide the nav (left) column. Rare. */
+  hideNav?: boolean;
+  class?: string;
+}
+const {
+  title,
+  description,
+  hideCode = false,
+  hideNav = false,
+  class: className = '',
+} = Astro.props;
+---
+
+<div class:list={['api-page', hideCode && 'api-page--no-code', hideNav && 'api-page--no-nav', className]}>
+  <header class="api-page__header">
+    <slot name="header" />
+    {title && <h1 class="api-page__title">{title}</h1>}
+    {description && <p class="api-page__desc">{description}</p>}
+  </header>
+
+  <div class="api-page__layout">
+    {!hideNav && (
+      <aside class="api-page__nav" aria-label="API navigation">
+        <div class="api-page__nav-sticky">
+          <slot name="nav" />
+        </div>
+      </aside>
+    )}
+
+    <main class="api-page__main">
+      <slot />
+    </main>
+
+    {!hideCode && (
+      <aside class="api-page__code" aria-label="Code examples">
+        <div class="api-page__code-sticky">
+          <slot name="code" />
+        </div>
+      </aside>
+    )}
+  </div>
+</div>
+
+<style>
+  .api-page {
+    max-width: var(--max-width, 1440px);
+    margin: 0 auto;
+    padding: 0 var(--v-space-md);
+    padding-top: calc(72px + var(--v-space-sm));
+  }
+
+  .api-page__header {
+    margin-bottom: var(--v-space-md);
+  }
+  .api-page__header:empty { display: none; }
+
+  .api-page__title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin: 0 0 var(--v-space-xs);
+    color: var(--surface-page-ink);
+  }
+  .api-page__desc {
+    margin: 0;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: var(--surface-page-ink-muted);
+  }
+
+  .api-page__layout {
+    display: grid;
+    grid-template-columns: minmax(240px, 280px) minmax(0, 1fr) minmax(320px, 400px);
+    gap: var(--v-space-lg);
+    align-items: start;
+  }
+  .api-page--no-code .api-page__layout {
+    grid-template-columns: minmax(240px, 280px) minmax(0, 1fr);
+  }
+  .api-page--no-nav .api-page__layout {
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 400px);
+  }
+  .api-page--no-nav.api-page--no-code .api-page__layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .api-page__nav,
+  .api-page__code {
+    position: sticky;
+    top: calc(72px + var(--v-space-sm));
+    max-height: calc(100vh - 72px - var(--v-space-md));
+    overflow-y: auto;
+  }
+  .api-page__nav-sticky,
+  .api-page__code-sticky {
+    padding-right: 0.25rem;
+  }
+
+  .api-page__main {
+    min-width: 0;
+  }
+
+  @media (max-width: 1200px) {
+    .api-page__layout {
+      grid-template-columns: minmax(220px, 260px) minmax(0, 1fr) !important;
+    }
+    .api-page__code {
+      display: none;
+    }
+    /* Code is optionally re-parented into the main flow via a consumer
+       pattern if needed; at this breakpoint we prefer main-flow readability. */
+  }
+  @media (max-width: 768px) {
+    .api-page__layout {
+      grid-template-columns: minmax(0, 1fr) !important;
+    }
+    .api-page__nav {
+      position: static;
+      max-height: none;
+    }
+  }
+</style>

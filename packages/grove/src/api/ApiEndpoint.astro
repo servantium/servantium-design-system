@@ -1,24 +1,77 @@
 ---
 /**
- * ApiEndpoint — METHOD + path chip. Theme-aware.
+ * ApiEndpoint — METHOD + path chip with optional deprecated / beta badges.
+ *
+ * The `id` prop sets a stable anchor so endpoints become deep-linkable and
+ * drive scroll-spy behavior in ApiNavTree.
+ *
+ * Example:
+ *   <ApiEndpoint
+ *     id="engagements.create"
+ *     method="POST"
+ *     path="/v1/engagements"
+ *     description="Create a new engagement."
+ *   />
  */
 interface Props {
   method: 'GET' | 'POST' | 'PATCH' | 'DELETE' | 'PUT';
   path: string;
   description?: string;
   version?: string;
+  /** Stable DOM id. Used for deep-linking and scroll-spy. */
+  id?: string;
+  /** Render a deprecation banner + badge. */
+  deprecated?: boolean;
+  /** Deprecation message (shown in banner when deprecated=true). */
+  deprecatedMessage?: string;
+  /** Migration target (e.g. "Use POST /v2/engagements instead"). */
+  deprecatedLink?: { href: string; label: string };
+  /** Render a BETA badge. */
+  beta?: boolean;
 }
-const { method, path, description, version } = Astro.props;
+const {
+  method,
+  path,
+  description,
+  version,
+  id,
+  deprecated = false,
+  deprecatedMessage,
+  deprecatedLink,
+  beta = false,
+} = Astro.props;
 ---
 
-<div class="api-endpoint">
+<section
+  class:list={['api-endpoint', deprecated && 'api-endpoint--deprecated']}
+  id={id}
+  data-api-endpoint={id}
+  data-method={method}
+>
+  {deprecated && (
+    <div class="api-endpoint__deprecation" role="note">
+      <strong>Deprecated.</strong>
+      {deprecatedMessage && <span> {deprecatedMessage}</span>}
+      {deprecatedLink && (
+        <a href={deprecatedLink.href}>{deprecatedLink.label} →</a>
+      )}
+    </div>
+  )}
+
   <div class="api-endpoint__row">
     <span class={`api-endpoint__method api-endpoint__method--${method.toLowerCase()}`}>{method}</span>
     <code class="api-endpoint__path">{path}</code>
-    {version && <span class="api-endpoint__version">v{version}</span>}
+    {id && (
+      <a class="api-endpoint__anchor" href={`#${id}`} aria-label="Link to this endpoint">#</a>
+    )}
+    <div class="api-endpoint__badges">
+      {beta && <span class="api-endpoint__badge api-endpoint__badge--beta">Beta</span>}
+      {deprecated && <span class="api-endpoint__badge api-endpoint__badge--deprecated">Deprecated</span>}
+      {version && <span class="api-endpoint__version">v{version}</span>}
+    </div>
   </div>
   {description && <p class="api-endpoint__desc">{description}</p>}
-</div>
+</section>
 
 <style>
   .api-endpoint {
@@ -27,6 +80,25 @@ const { method, path, description, version } = Astro.props;
     background: var(--surface-widget);
     border: 1px solid var(--surface-widget-border);
     border-radius: var(--r-md);
+    scroll-margin-top: 5rem; /* accounts for sticky nav */
+  }
+  .api-endpoint--deprecated {
+    border-color: rgba(255, 176, 46, 0.4);
+  }
+  .api-endpoint__deprecation {
+    margin: -0.25rem 0 0.75rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--color-warning-bg, #FFF8EB);
+    color: var(--color-warning-text-dark, #B87A00);
+    border-radius: var(--r-sm);
+    font-size: 0.8125rem;
+    line-height: 1.45;
+  }
+  .api-endpoint__deprecation a {
+    margin-left: 0.35rem;
+    color: var(--color-warning-text-dark, #B87A00);
+    text-decoration: underline;
+    font-weight: 600;
   }
   .api-endpoint__row {
     display: flex;
@@ -55,8 +127,40 @@ const { method, path, description, version } = Astro.props;
     font-size: 0.9375rem;
     color: var(--surface-widget-ink);
   }
-  .api-endpoint__version {
+  .api-endpoint__anchor {
+    opacity: 0;
+    color: var(--surface-widget-ink-muted);
+    text-decoration: none;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    transition: opacity 0.15s ease;
+  }
+  .api-endpoint:hover .api-endpoint__anchor,
+  .api-endpoint:focus-within .api-endpoint__anchor {
+    opacity: 1;
+  }
+  .api-endpoint__badges {
     margin-left: auto;
+    display: inline-flex;
+    gap: 0.375rem;
+    align-items: center;
+  }
+  .api-endpoint__badge {
+    padding: 0.125rem 0.5rem;
+    border-radius: var(--r-pill);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .api-endpoint__badge--beta {
+    background: var(--color-slate-blue-soft);
+    color: var(--color-slate-blue);
+  }
+  .api-endpoint__badge--deprecated {
+    background: var(--color-warning-bg, #FFF8EB);
+    color: var(--color-warning-text-dark, #B87A00);
+  }
+  .api-endpoint__version {
     padding: 0.125rem 0.5rem;
     background: var(--color-green-soft);
     color: var(--color-green);

@@ -1,0 +1,300 @@
+---
+/**
+ * OpenInIDE — launcher buttons for opening an API endpoint in modern IDEs
+ * and AI coding assistants. Modern spiritual successor to Postman's
+ * "Run in Postman" button.
+ *
+ * Built-in targets:
+ *   - claude   — opens claude.ai with a prefilled prompt that asks Claude
+ *                to write code calling this endpoint.
+ *   - cursor   — copies a structured prompt to the clipboard for Cursor
+ *                (Cursor has no standard deep-link for API requests yet;
+ *                copy-to-clipboard is the reliable route).
+ *   - vscode   — opens VS Code's REST Client extension with a .http snippet
+ *                via the vscode:// URL scheme, falls back to clipboard.
+ *   - curl     — copies a ready-to-run curl command.
+ *
+ * Config-driven: pass `targets` to override or add.
+ *
+ * Example:
+ *   <OpenInIDE
+ *     method="POST"
+ *     path="/v1/engagements"
+ *     baseUrl="https://api.servantium.com"
+ *     body={{ client_id: 'cli_123', name: 'Example' }}
+ *     authHeader="Authorization: Bearer YOUR_KEY"
+ *   />
+ */
+export type OpenInIDETarget = 'claude' | 'cursor' | 'vscode' | 'curl';
+
+interface Props {
+  method: 'GET' | 'POST' | 'PATCH' | 'DELETE' | 'PUT';
+  path: string;
+  /** Full base URL, e.g. "https://api.servantium.com". */
+  baseUrl?: string;
+  /** Body as JSON-serializable object. */
+  body?: unknown;
+  /** Auth header string (e.g. "Authorization: Bearer $API_KEY"). */
+  authHeader?: string;
+  /** Targets to render. Default: all four. */
+  targets?: OpenInIDETarget[];
+  /** Endpoint description (used as context in Claude prompt). */
+  description?: string;
+  /** Optional label shown above the buttons. */
+  label?: string;
+}
+const {
+  method,
+  path,
+  baseUrl = 'https://api.servantium.com',
+  body,
+  authHeader = 'Authorization: Bearer $SERVANTIUM_API_KEY',
+  targets = ['claude', 'cursor', 'vscode', 'curl'],
+  description,
+  label = 'Open in',
+} = Astro.props;
+
+const fullUrl = `${baseUrl.replace(/\/$/, '')}${path}`;
+const bodyJson = body !== undefined ? JSON.stringify(body, null, 2) : null;
+
+const payload = {
+  method,
+  path,
+  baseUrl,
+  fullUrl,
+  body: bodyJson,
+  authHeader,
+  description: description ?? '',
+};
+---
+
+<div class="open-in-ide" data-open-in-ide={JSON.stringify(payload)}>
+  {label && <span class="open-in-ide__label">{label}</span>}
+  <div class="open-in-ide__buttons" role="group" aria-label="Open in IDE">
+    {targets.includes('claude') && (
+      <button type="button" class="open-in-ide__btn" data-target="claude" aria-label="Open in Claude">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        <span>Claude</span>
+      </button>
+    )}
+    {targets.includes('cursor') && (
+      <button type="button" class="open-in-ide__btn" data-target="cursor" aria-label="Open in Cursor">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="m9 11 3 3L22 4"/>
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+        </svg>
+        <span>Cursor</span>
+      </button>
+    )}
+    {targets.includes('vscode') && (
+      <button type="button" class="open-in-ide__btn" data-target="vscode" aria-label="Open in VS Code">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="16 18 22 12 16 6"/>
+          <polyline points="8 6 2 12 8 18"/>
+        </svg>
+        <span>VS Code</span>
+      </button>
+    )}
+    {targets.includes('curl') && (
+      <button type="button" class="open-in-ide__btn" data-target="curl" aria-label="Copy as curl">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+        <span>Copy curl</span>
+      </button>
+    )}
+  </div>
+  <div class="open-in-ide__toast" role="status" aria-live="polite" hidden></div>
+</div>
+
+<script>
+  type Payload = {
+    method: string;
+    path: string;
+    baseUrl: string;
+    fullUrl: string;
+    body: string | null;
+    authHeader: string;
+    description: string;
+  };
+
+  function buildCurl(p: Payload): string {
+    const parts = [`curl -X ${p.method} '${p.fullUrl}' \\`];
+    parts.push(`  -H '${p.authHeader}' \\`);
+    if (p.body) {
+      parts.push(`  -H 'Content-Type: application/json' \\`);
+      parts.push(`  -d '${p.body}'`);
+    } else {
+      // remove trailing backslash from last line
+      parts[parts.length - 1] = parts[parts.length - 1].replace(/\s*\\$/, '');
+    }
+    return parts.join('\n');
+  }
+
+  function buildHttpFile(p: Payload): string {
+    const lines = [
+      `### ${p.method} ${p.path}`,
+      p.description ? `# ${p.description}` : '',
+      '',
+      `${p.method} ${p.fullUrl}`,
+      p.authHeader,
+    ];
+    if (p.body) {
+      lines.push('Content-Type: application/json');
+      lines.push('');
+      lines.push(p.body);
+    }
+    return lines.filter((l) => l !== null).join('\n');
+  }
+
+  function buildClaudePrompt(p: Payload): string {
+    const lines = [
+      `I want to call the Servantium API.`,
+      '',
+      `Endpoint: ${p.method} ${p.fullUrl}`,
+    ];
+    if (p.description) {
+      lines.push(`Purpose: ${p.description}`);
+    }
+    if (p.body) {
+      lines.push('', 'Request body:', '```json', p.body, '```');
+    }
+    lines.push('', 'Write code that calls this endpoint. Ask me which language I want if unsure.');
+    return lines.join('\n');
+  }
+
+  function buildCursorPrompt(p: Payload): string {
+    return buildClaudePrompt(p);
+  }
+
+  function showToast(root: HTMLElement, msg: string) {
+    const toast = root.querySelector<HTMLElement>('.open-in-ide__toast');
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.removeAttribute('hidden');
+    setTimeout(() => toast.setAttribute('hidden', ''), 2400);
+  }
+
+  async function copy(text: string): Promise<boolean> {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  document.querySelectorAll<HTMLElement>('.open-in-ide').forEach((root) => {
+    let payload: Payload;
+    try {
+      payload = JSON.parse(root.dataset.openInIde ?? '{}');
+    } catch {
+      return;
+    }
+
+    root.querySelectorAll<HTMLButtonElement>('.open-in-ide__btn').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const target = btn.dataset.target;
+        if (target === 'claude') {
+          const prompt = buildClaudePrompt(payload);
+          const url = `https://claude.ai/new?q=${encodeURIComponent(prompt)}`;
+          window.open(url, '_blank', 'noopener');
+        } else if (target === 'cursor') {
+          const prompt = buildCursorPrompt(payload);
+          const ok = await copy(prompt);
+          showToast(root, ok ? 'Prompt copied — paste into Cursor chat' : 'Copy failed');
+        } else if (target === 'vscode') {
+          const http = buildHttpFile(payload);
+          // REST Client extension deep link (if installed)
+          const deep = `vscode://humao.rest-client?request=${encodeURIComponent(http)}`;
+          const copied = await copy(http);
+          window.location.href = deep;
+          setTimeout(() => {
+            showToast(
+              root,
+              copied
+                ? 'Launched VS Code. Request also copied to clipboard.'
+                : 'Launched VS Code (REST Client).'
+            );
+          }, 300);
+        } else if (target === 'curl') {
+          const cmd = buildCurl(payload);
+          const ok = await copy(cmd);
+          showToast(root, ok ? 'curl copied to clipboard' : 'Copy failed');
+        }
+      });
+    });
+  });
+</script>
+
+<style>
+  .open-in-ide {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.5rem 0;
+    position: relative;
+    flex-wrap: wrap;
+  }
+  .open-in-ide__label {
+    font-family: var(--font-body);
+    font-size: var(--type-meta);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--surface-page-ink-muted);
+  }
+  .open-in-ide__buttons {
+    display: inline-flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+  }
+  .open-in-ide__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.3125rem 0.625rem;
+    background: var(--surface-widget);
+    color: var(--surface-widget-ink);
+    border: 1px solid var(--surface-widget-border);
+    border-radius: var(--r-sm);
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+  }
+  .open-in-ide__btn:hover {
+    border-color: var(--color-green-line);
+    color: var(--color-green);
+    transform: translateY(-1px);
+  }
+  .open-in-ide__btn:active {
+    transform: translateY(0);
+  }
+  .open-in-ide__btn svg {
+    flex-shrink: 0;
+  }
+  .open-in-ide__toast {
+    position: absolute;
+    bottom: calc(100% + 0.25rem);
+    left: 0;
+    padding: 0.375rem 0.625rem;
+    background: var(--color-ink);
+    color: var(--color-white);
+    border-radius: var(--r-sm);
+    font-size: 0.75rem;
+    font-weight: 500;
+    box-shadow: var(--sh-md, 0 4px 12px rgba(0,0,0,0.15));
+    pointer-events: none;
+    z-index: 10;
+    animation: open-in-ide-toast 0.15s ease-out;
+  }
+  @keyframes open-in-ide-toast {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
