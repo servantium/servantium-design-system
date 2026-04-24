@@ -46,6 +46,17 @@ interface Props {
   searchable?: boolean;
 }
 const { groups, title, searchable = false } = Astro.props;
+
+// Human-friendly nav chip labels. The `item.method` stays technical
+// (GET/POST/PATCH/DELETE/PUT) for data-method + anchor routing. Short
+// labels to fit narrow left-nav chips.
+const METHOD_NAV_LABEL: Record<string, string> = {
+  GET: 'GET',
+  POST: 'POST',
+  PATCH: 'UPD',
+  PUT: 'REPL',
+  DELETE: 'DEL',
+};
 ---
 
 <nav class="api-nav-tree" aria-label="API reference">
@@ -78,7 +89,7 @@ const { groups, title, searchable = false } = Astro.props;
               href={`#${item.id}`}
               data-nav-target={item.id}
             >
-              <span class={`api-nav-tree__method api-nav-tree__method--${item.method.toLowerCase()}`}>{item.method}</span>
+              <span class={`api-nav-tree__method api-nav-tree__method--${item.method.toLowerCase()}`} title={item.method}>{METHOD_NAV_LABEL[item.method] ?? item.method}</span>
               <span class="api-nav-tree__label">{item.label}</span>
               {item.beta && <span class="api-nav-tree__flag api-nav-tree__flag--beta">Beta</span>}
               {item.deprecated && <span class="api-nav-tree__flag api-nav-tree__flag--deprecated">Deprecated</span>}

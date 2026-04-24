@@ -40,6 +40,19 @@ const {
   deprecatedLink,
   beta = false,
 } = Astro.props;
+
+// Human-friendly chip label. The underlying method stays technical
+// (GET/POST/PATCH/DELETE/PUT) for routing + data-method. The visual
+// label is the plain-English verb so non-dev readers aren't thrown by
+// "PATCH".
+const METHOD_LABEL: Record<string, string> = {
+  GET: 'GET',
+  POST: 'POST',
+  PATCH: 'UPDATE',
+  PUT: 'REPLACE',
+  DELETE: 'DELETE',
+};
+const methodLabel = METHOD_LABEL[method] ?? method;
 ---
 
 <section
@@ -59,7 +72,7 @@ const {
   )}
 
   <div class="api-endpoint__row">
-    <span class={`api-endpoint__method api-endpoint__method--${method.toLowerCase()}`}>{method}</span>
+    <span class={`api-endpoint__method api-endpoint__method--${method.toLowerCase()}`} title={method}>{methodLabel}</span>
     <code class="api-endpoint__path">{path}</code>
     {id && (
       <a class="api-endpoint__anchor" href={`#${id}`} aria-label="Link to this endpoint">#</a>
