@@ -55,8 +55,10 @@ const id = `grove-tabs-${Math.random().toString(36).slice(2, 8)}`;
 </div>
 
 <script is:inline>
-  document.addEventListener('astro:page-load', function() {
+  function groveTabsInit() {
     document.querySelectorAll('[data-grove-tabs]').forEach(function(container) {
+      if (container.dataset.groveTabsReady === '1') return;
+      container.dataset.groveTabsReady = '1';
       var tabs = container.querySelectorAll('[role="tab"]');
       var panels = container.querySelectorAll('[data-tab-content]');
 
@@ -90,5 +92,13 @@ const id = `grove-tabs-${Math.random().toString(36).slice(2, 8)}`;
         });
       });
     });
-  });
+  }
+  // Run on initial DOM ready (works without ViewTransitions).
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', groveTabsInit);
+  } else {
+    groveTabsInit();
+  }
+  // Also run after view-transition navigations if host uses them.
+  document.addEventListener('astro:page-load', groveTabsInit);
 </script>
