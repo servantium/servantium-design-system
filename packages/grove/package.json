@@ -28,6 +28,8 @@
     "./ThemeProvider": "./src/components/ThemeProvider.astro",
     "./WhatsNewGrid": "./src/components/WhatsNewGrid.astro",
     "./widgets": "./src/widgets/index.ts",
+    "./prose.css": "./src/prose.css",
+    "./prose-enhance": "./src/prose-enhance.ts",
     "./api": "./src/api/index.ts",
     "./api/ApiEndpoint": "./src/api/ApiEndpoint.astro",
     "./api/ApiParams": "./src/api/ApiParams.astro",

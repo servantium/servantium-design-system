@@ -2,6 +2,9 @@
 /**
  * ApiPageLayout — three-column shell for API mega-pages.
  *
+ * Pulls in grove-prose styles + enhancer so code blocks, inline code
+ * tokens, and headings all get consistent styling + copy behavior.
+ *
  * Structure:
  *   [left: ApiNavTree (sticky)] | [center: endpoints + params + responses] | [right: code panel (sticky)]
  *
@@ -47,7 +50,13 @@ const {
   hideNav = false,
   class: className = '',
 } = Astro.props;
+import '../prose.css';
 ---
+
+<script>
+  import { enhanceProse } from '../prose-enhance';
+  enhanceProse();
+</script>
 
 <div class:list={['api-page', hideCode && 'api-page--no-code', hideNav && 'api-page--no-nav', className]}>
   <header class="api-page__header">
