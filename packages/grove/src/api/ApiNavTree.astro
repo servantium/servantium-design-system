@@ -1,0 +1,308 @@
+---
+/**
+ * ApiNavTree — hierarchical left-nav for API mega-pages.
+ *
+ * Renders resource groups with collapsible endpoint lists. Each endpoint
+ * shows a colored method chip. Active endpoint is tracked via scroll-spy
+ * (IntersectionObserver) against `data-api-endpoint` anchors rendered by
+ * ApiEndpoint.
+ *
+ * Example:
+ *   <ApiNavTree groups={[
+ *     {
+ *       label: 'Engagements',
+ *       items: [
+ *         { id: 'engagements.list',   method: 'GET',  label: 'List engagements' },
+ *         { id: 'engagements.create', method: 'POST', label: 'Create engagement' },
+ *       ]
+ *     },
+ *     {
+ *       label: 'Quotes',
+ *       items: [
+ *         { id: 'quotes.list', method: 'GET', label: 'List quotes' }
+ *       ]
+ *     }
+ *   ]} />
+ */
+export interface ApiNavItem {
+  id: string;
+  method: 'GET' | 'POST' | 'PATCH' | 'DELETE' | 'PUT';
+  label: string;
+  deprecated?: boolean;
+  beta?: boolean;
+}
+export interface ApiNavGroup {
+  label: string;
+  items: ApiNavItem[];
+  /** Collapse the group by default. */
+  collapsed?: boolean;
+}
+
+interface Props {
+  groups: ApiNavGroup[];
+  /** Optional heading above the tree. */
+  title?: string;
+  /** Optional search slot (e.g. Pagefind input). */
+  searchable?: boolean;
+}
+const { groups, title, searchable = false } = Astro.props;
+
+// Human-friendly nav chip labels. Servantium standardizes on
+// GET / POST / PUT / DELETE. Short labels fit narrow left-nav chips.
+const METHOD_NAV_LABEL: Record<string, string> = {
+  GET: 'GET',
+  POST: 'POST',
+  PUT: 'UPD',
+  PATCH: 'UPD',
+  DELETE: 'DEL',
+};
+---
+
+<nav class="api-nav-tree" aria-label="API reference">
+  {title && <div class="api-nav-tree__title">{title}</div>}
+  {searchable && (
+    <div class="api-nav-tree__search">
+      <input
+        type="search"
+        class="api-nav-tree__search-input"
+        placeholder="Filter endpoints..."
+        aria-label="Filter API endpoints"
+      />
+    </div>
+  )}
+
+  {groups.map((group) => (
+    <details class="api-nav-tree__group" open={!group.collapsed}>
+      <summary class="api-nav-tree__group-label">
+        <svg class="api-nav-tree__chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+        <span>{group.label}</span>
+        <span class="api-nav-tree__count">{group.items.length}</span>
+      </summary>
+      <ul class="api-nav-tree__list" role="list">
+        {group.items.map((item) => (
+          <li class="api-nav-tree__item">
+            <a
+              class:list={['api-nav-tree__link', item.deprecated && 'api-nav-tree__link--deprecated']}
+              href={`#${item.id}`}
+              data-nav-target={item.id}
+            >
+              <span class={`api-nav-tree__method api-nav-tree__method--${item.method.toLowerCase()}`} title={item.method}>{METHOD_NAV_LABEL[item.method] ?? item.method}</span>
+              <span class="api-nav-tree__label">{item.label}</span>
+              {item.beta && <span class="api-nav-tree__flag api-nav-tree__flag--beta">Beta</span>}
+              {item.deprecated && <span class="api-nav-tree__flag api-nav-tree__flag--deprecated">Deprecated</span>}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </details>
+  ))}
+</nav>
+
+<script>
+  // Scroll-spy: highlight the nav link whose endpoint section is nearest the top.
+  const links = new Map<string, HTMLAnchorElement>();
+  document.querySelectorAll<HTMLAnchorElement>('.api-nav-tree__link').forEach((a) => {
+    const id = a.dataset.navTarget;
+    if (id) links.set(id, a);
+  });
+
+  function setActive(id: string | null) {
+    links.forEach((link, linkId) => {
+      link.classList.toggle('api-nav-tree__link--active', linkId === id);
+    });
+  }
+
+  if (links.size > 0 && 'IntersectionObserver' in window) {
+    let visible = new Map<string, number>();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          const id = (e.target as HTMLElement).dataset.apiEndpoint;
+          if (!id) return;
+          if (e.isIntersecting) {
+            visible.set(id, e.boundingClientRect.top);
+          } else {
+            visible.delete(id);
+          }
+        });
+        if (visible.size === 0) return;
+        const topmost = [...visible.entries()].sort((a, b) => a[1] - b[1])[0][0];
+        setActive(topmost);
+      },
+      {
+        rootMargin: '-80px 0px -60% 0px',
+        threshold: [0, 0.1, 1],
+      }
+    );
+    document.querySelectorAll('[data-api-endpoint]').forEach((el) => observer.observe(el));
+  }
+
+  // Filter input.
+  const filterInput = document.querySelector<HTMLInputElement>('.api-nav-tree__search-input');
+  if (filterInput) {
+    filterInput.addEventListener('input', () => {
+      const q = filterInput.value.trim().toLowerCase();
+      document.querySelectorAll<HTMLElement>('.api-nav-tree__item').forEach((li) => {
+        const text = li.textContent?.toLowerCase() ?? '';
+        li.style.display = !q || text.includes(q) ? '' : 'none';
+      });
+      // Hide groups with no visible items.
+      document.querySelectorAll<HTMLElement>('.api-nav-tree__group').forEach((group) => {
+        const anyVisible = group.querySelectorAll<HTMLElement>(
+          '.api-nav-tree__item'
+        );
+        let hasVisible = false;
+        anyVisible.forEach((li) => {
+          if (li.style.display !== 'none') hasVisible = true;
+        });
+        group.style.display = hasVisible ? '' : 'none';
+      });
+    });
+  }
+</script>
+
+<style>
+  .api-nav-tree {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    line-height: 1.45;
+    color: var(--surface-page-ink);
+  }
+  .api-nav-tree__title {
+    padding: 0 0.5rem 0.5rem;
+    font-size: var(--type-meta);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--surface-page-ink-muted);
+  }
+  .api-nav-tree__search {
+    margin-bottom: 0.625rem;
+  }
+  .api-nav-tree__search-input {
+    width: 100%;
+    padding: 0.375rem 0.625rem;
+    border: 1px solid var(--surface-page-border);
+    background: var(--color-mist-grey);
+    border-radius: var(--r-sm);
+    font-size: 0.8125rem;
+    color: var(--surface-page-ink);
+  }
+  .api-nav-tree__search-input:focus {
+    outline: none;
+    border-color: var(--color-green);
+  }
+  .api-nav-tree__group {
+    margin: 0 0 0.25rem;
+  }
+  .api-nav-tree__group-label {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--surface-page-ink);
+    cursor: pointer;
+    list-style: none;
+    border-radius: var(--r-sm);
+  }
+  .api-nav-tree__group-label::-webkit-details-marker {
+    display: none;
+  }
+  .api-nav-tree__group-label:hover {
+    background: var(--color-mist-grey);
+  }
+  .api-nav-tree__chevron {
+    transition: transform 0.15s ease;
+    color: var(--surface-page-ink-muted);
+  }
+  .api-nav-tree__group[open] .api-nav-tree__chevron {
+    transform: rotate(90deg);
+  }
+  .api-nav-tree__count {
+    margin-left: auto;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: var(--surface-page-ink-muted);
+    background: var(--color-mist-grey);
+    padding: 0.0625rem 0.375rem;
+    border-radius: var(--r-pill);
+  }
+  .api-nav-tree__list {
+    list-style: none;
+    padding: 0.125rem 0 0.5rem;
+    margin: 0;
+  }
+  .api-nav-tree__item {
+    margin: 0;
+  }
+  .api-nav-tree__link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3125rem 0.5rem 0.3125rem 0.875rem;
+    border-left: 2px solid transparent;
+    border-radius: 0 var(--r-sm) var(--r-sm) 0;
+    color: var(--surface-page-ink);
+    text-decoration: none;
+    transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+  }
+  .api-nav-tree__link:hover {
+    background: var(--color-mist-grey);
+  }
+  .api-nav-tree__link--active {
+    background: var(--color-green-soft);
+    border-left-color: var(--color-green);
+    color: var(--color-green-hover);
+  }
+  .api-nav-tree__link--deprecated {
+    text-decoration: line-through;
+    color: var(--surface-page-ink-muted);
+  }
+  .api-nav-tree__method {
+    flex-shrink: 0;
+    padding: 0.0625rem 0.25rem;
+    border-radius: var(--r-sm);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    min-width: 2.75rem;
+    text-align: center;
+  }
+  .api-nav-tree__method--get    { background: var(--color-green-soft); color: var(--color-green); }
+  .api-nav-tree__method--post   { background: var(--color-slate-blue-soft); color: var(--color-slate-blue); }
+  .api-nav-tree__method--patch  { background: var(--color-amber-soft); color: var(--color-amber); }
+  .api-nav-tree__method--delete { background: var(--color-coral-soft); color: var(--color-coral); }
+  .api-nav-tree__method--put    { background: rgba(38,168,153,0.14); color: var(--color-deep-teal); }
+
+  .api-nav-tree__label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .api-nav-tree__flag {
+    padding: 0.0625rem 0.25rem;
+    border-radius: var(--r-sm);
+    font-size: 0.5625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .api-nav-tree__flag--beta {
+    background: var(--color-slate-blue-soft);
+    color: var(--color-slate-blue);
+  }
+  .api-nav-tree__flag--deprecated {
+    background: var(--color-warning-bg, #FFF8EB);
+    color: var(--color-warning-text-dark, #B87A00);
+  }
+</style>

@@ -1,6 +1,6 @@
 {
   "name": "@servantium/grove",
-  "version": "0.3.7",
+  "version": "0.5.0",
   "description": "Grove \u2014 Astro documentation components for Servantium surfaces",
   "type": "module",
   "exports": {
@@ -28,7 +28,19 @@
     "./ThemeProvider": "./src/components/ThemeProvider.astro",
     "./WhatsNewGrid": "./src/components/WhatsNewGrid.astro",
     "./widgets": "./src/widgets/index.ts",
-    "./api": "./src/api/index.ts"
+    "./prose.css": "./src/prose.css",
+    "./prose-enhance": "./src/prose-enhance.ts",
+    "./api": "./src/api/index.ts",
+    "./api/ApiEndpoint": "./src/api/ApiEndpoint.astro",
+    "./api/ApiParams": "./src/api/ApiParams.astro",
+    "./api/ApiResponse": "./src/api/ApiResponse.astro",
+    "./api/ApiCodeExample": "./src/api/ApiCodeExample.astro",
+    "./api/ApiCodeBlock": "./src/api/ApiCodeBlock.astro",
+    "./api/ApiCodePanel": "./src/api/ApiCodePanel.astro",
+    "./api/ApiNavTree": "./src/api/ApiNavTree.astro",
+    "./api/ApiPageLayout": "./src/api/ApiPageLayout.astro",
+    "./api/ApiVersionSelector": "./src/api/ApiVersionSelector.astro",
+    "./api/OpenInIDE": "./src/api/OpenInIDE.astro"
   },
   "files": [
     "src",

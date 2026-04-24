@@ -1,27 +1,106 @@
 ---
 /**
  * ApiResponse — labelled code block for response samples.
+ *
+ * Two modes:
+ *
+ * 1. Single-status (backward compatible) — pass `status` + default slot:
+ *    <ApiResponse status={200} lang="json">{`{ "id": "eng_123" }`}</ApiResponse>
+ *
+ * 2. Multi-status tabs — pass `statuses` array; each tab renders its own
+ *    labelled block. Tabs switch via client JS; selection is session-scoped.
+ *    <ApiResponse statuses={[
+ *      { code: 200, title: 'Success', lang: 'json', body: '{ ... }' },
+ *      { code: 422, title: 'Validation error', lang: 'json', body: '{ "errors": [...] }' },
+ *    ]} />
  */
+export interface ResponseStatus {
+  code: number | string;
+  title?: string;
+  lang?: string;
+  body: string;
+}
+
 interface Props {
+  /** Single-status mode. Use default slot for body. */
   status?: number | string;
   title?: string;
   lang?: string;
+  /** Multi-status mode. Overrides single-status if provided. */
+  statuses?: ResponseStatus[];
 }
-const { status = 200, title, lang = 'json' } = Astro.props;
-const statusClass =
-  typeof status === 'number' && status >= 200 && status < 300 ? 'success'
-  : typeof status === 'number' && status >= 400 ? 'danger'
-  : 'note';
+const { status = 200, title, lang = 'json', statuses } = Astro.props;
+
+function statusClass(code: number | string): 'success' | 'danger' | 'note' {
+  const n = typeof code === 'number' ? code : parseInt(String(code), 10);
+  if (!isNaN(n)) {
+    if (n >= 200 && n < 300) return 'success';
+    if (n >= 400) return 'danger';
+  }
+  return 'note';
+}
+
+const multi = Array.isArray(statuses) && statuses.length > 0;
+const panelId = `api-response-${Math.random().toString(36).slice(2, 9)}`;
 ---
 
-<div class="api-response">
-  <div class="api-response__header">
-    <span class={`api-response__status api-response__status--${statusClass}`}>{status}</span>
-    <span class="api-response__title">{title || 'Response'}</span>
-    <span class="api-response__lang">{lang}</span>
+{multi ? (
+  <div class="api-response api-response--tabs" data-api-response={panelId}>
+    <div class="api-response__tabs" role="tablist">
+      {statuses!.map((s, i) => (
+        <button
+          type="button"
+          role="tab"
+          class={`api-response__tab api-response__tab--${statusClass(s.code)}`}
+          data-status-index={i}
+          aria-selected={i === 0}
+          tabindex={i === 0 ? 0 : -1}
+        >
+          <span class={`api-response__status api-response__status--${statusClass(s.code)}`}>{s.code}</span>
+          {s.title && <span class="api-response__tab-title">{s.title}</span>}
+        </button>
+      ))}
+    </div>
+    {statuses!.map((s, i) => (
+      <div class="api-response__panel" role="tabpanel" data-status-index={i} hidden={i !== 0 || undefined}>
+        <div class="api-response__panel-meta">
+          <span class="api-response__lang">{s.lang || 'json'}</span>
+        </div>
+        <pre class={`api-response__code language-${s.lang || 'json'}`}><code>{s.body}</code></pre>
+      </div>
+    ))}
   </div>
-  <pre class={`api-response__code language-${lang}`}><code><slot /></code></pre>
-</div>
+) : (
+  <div class="api-response">
+    <div class="api-response__header">
+      <span class={`api-response__status api-response__status--${statusClass(status)}`}>{status}</span>
+      <span class="api-response__title">{title || 'Response'}</span>
+      <span class="api-response__lang">{lang}</span>
+    </div>
+    <pre class={`api-response__code language-${lang}`}><code><slot /></code></pre>
+  </div>
+)}
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-api-response]').forEach((root) => {
+    const tabs = root.querySelectorAll<HTMLButtonElement>('.api-response__tab');
+    const panels = root.querySelectorAll<HTMLElement>('.api-response__panel');
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const idx = tab.dataset.statusIndex;
+        tabs.forEach((t) => {
+          const active = t.dataset.statusIndex === idx;
+          t.setAttribute('aria-selected', String(active));
+          t.setAttribute('tabindex', active ? '0' : '-1');
+        });
+        panels.forEach((p) => {
+          if (p.dataset.statusIndex === idx) p.removeAttribute('hidden');
+          else p.setAttribute('hidden', '');
+        });
+      });
+    });
+  });
+</script>
 
 <style>
   .api-response {
@@ -30,7 +109,8 @@ const statusClass =
     border-radius: var(--r-md);
     overflow: hidden;
   }
-  .api-response__header {
+  .api-response__header,
+  .api-response__panel-meta {
     display: flex;
     align-items: center;
     gap: 0.625rem;
@@ -38,6 +118,41 @@ const statusClass =
     background: var(--color-mist-grey);
     border-bottom: 1px solid var(--surface-widget-border);
     font-size: var(--type-meta);
+  }
+  .api-response__tabs {
+    display: flex;
+    gap: 0;
+    background: var(--color-mist-grey);
+    border-bottom: 1px solid var(--surface-widget-border);
+    overflow-x: auto;
+  }
+  .api-response__tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 0.875rem;
+    background: transparent;
+    border: 0;
+    border-right: 1px solid var(--surface-widget-border);
+    font-family: var(--font-body);
+    font-size: var(--type-meta);
+    font-weight: 600;
+    color: var(--surface-page-ink-muted);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+    white-space: nowrap;
+  }
+  .api-response__tab:hover {
+    background: var(--color-cloud-2);
+  }
+  .api-response__tab[aria-selected="true"] {
+    background: var(--color-white);
+    color: var(--surface-page-ink);
+    border-bottom: 2px solid var(--color-green);
+    margin-bottom: -1px;
+  }
+  .api-response__tab-title {
+    color: inherit;
   }
   .api-response__status {
     padding: 0.125rem 0.5rem;

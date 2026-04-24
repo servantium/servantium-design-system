@@ -49,6 +49,12 @@
   --color-danger: #FF5C70;
   --color-info: #4C82A7;
 
+  /* ── Callout surfaces (used by DocsAside variants) ── */
+  --color-note-bg: #EFF5F9;
+  --color-warning-bg: #FFF8EB;
+  --color-warning-text-dark: #B87A00;
+  --color-danger-bg: #FFF0F1;
+
   /* ── Neutrals (numbered + named aliases) ── */
   --color-ink: #0D0D0D;
   --color-ink-1: #1a1a1a;

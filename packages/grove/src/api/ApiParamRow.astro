@@ -1,0 +1,68 @@
+---
+/**
+ * ApiParamRow — single parameter row. Recursive via Astro self-import.
+ * Internal to ApiParams. Not exported from the package.
+ */
+import type { ApiParam } from './ApiParams.astro';
+
+interface Props {
+  param: ApiParam;
+  collapseNested?: boolean;
+}
+const { param, collapseNested = true } = Astro.props;
+const hasChildren = param.children && param.children.length > 0;
+const childCount = param.children?.length ?? 0;
+const showLabel = `Show ${childCount} ${childCount === 1 ? 'property' : 'properties'}`;
+const hideLabel = `Hide ${childCount === 1 ? 'property' : 'properties'}`;
+const initiallyHidden = hasChildren && collapseNested;
+---
+
+<li class:list={['api-params__row', param.deprecated && 'api-params__row--deprecated']}>
+  <div class="api-params__head">
+    <code class="api-params__name">{param.name}</code>
+    <code class="api-params__type">{param.type}</code>
+    {param.required
+      ? <span class="api-params__required">required</span>
+      : <span class="api-params__optional">optional</span>
+    }
+    {param.deprecated && <span class="api-params__badge-deprecated">Deprecated</span>}
+  </div>
+
+  {param.description && (
+    <p class="api-params__desc">
+      {param.description}
+      {param.defaultValue !== undefined && (
+        <code class="api-params__default">Defaults to <b>{param.defaultValue}</b></code>
+      )}
+    </p>
+  )}
+
+  {param.deprecated && param.deprecatedMessage && (
+    <p class="api-params__deprecated-msg">{param.deprecatedMessage}</p>
+  )}
+
+  {param.enumValues && param.enumValues.length > 0 && (
+    <div class="api-params__enum">
+      {param.enumValues.map((v) => <code class="api-params__enum-chip">{v}</code>)}
+    </div>
+  )}
+
+  {hasChildren && (
+    <>
+      <button
+        type="button"
+        class="api-params__toggle"
+        aria-expanded={!initiallyHidden}
+        data-show-label={showLabel}
+        data-hide-label={hideLabel}
+      >
+        <span class="api-params__toggle-label">{initiallyHidden ? showLabel : hideLabel}</span>
+      </button>
+      <ul class="api-params__children" role="list" hidden={initiallyHidden || undefined}>
+        {param.children!.map((child) => (
+          <Astro.self param={child} collapseNested={collapseNested} />
+        ))}
+      </ul>
+    </>
+  )}
+</li>

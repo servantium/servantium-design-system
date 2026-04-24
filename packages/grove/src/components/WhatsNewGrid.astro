@@ -14,11 +14,18 @@ export interface WhatsNewItem {
 
 interface Props {
   items: WhatsNewItem[];
+  /**
+   * "vivid"  = saturated dark gradients (portal aesthetic, high contrast)
+   * "soft"   = tinted light card surfaces (marketing-adjacent, approachable)
+   * "plain"  = white cards with accent ink + border (help's original style)
+   * Default: "soft" — matches the help site's approachable tone.
+   */
+  variant?: 'vivid' | 'soft' | 'plain';
   class?: string;
 }
-const { items = [], class: className = '' } = Astro.props;
+const { items = [], variant = 'soft', class: className = '' } = Astro.props;
 
-const gradients: Record<string, string> = {
+const vividGradients: Record<string, string> = {
   green:  'linear-gradient(135deg, #0E8A52 0%, #045F37 100%)',
   blue:   'linear-gradient(135deg, #3E6E9A 0%, #1E3850 100%)',
   amber:  'linear-gradient(135deg, #D88B2A 0%, #8C521B 100%)',
@@ -26,6 +33,17 @@ const gradients: Record<string, string> = {
   coral:  'linear-gradient(135deg, #D95266 0%, #8B2D3D 100%)',
   teal:   'linear-gradient(135deg, #1A8A7F 0%, #0E4F49 100%)',
   slate:  'linear-gradient(135deg, #3E4D5C 0%, #1E2932 100%)',
+};
+
+// Tinted card surfaces — gentle light backgrounds with deep accent ink
+const softSurfaces: Record<string, { bg: string; ink: string; border: string }> = {
+  green:  { bg: '#E8FBF1', ink: '#023E25', border: '#C8F5DE' },
+  blue:   { bg: '#EEF4F9', ink: '#1E3850', border: '#D4DFEA' },
+  amber:  { bg: '#FFF5E4', ink: '#5C3A15', border: '#F5DFB5' },
+  purple: { bg: '#F1ECFB', ink: '#3B2570', border: '#DCD0F2' },
+  coral:  { bg: '#FFEBEF', ink: '#7A2333', border: '#F5C6CE' },
+  teal:   { bg: '#E4F6F3', ink: '#0E4F49', border: '#BDE5DE' },
+  slate:  { bg: '#EEF0F4', ink: '#1E2932', border: '#CFD5DE' },
 };
 
 // Auto-assign accents if not specified (cycle through palette).
@@ -36,9 +54,20 @@ const resolved = items.map((item, i) => ({
 }));
 ---
 
-<div class:list={['whats-new-grid', className]}>
-  {resolved.map((item) => (
-    <a href={item.href} class="whats-new-grid__card" style={`background: ${gradients[item.accent || 'green']};`}>
+<div class:list={['whats-new-grid', `whats-new-grid--${variant}`, className]}>
+  {resolved.map((item) => {
+    const accent = item.accent || 'green';
+    let cardStyle = '';
+    if (variant === 'vivid') {
+      cardStyle = `background: ${vividGradients[accent]};`;
+    } else if (variant === 'soft') {
+      const s = softSurfaces[accent];
+      cardStyle = `background: ${s.bg}; color: ${s.ink}; border-color: ${s.border};`;
+    } else { /* plain */
+      cardStyle = '';
+    }
+    return (
+    <a href={item.href} class="whats-new-grid__card" style={cardStyle} data-accent={accent}>
       <div class="whats-new-grid__icon" aria-hidden="true">
         {item.icon === 'grid' && (
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
@@ -103,7 +132,8 @@ const resolved = items.map((item, i) => ({
         </svg>
       </div>
     </a>
-  ))}
+    );
+  })}
 </div>
 
 <style>
@@ -130,19 +160,71 @@ const resolved = items.map((item, i) => ({
     min-height: 110px;
     padding: 0.875rem 1rem;
     border-radius: var(--r-lg);
-    color: var(--color-white);
     overflow: hidden;
     text-decoration: none;
-    transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
+    border: 1px solid transparent;
+    transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out), border-color 0.2s var(--ease-out);
   }
-  .whats-new-grid__card:hover {
+
+  /* Variant: vivid — saturated gradient fill, white ink (portal aesthetic) */
+  .whats-new-grid--vivid .whats-new-grid__card { color: var(--color-white); }
+  .whats-new-grid--vivid .whats-new-grid__title { color: var(--color-white); }
+  .whats-new-grid--vivid .whats-new-grid__meta { color: rgba(255, 255, 255, 0.72); }
+  .whats-new-grid--vivid .whats-new-grid__icon { color: rgba(255, 255, 255, 0.92); }
+  .whats-new-grid--vivid .whats-new-grid__card:hover {
     transform: translateY(-3px);
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
   }
+
+  /* Variant: soft — tinted surfaces, dark accent ink (help aesthetic) */
+  .whats-new-grid--soft .whats-new-grid__card {
+    box-shadow: var(--sh-sm);
+  }
+  .whats-new-grid--soft .whats-new-grid__title {
+    color: inherit;
+  }
+  .whats-new-grid--soft .whats-new-grid__meta {
+    color: inherit;
+    opacity: 0.7;
+  }
+  .whats-new-grid--soft .whats-new-grid__icon {
+    color: inherit;
+    opacity: 0.85;
+  }
+  .whats-new-grid--soft .whats-new-grid__card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--sh-md);
+  }
+  .whats-new-grid--soft .whats-new-grid__decoration svg {
+    display: none;   /* no decorative circles on soft cards */
+  }
+
+  /* Variant: plain — white card with colored border + icon (cleanest) */
+  .whats-new-grid--plain .whats-new-grid__card {
+    background: var(--color-white);
+    color: var(--color-ink);
+    border-color: var(--color-cloud-grey);
+  }
+  .whats-new-grid--plain .whats-new-grid__card[data-accent="green"]  .whats-new-grid__icon { color: var(--color-green); }
+  .whats-new-grid--plain .whats-new-grid__card[data-accent="blue"]   .whats-new-grid__icon { color: var(--color-slate-blue); }
+  .whats-new-grid--plain .whats-new-grid__card[data-accent="amber"]  .whats-new-grid__icon { color: var(--color-amber); }
+  .whats-new-grid--plain .whats-new-grid__card[data-accent="purple"] .whats-new-grid__icon { color: #6B47B5; }
+  .whats-new-grid--plain .whats-new-grid__card[data-accent="coral"]  .whats-new-grid__icon { color: var(--color-coral); }
+  .whats-new-grid--plain .whats-new-grid__card[data-accent="teal"]   .whats-new-grid__icon { color: var(--color-deep-teal); }
+  .whats-new-grid--plain .whats-new-grid__card[data-accent="slate"]  .whats-new-grid__icon { color: var(--color-slate); }
+  .whats-new-grid--plain .whats-new-grid__card:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-green-line);
+    box-shadow: var(--sh-md);
+  }
+  .whats-new-grid--plain .whats-new-grid__title { color: var(--color-ink); }
+  .whats-new-grid--plain .whats-new-grid__meta { color: var(--color-ink-muted); }
+  .whats-new-grid--plain .whats-new-grid__decoration svg { display: none; }
+
+  /* Shared positioning */
   .whats-new-grid__icon {
     position: relative;
     z-index: 2;
-    color: rgba(255, 255, 255, 0.92);
   }
   .whats-new-grid__text {
     position: relative;
@@ -152,13 +234,11 @@ const resolved = items.map((item, i) => ({
     font-family: var(--font-body);
     font-size: 1rem;
     font-weight: 600;
-    color: var(--color-white);
     margin: 0 0 0.25rem;
     line-height: 1.3;
   }
   .whats-new-grid__meta {
     font-size: var(--type-meta);
-    color: rgba(255, 255, 255, 0.72);
     margin: 0;
   }
   .whats-new-grid__decoration {

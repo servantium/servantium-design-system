@@ -1,0 +1,277 @@
+---
+/**
+ * ApiCodePanel — language-tabbed code container.
+ *
+ * Wraps N ApiCodeBlock-style samples under a language tab switcher.
+ * Selection persists across panels on the page and across the session
+ * (stored in localStorage), so users who pick "python" once stay in
+ * python as they scroll through endpoints.
+ *
+ * Example:
+ *   <ApiCodePanel
+ *     title="Request"
+ *     samples={[
+ *       { lang: 'curl',   label: 'cURL',       code: 'curl -X POST ...' },
+ *       { lang: 'python', label: 'Python',     code: 'client.engagements.create(...)' },
+ *       { lang: 'ts',     label: 'TypeScript', code: 'await client.engagements.create({ ... })' },
+ *     ]}
+ *   />
+ */
+export interface CodeSample {
+  lang: string;
+  /** Tab label. Defaults to a humanized `lang`. */
+  label?: string;
+  /** The code string. */
+  code: string;
+  /** Optional filename shown above the code. */
+  filename?: string;
+}
+
+interface Props {
+  /** Title shown above the tabs (e.g. "Request", "Example"). */
+  title?: string;
+  samples: CodeSample[];
+  /** Group key. Panels sharing a key sync their active tab. Default: 'default'. */
+  syncGroup?: string;
+}
+const { title, samples, syncGroup = 'default' } = Astro.props;
+const id = `code-panel-${Math.random().toString(36).slice(2, 9)}`;
+
+function labelFor(s: CodeSample): string {
+  if (s.label) return s.label;
+  const map: Record<string, string> = {
+    curl: 'cURL',
+    bash: 'Bash',
+    js: 'JavaScript',
+    ts: 'TypeScript',
+    javascript: 'JavaScript',
+    typescript: 'TypeScript',
+    py: 'Python',
+    python: 'Python',
+    go: 'Go',
+    ruby: 'Ruby',
+    rb: 'Ruby',
+    json: 'JSON',
+  };
+  return map[s.lang.toLowerCase()] ?? s.lang;
+}
+---
+
+<div class="api-code-panel" data-code-panel={id} data-sync-group={syncGroup}>
+  <div class="api-code-panel__header">
+    {title && <span class="api-code-panel__title">{title}</span>}
+    <div class="api-code-panel__tabs" role="tablist">
+      {samples.map((s, i) => (
+        <button
+          type="button"
+          role="tab"
+          class="api-code-panel__tab"
+          data-lang={s.lang}
+          aria-selected={i === 0}
+          tabindex={i === 0 ? 0 : -1}
+        >
+          {labelFor(s)}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  {samples.map((s, i) => (
+    <div class="api-code-panel__body" data-lang={s.lang} role="tabpanel" hidden={i !== 0 || undefined}>
+      {s.filename && (
+        <div class="api-code-panel__filename">{s.filename}</div>
+      )}
+      <div class="api-code-panel__copy-wrap">
+        <button type="button" class="api-code-panel__copy" aria-label="Copy code">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          <span class="api-code-panel__copy-label">Copy</span>
+        </button>
+        <pre class={`api-code-panel__pre language-${s.lang}`}><code>{s.code}</code></pre>
+      </div>
+    </div>
+  ))}
+</div>
+
+<script>
+  const STORAGE_PREFIX = 'grove:code-panel:';
+
+  function applyLangToGroup(group: string, lang: string) {
+    const panels = document.querySelectorAll<HTMLElement>(
+      `.api-code-panel[data-sync-group="${group}"]`
+    );
+    panels.forEach((panel) => {
+      const bodies = panel.querySelectorAll<HTMLElement>('.api-code-panel__body');
+      const tabs = panel.querySelectorAll<HTMLButtonElement>('.api-code-panel__tab');
+      let matched = false;
+      bodies.forEach((body) => {
+        if (body.dataset.lang === lang) {
+          body.removeAttribute('hidden');
+          matched = true;
+        } else {
+          body.setAttribute('hidden', '');
+        }
+      });
+      tabs.forEach((tab) => {
+        const active = tab.dataset.lang === lang;
+        tab.setAttribute('aria-selected', String(active));
+        tab.setAttribute('tabindex', active ? '0' : '-1');
+      });
+      // Fallback: if this panel doesn't have the selected lang, keep its first tab active.
+      if (!matched) {
+        const first = bodies[0];
+        const firstTab = tabs[0];
+        if (first) first.removeAttribute('hidden');
+        if (firstTab) {
+          firstTab.setAttribute('aria-selected', 'true');
+          firstTab.setAttribute('tabindex', '0');
+        }
+      }
+    });
+  }
+
+  // Initialize from persisted selection per sync group.
+  document.querySelectorAll<HTMLElement>('.api-code-panel').forEach((panel) => {
+    const group = panel.dataset.syncGroup ?? 'default';
+    const stored = localStorage.getItem(STORAGE_PREFIX + group);
+    if (stored) applyLangToGroup(group, stored);
+  });
+
+  // Wire tab clicks.
+  document.querySelectorAll<HTMLButtonElement>('.api-code-panel__tab').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const panel = tab.closest<HTMLElement>('.api-code-panel');
+      if (!panel) return;
+      const lang = tab.dataset.lang;
+      const group = panel.dataset.syncGroup ?? 'default';
+      if (!lang) return;
+      localStorage.setItem(STORAGE_PREFIX + group, lang);
+      applyLangToGroup(group, lang);
+    });
+  });
+
+  // Wire copy buttons.
+  document.querySelectorAll<HTMLButtonElement>('.api-code-panel__copy').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const pre = btn.parentElement?.querySelector('code');
+      if (!pre) return;
+      try {
+        await navigator.clipboard.writeText(pre.textContent ?? '');
+        const label = btn.querySelector('.api-code-panel__copy-label');
+        const original = label?.textContent ?? 'Copy';
+        if (label) label.textContent = 'Copied';
+        btn.classList.add('api-code-panel__copy--success');
+        setTimeout(() => {
+          if (label) label.textContent = original;
+          btn.classList.remove('api-code-panel__copy--success');
+        }, 1400);
+      } catch {}
+    });
+  });
+</script>
+
+<style>
+  .api-code-panel {
+    margin: 1rem 0;
+    border: 1px solid var(--color-dark-border);
+    border-radius: var(--r-md);
+    overflow: hidden;
+    background: var(--color-dark-bg);
+  }
+  .api-code-panel__header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--color-dark-surface);
+    border-bottom: 1px solid var(--color-dark-border);
+    font-size: var(--type-meta);
+    flex-wrap: wrap;
+  }
+  .api-code-panel__title {
+    font-family: var(--font-body);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-dark-ink-2);
+  }
+  .api-code-panel__tabs {
+    display: inline-flex;
+    gap: 0;
+    margin-left: auto;
+    background: var(--color-dark-bg);
+    border-radius: var(--r-sm);
+    padding: 0.125rem;
+  }
+  .api-code-panel__tab {
+    padding: 0.25rem 0.625rem;
+    background: transparent;
+    border: 0;
+    border-radius: calc(var(--r-sm) - 1px);
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-dark-ink-3);
+    cursor: pointer;
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+  .api-code-panel__tab:hover {
+    color: var(--color-dark-ink-1);
+  }
+  .api-code-panel__tab[aria-selected="true"] {
+    background: var(--color-dark-surface-2);
+    color: var(--color-dark-ink-1);
+  }
+  .api-code-panel__filename {
+    padding: 0.5rem 0.875rem 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: var(--type-meta);
+    color: var(--color-dark-ink-2);
+  }
+  .api-code-panel__copy-wrap {
+    position: relative;
+  }
+  .api-code-panel__copy {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--color-dark-border);
+    border-radius: var(--r-sm);
+    color: var(--color-dark-ink-2);
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .api-code-panel__copy-wrap:hover .api-code-panel__copy,
+  .api-code-panel__copy:focus-visible {
+    opacity: 1;
+  }
+  .api-code-panel__copy:hover {
+    color: var(--color-white);
+  }
+  .api-code-panel__copy--success {
+    opacity: 1;
+    color: var(--color-fresh-green);
+    border-color: var(--color-fresh-green);
+  }
+  .api-code-panel__pre {
+    margin: 0;
+    padding: 1rem;
+    background: transparent;
+    color: var(--color-dark-ink-1);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    overflow-x: auto;
+  }
+</style>

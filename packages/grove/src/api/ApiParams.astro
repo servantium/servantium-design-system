@@ -1,49 +1,94 @@
 ---
 /**
- * ApiParams — parameter table with type chips. Used under an ApiEndpoint.
+ * ApiParams — parameter list with support for required/optional labels,
+ * enum values, defaults, deprecation, and nested object expand toggles.
+ *
+ * Renders as a bullet-style list (Stripe/Anthropic pattern) rather than an
+ * HTML table so deeply nested types remain readable.
+ *
+ * Example:
+ *   <ApiParams title="Body parameters" params={[
+ *     {
+ *       name: 'status',
+ *       type: 'enum',
+ *       required: true,
+ *       enumValues: ['draft', 'active', 'archived'],
+ *       description: 'The engagement lifecycle state.'
+ *     },
+ *     {
+ *       name: 'client',
+ *       type: 'object',
+ *       required: true,
+ *       description: 'The client this engagement belongs to.',
+ *       children: [
+ *         { name: 'id', type: 'string', required: true, description: 'Client UUID.' },
+ *         { name: 'name', type: 'string', required: false, description: 'Display name.' }
+ *       ]
+ *     }
+ *   ]} />
  */
+import ApiParamRow from './ApiParamRow.astro';
+
 export interface ApiParam {
   name: string;
   type: string;
   required?: boolean;
   description?: string;
+  /** Enum values rendered as chips under the param. */
+  enumValues?: string[];
+  /** Default value (rendered inline after the description). */
+  defaultValue?: string;
+  /** Nested object properties. Rendered behind a "Show N properties" toggle. */
+  children?: ApiParam[];
+  /** Mark as deprecated. */
+  deprecated?: boolean;
+  /** Deprecation replacement hint. */
+  deprecatedMessage?: string;
 }
 interface Props {
   title?: string;
   params: ApiParam[];
+  /** Collapse nested objects by default. Set false to expand everything. */
+  collapseNested?: boolean;
 }
-const { title = 'Parameters', params = [] } = Astro.props;
+const { title = 'Parameters', params = [], collapseNested = true } = Astro.props;
 ---
 
 {params.length > 0 && (
   <section class="api-params">
     <h4 class="api-params__title">{title}</h4>
-    <table class="api-params__table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        {params.map((p) => (
-          <tr>
-            <td>
-              <code class="api-params__name">{p.name}</code>
-              {p.required && <span class="api-params__required">required</span>}
-            </td>
-            <td><code class="api-params__type">{p.type}</code></td>
-            <td class="api-params__desc">{p.description}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <ul class="api-params__list" role="list">
+      {params.map((p) => <ApiParamRow param={p} collapseNested={collapseNested} />)}
+    </ul>
   </section>
 )}
 
+<script>
+  // Collapsible nested-object toggles.
+  document.querySelectorAll<HTMLButtonElement>('.api-params__toggle').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const target = btn.nextElementSibling as HTMLElement | null;
+      if (!target) return;
+      const open = target.hasAttribute('hidden') ? false : true;
+      if (open) {
+        target.setAttribute('hidden', '');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.querySelector('.api-params__toggle-label')!.textContent =
+          btn.dataset.showLabel || 'Show properties';
+      } else {
+        target.removeAttribute('hidden');
+        btn.setAttribute('aria-expanded', 'true');
+        btn.querySelector('.api-params__toggle-label')!.textContent =
+          btn.dataset.hideLabel || 'Hide properties';
+      }
+    });
+  });
+</script>
+
 <style>
-  .api-params { margin: 1.5rem 0; }
+  .api-params {
+    margin: 1.5rem 0;
+  }
   .api-params__title {
     font-family: var(--font-body);
     font-size: 0.9375rem;
@@ -51,31 +96,34 @@ const { title = 'Parameters', params = [] } = Astro.props;
     margin: 0 0 0.75rem;
     color: var(--surface-page-ink);
   }
-  .api-params__table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.875rem;
+  .api-params__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid var(--surface-page-border);
   }
-  .api-params__table th,
-  .api-params__table td {
-    text-align: left;
-    padding: 0.625rem 0.75rem;
+  :global(.api-params__row) {
+    padding: 0.75rem 0;
     border-bottom: 1px solid var(--surface-page-border);
-    vertical-align: top;
+    font-size: 0.875rem;
+    line-height: 1.55;
   }
-  .api-params__table th {
-    font-weight: 600;
-    font-size: var(--type-meta);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--surface-page-ink-muted);
+  :global(.api-params__row--deprecated) {
+    opacity: 0.75;
   }
-  .api-params__name {
+  :global(.api-params__head) {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  :global(.api-params__name) {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 0.8125rem;
+    font-weight: 600;
     color: var(--surface-page-ink);
   }
-  .api-params__type {
+  :global(.api-params__type) {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 0.75rem;
     padding: 0.125rem 0.375rem;
@@ -83,16 +131,82 @@ const { title = 'Parameters', params = [] } = Astro.props;
     color: var(--color-green);
     border-radius: var(--r-sm);
   }
-  .api-params__required {
-    display: inline-block;
-    margin-left: 0.5rem;
+  :global(.api-params__required) {
     font-size: 0.6875rem;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
     color: var(--color-coral);
     letter-spacing: 0.04em;
   }
-  .api-params__desc {
+  :global(.api-params__optional) {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--surface-page-ink-muted);
+    letter-spacing: 0.04em;
+  }
+  :global(.api-params__badge-deprecated) {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-warning-text-dark, #B87A00);
+    background: var(--color-warning-bg, #FFF8EB);
+    padding: 0.0625rem 0.375rem;
+    border-radius: var(--r-sm);
+    letter-spacing: 0.04em;
+  }
+  :global(.api-params__desc) {
+    margin: 0.25rem 0 0;
     color: var(--surface-page-ink-muted);
   }
+  :global(.api-params__default) {
+    display: inline-block;
+    margin-left: 0.25rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.75rem;
+    color: var(--surface-page-ink-muted);
+  }
+  :global(.api-params__enum) {
+    margin: 0.375rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+  :global(.api-params__enum-chip) {
+    padding: 0.125rem 0.375rem;
+    background: var(--color-mist-grey);
+    color: var(--surface-page-ink);
+    border-radius: var(--r-sm);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.75rem;
+  }
+  :global(.api-params__deprecated-msg) {
+    margin: 0.25rem 0 0;
+    font-size: 0.8125rem;
+    color: var(--color-warning-text-dark, #B87A00);
+  }
+  :global(.api-params__toggle) {
+    margin-top: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    background: transparent;
+    border: 1px solid var(--surface-page-border);
+    border-radius: var(--r-sm);
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--surface-page-ink-muted);
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  :global(.api-params__toggle:hover) {
+    color: var(--color-green);
+    border-color: var(--color-green-line);
+  }
+  :global(.api-params__children) {
+    margin: 0.5rem 0 0;
+    padding-left: 1rem;
+    border-left: 2px solid var(--surface-page-border);
+    list-style: none;
+  }
 </style>
+
