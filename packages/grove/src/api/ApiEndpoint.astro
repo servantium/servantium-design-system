@@ -41,15 +41,15 @@ const {
   beta = false,
 } = Astro.props;
 
-// Human-friendly chip label. The underlying method stays technical
-// (GET/POST/PATCH/DELETE/PUT) for routing + data-method. The visual
-// label is the plain-English verb so non-dev readers aren't thrown by
-// "PATCH".
+// Human-friendly chip label. Servantium APIs standardize on
+// GET / POST / PUT / DELETE (no PATCH). PUT is used for partial and
+// full updates. Label stays technical for GET/POST/DELETE; PUT renders
+// as UPDATE for readability. PATCH kept in the map for any legacy docs.
 const METHOD_LABEL: Record<string, string> = {
   GET: 'GET',
   POST: 'POST',
+  PUT: 'UPDATE',
   PATCH: 'UPDATE',
-  PUT: 'REPLACE',
   DELETE: 'DELETE',
 };
 const methodLabel = METHOD_LABEL[method] ?? method;

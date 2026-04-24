@@ -47,14 +47,13 @@ interface Props {
 }
 const { groups, title, searchable = false } = Astro.props;
 
-// Human-friendly nav chip labels. The `item.method` stays technical
-// (GET/POST/PATCH/DELETE/PUT) for data-method + anchor routing. Short
-// labels to fit narrow left-nav chips.
+// Human-friendly nav chip labels. Servantium standardizes on
+// GET / POST / PUT / DELETE. Short labels fit narrow left-nav chips.
 const METHOD_NAV_LABEL: Record<string, string> = {
   GET: 'GET',
   POST: 'POST',
+  PUT: 'UPD',
   PATCH: 'UPD',
-  PUT: 'REPL',
   DELETE: 'DEL',
 };
 ---
