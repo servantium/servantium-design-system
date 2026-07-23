@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./site-config": "./src/site-config.ts",
     "./DocsLayout": "./src/components/DocsLayout.astro",
     "./DocsSidebar": "./src/components/DocsSidebar.astro",
     "./DocsSearch": "./src/components/DocsSearch.astro",
