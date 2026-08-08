@@ -41,12 +41,26 @@ const c = config[type];
 const displayTitle = title || c.defaultTitle;
 ---
 
-<div class:list={['my-6 rounded-r-lg border-l-4 p-4', c.borderColor, c.bgColor]} role="note">
+<div class:list={['grove-aside my-6 rounded-r-lg border-l-4 p-4', c.borderColor, c.bgColor]} role="note">
   <div class:list={['mb-2 flex items-center gap-2 font-semibold text-sm', c.titleColor]}>
     <Fragment set:html={c.icon} />
     {displayTitle}
   </div>
-  <div class="text-sm leading-relaxed text-ink-light [&>p]:mb-2 [&>p:last-child]:mb-0">
+  <div class="grove-aside-body text-sm leading-relaxed text-ink-light">
     <slot />
   </div>
 </div>
+
+<style>
+  /* Scoped paragraph spacing inside an Aside. Replaces Tailwind v4
+     arbitrary-variant classes ([&>p]:mb-2) — those leaked as visible
+     text on Cloudflare Pages builds where the Tailwind processor did
+     not register the design-system files in its content-scan paths,
+     leaving the class string untransformed in the rendered DOM. */
+  .grove-aside-body > :global(p) {
+    margin-bottom: 0.5rem;
+  }
+  .grove-aside-body > :global(p:last-child) {
+    margin-bottom: 0;
+  }
+</style>
