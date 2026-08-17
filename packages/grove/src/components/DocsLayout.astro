@@ -68,6 +68,14 @@ interface Props {
   hrefPrefix?: string;
   /** Root label shown as the first breadcrumb. Default 'Help'. */
   rootLabel?: string;
+  /**
+   * Suffix appended to the <title> tag after ' | '. Default 'Servantium Help',
+   * which is right for product documentation. Public reference content that
+   * competes in search (e.g. the glossary) should pass 'Servantium' so the
+   * title does not spend its most valuable characters announcing itself as
+   * support docs.
+   */
+  titleSuffix?: string;
 }
 
 const {
@@ -88,12 +96,22 @@ const {
   searchMergeIndex = [],
   hrefPrefix = '',
   rootLabel = 'Help',
+  titleSuffix = 'Servantium Help',
 } = Astro.props;
 
 const prefix = hrefPrefix === '' ? '/' : (hrefPrefix.endsWith('/') ? hrefPrefix : hrefPrefix + '/');
 
 const tocHeadings = headings.filter((h) => h.depth === 2);
-const pageUrl = `https://servantium.com${Astro.url.pathname}`;
+
+// Self-referencing URLs (canonical-adjacent: breadcrumb schema, share links,
+// and the Copy-for-AI prompts) MUST use the consuming site's own origin.
+// This was previously hardcoded to https://servantium.com, which published
+// BreadcrumbList `item` URLs on a different host than the page's canonical
+// and pointed the "Open in Claude/ChatGPT" prompts at URLs that 404 on the
+// marketing site. Derive it from Astro.site instead, falling back to the
+// request origin so a consumer that forgets to set `site` still self-references.
+const siteOrigin = (Astro.site ?? new URL(Astro.url.origin)).origin;
+const pageUrl = `${siteOrigin}${Astro.url.pathname}`;
 
 // Build breadcrumb items from currentSlug
 const slugSegments = currentSlug.split('/').filter(Boolean);
@@ -116,7 +134,7 @@ const breadcrumbItems = [
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{title} | Servantium Help</title>
+  <title>{title} | {titleSuffix}</title>
   {description && <meta name="description" content={description} />}
 
   <TestEnvBanner />
@@ -133,7 +151,7 @@ const breadcrumbItems = [
       "@type": "ListItem",
       "position": index + 1,
       "name": item.label,
-      ...(item.href ? { "item": `https://servantium.com${item.href}` } : {})
+      ...(item.href ? { "item": `${siteOrigin}${item.href}` } : {})
     }))
   })} />
 
