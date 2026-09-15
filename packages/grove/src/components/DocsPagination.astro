@@ -7,9 +7,19 @@ interface PaginationLink {
 interface Props {
   prev?: PaginationLink | null;
   next?: PaginationLink | null;
+  /**
+   * URL prefix for docs links, already normalised to start and end with '/'
+   * by DocsLayout. Default '/' (docs live at site root). Previously these
+   * hrefs were hardcoded to '/help/', which emitted a redirecting URL on
+   * every docs page of any consumer that mounts docs at the root.
+   */
+  prefix?: string;
 }
 
-const { prev = null, next = null } = Astro.props;
+const { prev = null, next = null, prefix = '/' } = Astro.props;
+
+/** Home sits at the prefix itself and carries an empty slug. */
+const hrefFor = (slug: string) => (slug ? `${prefix}${slug}/` : prefix);
 
 if (!prev && !next) return;
 ---
@@ -17,7 +27,7 @@ if (!prev && !next) return;
 <nav aria-label="Pagination" class="mt-16 grid grid-cols-1 gap-4 sm:grid-cols-2">
   {prev ? (
     <a
-      href={`/help/${prev.slug}/`}
+      href={hrefFor(prev.slug)}
       class="group flex flex-col rounded-lg border border-cloud-grey p-4 transition-all duration-150 hover:-translate-y-0.5 hover:border-green hover:shadow-md"
     >
       <span class="mb-1 text-xs font-medium text-slate-400">
@@ -33,7 +43,7 @@ if (!prev && !next) return;
 
   {next ? (
     <a
-      href={`/help/${next.slug}/`}
+      href={hrefFor(next.slug)}
       class="group flex flex-col items-end rounded-lg border border-cloud-grey p-4 text-right transition-all duration-150 hover:-translate-y-0.5 hover:border-green hover:shadow-md"
     >
       <span class="mb-1 text-xs font-medium text-slate-400">
