@@ -12,10 +12,10 @@
     "website": "https://servantium.com",
     "app": "https://app.servantium.com",
     "help": "https://help.servantium.com",
-    "privacy": "https://servantium.com/privacy",
-    "terms": "https://servantium.com/terms",
+    "privacy": "https://servantium.com/privacy/",
+    "terms": "https://servantium.com/terms/",
     "trust": "https://trust.servantium.com",
-    "releaseNotes": "https://help.servantium.com/release-notes"
+    "releaseNotes": "https://help.servantium.com/release-notes/"
   },
   "email": {
     "noreply": "noreply@servantium.com"

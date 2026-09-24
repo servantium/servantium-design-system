@@ -10,7 +10,7 @@ The one place Servantium's identity lives. If a logo, Astro, the email header ar
 | `assets/logo/` | `servantium-logo.png` (on light), `servantium-logo-white.png` (on dark) | Copied from servantium.com, 723×170 |
 | `assets/astro/astro-<pose>.svg` | **Astro the Astronaut** — waving, captain, detective, professor, cowboy | Copied from the Flutter app's `assets/astronaut_*.svg` |
 | `assets/astro/astro-<pose>.png` | Astro rasterised, 240×240 | **Generated** — `npm run render` |
-| `assets/email/header-<size>.{svg,jpg}` | The email banner art ("forest night sky"), compact / standard / hero | **Generated**, seeded so a re-render isn't a redesign |
+| `assets/email/header-{standard,hero}.{svg,jpg}` | The email banner art ("forest night sky"): standard, and a taller hero for when Astro is in the banner | **Generated**, seeded so a re-render isn't a redesign |
 
 SVG is the master; PNG and JPG are build outputs. Email clients can't show SVG, so anything an email uses has a raster version — but nobody hand-exports one. Edit the SVG (or the art generator in `scripts/render.mjs`), run `npm run render`, commit both.
 

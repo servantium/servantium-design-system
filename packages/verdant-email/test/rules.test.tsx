@@ -1,71 +1,182 @@
 /**
- * The rules, as tests. Everything the founder ruled and everything a mail client punishes, checked
- * against every template's real output — so a rule can't be broken by a new template, only by
- * editing this file.
+ * The rules, as tests. Every design decision and everything a mail client punishes, checked
+ * against every email's real output — TSX templates, MDX emails, and every sample on the style
+ * sheet — so a rule can't be broken by a new email, only by editing this file.
  *
  *   npm test
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { addressLine, company, footerLinks } from '@servantium/brand';
 import { renderEmail, toFirebaseFragment } from '../src/render';
 import { templates } from '../src/index';
 import { firebasePlaceholders } from '../src/templates/password-reset';
-import { color, tones } from '../src/theme';
+import { Banner, Email, type BannerProps } from '../src/components/Layout';
+import { Card } from '../scripts/card';
+import { FrontmatterError, loadMdxEmail, mdxBody, protectMergeFields } from '../src/mdx';
+import { htmlToText } from '../src/text';
+import { SAMPLES } from '../src/stylesheet';
+import { color, neutral, tones } from '../src/theme';
+import { collect } from '../scripts/collect';
 
-const rendered = Object.values(templates).map((t) => {
-  const s = t.build(t.sample as never);
-  return { id: t.id, html: renderEmail({ subject: s.subject, preheader: s.preheader, children: s.body }) };
-});
+const emails = await collect();
+const both = emails.flatMap((e) => [
+  { id: e.id, stream: e.stream, html: e.preview.html },
+  { id: `${e.id} (sent)`, stream: e.stream, html: e.sent.html },
+]);
+const samples = await Promise.all(SAMPLES.flatMap((g) => g.items).map(async (s) => ({
+  id: `style sheet: ${s.name}`,
+  html: renderEmail({ subject: s.name, preheader: '', children: <Card>{await mdxBody(s.mdx)}</Card> }),
+})));
+const everything = [...both, ...samples];
 
-// ── Founder rulings ─────────────────────────────────────────────────────────────────────────────
+// ── Design decisions ────────────────────────────────────────────────────────────────────────────
 test('no coloured bar down the left of anything (banned 2026-09-24)', () => {
-  for (const { id, html } of rendered) assert.doesNotMatch(html, /border-left/i, `${id} draws a left bar`);
+  for (const { id, html } of everything) assert.doesNotMatch(html, /border-left/i, `${id} draws a left bar`);
 });
 
 test('every email opens on the shared forest banner', () => {
-  for (const { id, html } of rendered) assert.match(html, new RegExp(`bgcolor="${color.banner}"`, 'i'), `${id} has no banner`);
+  for (const { id, html } of both) assert.match(html, new RegExp(`bgcolor="${color.banner}"`, 'i'), `${id} has no banner`);
 });
 
 test('footer links and address come from company.json, in every email', () => {
-  for (const { id, html } of rendered) {
+  for (const { id, html } of both) {
     assert.ok(html.includes(addressLine()), `${id} is missing the company address`);
     for (const l of footerLinks()) assert.ok(html.includes(`href="${l.href}"`), `${id} is missing ${l.label}`);
   }
 });
 
+test('three tones, and nothing else', () => {
+  assert.deepEqual(Object.keys(tones), ['default', 'attention', 'urgent']);
+});
+
+// ── Astro ───────────────────────────────────────────────────────────────────────────────────────
+test('Astro never appears on an attention or urgent email', () => {
+  for (const e of emails) {
+    if (e.tone !== 'default') assert.doesNotMatch(e.preview.html, /astro-\w+\.png/, `${e.id} is ${e.tone} and shows Astro`);
+  }
+});
+
+test('the Banner refuses Astro with a non-default tone, even when the types are forced', () => {
+  const forced = { tone: 'urgent', astro: 'waving', label: 'x', title: 'x' } as unknown as BannerProps;
+  assert.throws(() => renderToStaticMarkup(<Email><Banner {...forced} /></Email>), /good news only/);
+});
+
+// ── Frontmatter is a schema ─────────────────────────────────────────────────────────────────────
+const fm = (lines: string) => `---\n${lines}\n---\nHello.`;
+const OK = 'subject: s\npreheader: p\nlabel: l\ntitle: t\nstream: transactional\nfooter:\n  reason: r';
+
+test('frontmatter: a valid email loads', async () => {
+  await assert.doesNotReject(loadMdxEmail(fm(OK)));
+});
+
+test('frontmatter: Astro on an urgent email fails the build', async () => {
+  await assert.rejects(loadMdxEmail(fm(`${OK}\ntone: urgent\nastro: waving`)), FrontmatterError);
+});
+
+test('frontmatter: a missing footer reason fails the build', async () => {
+  await assert.rejects(loadMdxEmail(fm(OK.replace('footer:\n  reason: r', ''))), /footer\.reason/);
+});
+
+test('frontmatter: an unknown tone or stream fails the build', async () => {
+  await assert.rejects(loadMdxEmail(fm(`${OK}\ntone: critical`)), /tone/);
+  await assert.rejects(loadMdxEmail(fm(OK.replace('transactional', 'marketing'))), /stream/);
+});
+
+// ── Unsubscribe follows the stream ──────────────────────────────────────────────────────────────
+test('broadcast mail offers an unsubscribe; transactional mail never does', () => {
+  for (const { id, stream, html } of both) {
+    const has = />Unsubscribe</.test(html);
+    assert.equal(has, stream === 'broadcast', `${id} is ${stream} and ${has ? 'must not offer' : 'must offer'} an unsubscribe`);
+  }
+});
+
+test('broadcast mail uses Postmark\'s unsubscribe tag', () => {
+  for (const e of emails.filter((x) => x.stream === 'broadcast')) assert.match(e.sent.html, /\{\{\{ pm:unsubscribe \}\}\}/, e.id);
+});
+
+// ── Merge fields ────────────────────────────────────────────────────────────────────────────────
+test('merge fields reach the sent HTML untouched, and the preview fills them', () => {
+  const incident = emails.find((e) => e.id === 'incident')!;
+  for (const f of ['first_name', 'incident_title', 'status', 'status_url']) {
+    assert.ok(incident.sent.html.includes(`{{ ${f} }}`), `sent incident lost {{ ${f} }}`);
+  }
+  assert.ok(incident.sent.subject.includes('{{ incident_title }}'));
+  assert.doesNotMatch(incident.preview.html, /\{\{ (first_name|status|incident_title) \}\}/, 'preview left a field unfilled');
+});
+
+test('merge-field protection leaves code and JSX alone', () => {
+  assert.equal(protectMergeFields('Hi {{ name }}'), "Hi {'{{ name }}'}");
+  assert.equal(protectMergeFields('<Button href="{{ url }}">Go</Button>'), '<Button href="{{ url }}">Go</Button>');
+  assert.equal(protectMergeFields('`{{ literal }}`'), '`{{ literal }}`');
+  assert.equal(protectMergeFields('```\n{{ literal }}\n```'), '```\n{{ literal }}\n```');
+  assert.equal(protectMergeFields('Intro.\n\n{{ update }}\n'), "Intro.\n\n<Text>{'{{ update }}'}</Text>\n");
+});
+
+test('a paragraph that is only a merge field is still a styled paragraph', () => {
+  const incident = emails.find((e) => e.id === 'incident')!;
+  assert.match(incident.sent.html, /<p style="[^"]*font-family[^"]*">\{\{ update \}\}<\/p>/, 'the update lost its paragraph styling');
+});
+
+test('no MDX escaping leaks into any output', () => {
+  for (const { id, html } of everything) assert.doesNotMatch(html, /\{'\{\{/, `${id} shows a protected merge field`);
+});
+
 // ── What mail clients punish ────────────────────────────────────────────────────────────────────
 test('under 102 KB, where Gmail clips the message', () => {
-  for (const { id, html } of rendered) assert.ok(Buffer.byteLength(html) < 102 * 1024, `${id} will be clipped by Gmail`);
+  for (const { id, html } of both) assert.ok(Buffer.byteLength(html) < 102 * 1024, `${id} will be clipped by Gmail`);
 });
 
 test('no SVG, no flex, no grid', () => {
-  for (const { id, html } of rendered) {
+  for (const { id, html } of everything) {
     assert.doesNotMatch(html, /<svg/i, `${id}: Gmail and Outlook drop SVG`);
     assert.doesNotMatch(html, /display:\s*(flex|grid)/i, `${id}: Outlook desktop has no flex or grid`);
   }
 });
 
 test('every image has alt text', () => {
-  for (const { id, html } of rendered) {
+  for (const { id, html } of everything) {
     for (const img of html.match(/<img[^>]*>/g) ?? []) assert.match(img, /\salt="/, `${id}: ${img.slice(0, 60)}…`);
   }
 });
 
 test('every button has an Outlook shape', () => {
-  for (const { id, html } of rendered) {
+  for (const { id, html } of everything) {
     const links = (html.match(/<!--\[if !mso\]><!--><a /g) ?? []).length;
     const shapes = (html.match(/<v:roundrect/g) ?? []).length;
     assert.equal(shapes, links, `${id}: a button without VML shows as a bare link in Outlook`);
   }
 });
 
-// ── Unsubscribe: required on marketing, forbidden on transactional ──────────────────────────────
-test('only optional mail offers an unsubscribe', () => {
-  for (const { id, html } of rendered) {
-    const has = />Unsubscribe</.test(html);
-    assert.equal(has, id === 'release-notes', `${id} ${has ? 'must not offer' : 'must offer'} an unsubscribe`);
+test('at most one primary button per email', () => {
+  const primary = new RegExp(`<a [^>]*background-color:${color.brand}`, 'gi');
+  for (const { id, html } of both) assert.ok((html.match(primary) ?? []).length <= 1, `${id} has more than one primary button`);
+});
+
+test('sent emails load images from an absolute URL', () => {
+  for (const e of emails) {
+    for (const src of e.sent.html.match(/src="[^"]*"/g) ?? []) assert.match(src, /src="https:\/\//, `${e.id}: ${src}`);
   }
+});
+
+// ── Plain text ──────────────────────────────────────────────────────────────────────────────────
+test('every email has a readable plain-text part', () => {
+  for (const e of emails) {
+    const text = htmlToText(e.sent.html);
+    assert.doesNotMatch(text, /<[a-z/!]/i, `${e.id}: markup left in the text part`);
+    assert.doesNotMatch(text, /v:roundrect|\[if mso/, `${e.id}: Outlook markup left in the text part`);
+    assert.ok(text.includes(addressLine()), `${e.id}: text part has no address`);
+    for (const href of e.sent.html.match(/<!--\[if !mso\]><!--><a href="([^"]*)"/g) ?? []) {
+      const url = href.replace(/.*href="/, '').replace(/"$/, '').replace(/&amp;/g, '&');
+      assert.ok(text.includes(url), `${e.id}: text part is missing the button link ${url}`);
+    }
+  }
+});
+
+test('every id is a valid Postmark alias', () => {
+  for (const e of emails) assert.match(e.id, /^[a-z][a-z0-9-]*$/, e.id);
+  assert.equal(new Set(emails.map((e) => e.id)).size, emails.length, 'two emails share an alias');
 });
 
 // ── Contrast: WCAG AA (4.5:1) for every text pairing ────────────────────────────────────────────
@@ -90,15 +201,18 @@ test('body text, links and muted text pass AA', () => {
   aa(color.onBannerMuted, color.banner, 'subtitle on the banner');
 });
 
-test('every tone passes AA on the banner and in its callout', () => {
+test('every tone passes AA on the banner and in its callout, and its rule is visible on forest', () => {
   for (const [name, t] of Object.entries(tones)) {
     aa(t.onBanner, color.banner, `${name} banner label`);
     aa(t.strong, t.tint, `${name} callout title`);
+    aa(color.ink, t.tint, `${name} callout text`);
+    assert.ok(ratio(t.accent, color.banner) >= 3, `${name} rule is ${ratio(t.accent, color.banner).toFixed(1)}:1 on forest, below 3`);
   }
+  aa(neutral.strong, neutral.tint, 'neutral callout title');
 });
 
-test('KNOWN: the primary button is below AA — the founder ruling, recorded not hidden', () => {
-  // White on #00C26D is ~2.3:1. The ruling is "#00C26D with white text"; this test exists so the
+test('KNOWN: the primary button is below AA — a design decision, recorded not hidden', () => {
+  // White on #00C26D is ~2.3:1. The decision is "#00C26D with white text"; this test exists so the
   // number is on record and the day someone changes the button, this fails and says why.
   assert.ok(ratio('#FFFFFF', color.brand) < 3, 'the button changed — update this test and the README');
 });

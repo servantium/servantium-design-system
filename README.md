@@ -9,7 +9,7 @@ Single source of truth for visual design, brand assets and documentation compone
 | **[`@servantium/verdant`](./packages/verdant)** | CSS custom properties (colors, typography, spacing, easing), optional base/reset styles. Pure CSS, framework-agnostic. | servantium-website, servantium-help, servantium-internal (portal) |
 | **[`@servantium/grove`](./packages/grove)** | Astro documentation components (`DocsLayout`, `DocsSidebar`, `DocsSearch`, `TableOfContents`, `DocsAside`, `DocsSteps`, `DocsTabs`, `DocsPagination`, `ReleaseTimeline`). | servantium-website, servantium-help |
 | **[`@servantium/brand`](./packages/brand)** | Logo, Astro the Astronaut, email header art, and `company.json` (legal name, address, public links). SVG masters; PNG/JPG generated. | email; intended for every surface |
-| **[`@servantium/verdant-email`](./packages/verdant-email)** | Email components (`Banner`, `Button`, `DataTable`, `Callout`, `Footer`…) and the Servantium email templates. Renders Outlook/Gmail-safe HTML, plus Jinja and Firebase exports. | portal (Resend), triggers (Jinja export), Firebase |
+| **[`@servantium/verdant-email`](./packages/verdant-email)** | Email components (`Banner`, `Button`, `DataTable`, `Callout`, `Footer`…), the Servantium emails (TSX and MDX), and the email style sheet. Builds Outlook/Gmail-safe HTML and exports it as Postmark templates. | Postmark (templates pushed from here), Firebase (password reset, for now) |
 
 ## Repo layout
 

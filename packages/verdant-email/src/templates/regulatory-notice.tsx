@@ -2,10 +2,13 @@
  * Regulatory notice — a notice we are legally obliged to send. The sample is a sub-processor change
  * under the Data Processing Addendum; the same shape serves policy and terms updates.
  *
- * Formal on purpose: the `notice` tone (slate, not green), a summary table that answers the four
+ * Formal on purpose: the default tone (nothing is wrong; no action is required), no Astro, a summary
+ * table that answers the four
  * questions a legal reader has before reading any prose, and a SECONDARY button — a filled green
  * button on a legal notice reads as a call to action. The footer says why there is no unsubscribe:
- * a required notice isn't marketing and can't be opted out of.
+ * a required notice isn't marketing and can't be opted out of — which is also why it goes out on
+ * Postmark's TRANSACTIONAL stream, one message per admin. Postmark's broadcast stream would add an
+ * unsubscribe link to it automatically.
  *
  * SAMPLE CONTENT: the change described is illustrative. Confirm the facts before sending one.
  */
@@ -24,9 +27,9 @@ type Props = {
 export default defineTemplate<Props>({
   id: 'regulatory-notice',
   name: 'Regulatory notice',
-  tone: 'notice',
-  size: 'standard',
-  sendsVia: 'A sender, to workspace administrators only',
+  tone: 'default',
+  stream: 'transactional',
+  sendsVia: 'Postmark template `regulatory-notice`, to each workspace administrator. Set ReplyTo to a monitored inbox — the body invites objections by reply',
   sample: { adminFirstName: 'Dana', workspaceName: 'Halcyon Bioanalytical Services', effectiveDate: 'October 24, 2026', reference: 'SVC-2026-0917' },
   placeholders: { adminFirstName: '{{ admin_first_name }}', workspaceName: '{{ workspace_name }}', effectiveDate: '{{ effective_date }}', reference: '{{ reference }}' },
   build: (p) => ({
@@ -34,7 +37,7 @@ export default defineTemplate<Props>({
     preheader: 'No action is needed. You may object within 30 days under your Data Processing Addendum.',
     body: (
       <Email>
-        <Banner tone="notice" size="standard" label="Service notice" title="Changes to our sub-processors" />
+        <Banner label="Service notice" title="Changes to our sub-processors" />
         <Body>
           <Text>Hello {p.adminFirstName},</Text>
           <Text margin="0 0 24px">

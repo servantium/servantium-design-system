@@ -24,9 +24,9 @@ type Props = {
 export default defineTemplate<Props>({
   id: 'welcome',
   name: 'Welcome / invitation',
-  tone: 'brand',
-  size: 'hero',
-  sendsVia: 'A sender — Resend in the portal, or the triggers via the Jinja export',
+  tone: 'default',
+  stream: 'transactional',
+  sendsVia: 'Postmark template `welcome`, sent by the triggers when an admin adds a user',
   sample: {
     firstName: 'Jules',
     inviterName: 'Dana Whitfield',
@@ -48,8 +48,7 @@ export default defineTemplate<Props>({
     preheader: `Set your password to get started. Your link expires in ${p.expiresIn}.`,
     body: (
       <Email>
-        <Banner tone="brand" size="hero" label="Welcome" title="Welcome to Servantium."
-          subtitle="The operating system for services teams." astro="waving" />
+        <Banner label="Welcome" title="Welcome to Servantium." subtitle="The operating system for services teams." astro="waving" />
         <Body>
           <Text>Hi {p.firstName},</Text>
           <Text>

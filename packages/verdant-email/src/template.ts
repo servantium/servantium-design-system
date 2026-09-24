@@ -1,24 +1,32 @@
 /**
- * template — the contract every email template meets.
+ * template — the contract every email meets, whether it's written in TSX or MDX.
  *
- * A template is its words and two decisions (banner size, tone). It ships SAMPLE props so it can be
- * previewed, and optionally PLACEHOLDER props — the same shape with `{{ jinja }}` strings in place of
- * values — so the export can write a version engineering's Python services fill in with Jinja, the
- * engine their document templates already use. One source; the portal sends the rendered React,
- * the triggers send the Jinja export.
+ * Product emails (welcome, reset, task, notice) are TSX: their words are fixed and their DATA comes
+ * from the product. Editorial emails (release notes, incidents, marketing) are MDX with frontmatter,
+ * because a person writes each one. Both produce this same shape, so the export, the gallery, the
+ * tests and the Postmark push treat them identically.
  */
 import type { ReactElement } from 'react';
-import type { BannerSize } from './components/Layout';
 import type { Tone } from './theme';
+
+/**
+ * Which Postmark stream sends it.
+ *   transactional — about this person's account or something they did. Must always arrive; never
+ *                   carries an unsubscribe. Welcome, reset, tasks, incidents, required notices.
+ *   broadcast     — optional reading sent to many. Postmark REQUIRES an unsubscribe here and adds
+ *                   one if it's missing. Release notes, newsletters, marketing.
+ */
+export type Stream = 'transactional' | 'broadcast';
 
 export type EmailTemplate<P> = {
   id: string;
   name: string;
   tone: Tone;
-  size: BannerSize;
-  /** Who sends it today, in plain words — the gallery prints this. */
+  stream: Stream;
+  /** Who sends it and how, in plain words — the gallery prints this. */
   sendsVia: string;
   sample: P;
+  /** Same shape as `sample`, with `{{ merge_fields }}` — for the Postmark/Jinja export. */
   placeholders?: P;
   build: (props: P) => { subject: string; preheader: string; body: ReactElement };
 };

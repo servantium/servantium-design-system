@@ -60,6 +60,7 @@ const HEAD_STYLE = `
     .ve-astro-cell{width:96px !important;}
     .ve-hide-sm{display:none !important;}
     .ve-kv-label{width:96px !important;}
+    .ve-label{letter-spacing:1px !important;}
     .ve-btn a{display:block !important;}
   }`;
 

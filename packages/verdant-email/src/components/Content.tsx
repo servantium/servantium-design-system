@@ -3,14 +3,18 @@
  * thing, so a change here changes every email.
  *
  * ── BANNED, and enforced by test/rules.test.tsx ───────────────────────────────────────────────
- *   · A coloured bar down the left of a section (founder, 2026-09-24: "we ban that from emails").
+ *   · A coloured bar down the left of a section (design decision, 2026-09-24).
  *     Callout carries its tone as a full tint instead. No component here accepts a border-left.
  *   · SVG images — Gmail and Outlook drop them.
  *   · flex / grid — Outlook desktop has no idea what they are.
  */
 import type { ReactNode } from 'react';
 import { Raw } from '../render';
-import { color, fonts, tones, type Tone } from '../theme';
+import { color, fonts, neutral, tones, type Tone } from '../theme';
+
+/** A tone, or `neutral` for panels that aren't a warning or good news — a quoted note, a code sample. */
+export type Tint = Tone | 'neutral';
+const tint = (t: Tint) => (t === 'neutral' ? neutral : tones[t]);
 
 const escAttr = (s: string) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 const escText = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -60,7 +64,7 @@ export function Link({ href, children }: { href: string; children: ReactNode }) 
  * The welcome email's button, made the standard. Outlook desktop gets a VML shape (otherwise it
  * draws a bare link); every other client gets a padded link.
  *
- *   primary    the one action the email exists for. #00C26D with white text (founder ruling).
+ *   primary    the one action the email exists for. #00C26D with white text (design decision).
  *   secondary  an outline, for a second action or for notices, where a filled green button reads
  *              as a marketing call to action.
  *
@@ -131,8 +135,8 @@ export function DataTable({ rows, title, variant = 'panel', labelWidth = 128 }: 
  * required. The tone lives in the WHOLE tint and the title colour. There is no left bar: that is
  * banned, and this component offers no way to draw one.
  */
-export function Callout({ tone = 'brand', title, children }: { tone?: Tone; title?: string; children: ReactNode }) {
-  const t = tones[tone];
+export function Callout({ tone = 'default', title, children }: { tone?: Tint; title?: string; children: ReactNode }) {
+  const t = tint(tone);
   return (
     <table role="presentation" width="100%" cellPadding={0} cellSpacing={0} border={0} bgcolor={t.tint}
       style={{ backgroundColor: t.tint, borderRadius: '10px' }}>
@@ -146,8 +150,8 @@ export function Callout({ tone = 'brand', title, children }: { tone?: Tone; titl
 
 // ── Chip ───────────────────────────────────────────────────────────────────────────────────────
 /** A small tinted label — "New", "Improved", "Resolved". */
-export function Chip({ tone = 'brand', children }: { tone?: Tone; children: string }) {
-  const t = tones[tone];
+export function Chip({ tone = 'default', children }: { tone?: Tint; children: string }) {
+  const t = tint(tone);
   return (
     <span style={{ display: 'inline-block', padding: '2px 8px', borderRadius: '999px', backgroundColor: t.tint, color: t.strong,
       fontFamily: fonts.body, fontSize: '11px', lineHeight: '16px', fontWeight: 700, letterSpacing: '0.8px', textTransform: 'uppercase' }}>
@@ -158,7 +162,7 @@ export function Chip({ tone = 'brand', children }: { tone?: Tone; children: stri
 
 // ── Items ──────────────────────────────────────────────────────────────────────────────────────
 /** A run of titled items — "Once you're in", release notes, incident updates. */
-export function Items({ items }: { items: { title: ReactNode; body: ReactNode; chip?: { tone: Tone; label: string }; meta?: ReactNode }[] }) {
+export function Items({ items }: { items: { title: ReactNode; body: ReactNode; chip?: { tone: Tint; label: string }; meta?: ReactNode }[] }) {
   return (
     <table role="presentation" width="100%" cellPadding={0} cellSpacing={0} border={0}>
       <tbody>
@@ -205,4 +209,48 @@ export function LinkFallback({ href }: { href: string }) {
       <a href={href} style={{ color: color.link, textDecoration: 'underline', wordBreak: 'break-all' }}>{href}</a>
     </Text>
   );
+}
+
+// ── Bulleted list ──────────────────────────────────────────────────────────────────────────────
+/**
+ * What a Markdown `-` list becomes. A table, not a <ul>: Outlook desktop indents and spaces <ul>
+ * unpredictably, and Gmail strips list padding. A two-column table draws the same bullets everywhere.
+ */
+export function List({ children }: { children: ReactNode }) {
+  return (
+    <table role="presentation" width="100%" cellPadding={0} cellSpacing={0} border={0} style={{ margin: '0 0 16px' }}>
+      <tbody>{children}</tbody>
+    </table>
+  );
+}
+
+export function ListItem({ children }: { children: ReactNode }) {
+  return (
+    <tr>
+      <td width={20} valign="top" style={{ padding: '0 0 8px', fontFamily: fonts.body, fontSize: '16px', lineHeight: '24px', color: color.link }}>&#8226;</td>
+      <td valign="top" style={{ padding: '0 0 8px', fontFamily: fonts.body, fontSize: '16px', lineHeight: '24px', color: color.ink }}>{children}</td>
+    </tr>
+  );
+}
+
+// ── Code ───────────────────────────────────────────────────────────────────────────────────────
+/** Monospace block. For the style sheet and internal mail — customers rarely need code. */
+export function CodeBlock({ children }: { children: string }) {
+  return (
+    <table role="presentation" width="100%" cellPadding={0} cellSpacing={0} border={0} bgcolor={neutral.tint}
+      style={{ backgroundColor: neutral.tint, borderRadius: '8px', margin: '0 0 16px' }}>
+      <tbody><tr><td style={{ padding: '12px 16px', fontFamily: "Menlo, Consolas, 'Courier New', monospace", fontSize: '12px',
+        lineHeight: '18px', color: color.ink, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{children}</td></tr></tbody>
+    </table>
+  );
+}
+
+// ── Merge fields ───────────────────────────────────────────────────────────────────────────────
+/**
+ * Writes `{{ name }}` into the output untouched, for the sender to fill — for TSX templates. (MDX
+ * authors just type `{{ name }}`; the loader protects it.) Same syntax as Postmark's Mustachio and
+ * Jinja, so one placeholder works with either sender.
+ */
+export function Merge({ name }: { name: string }) {
+  return <>{`{{ ${name} }}`}</>;
 }

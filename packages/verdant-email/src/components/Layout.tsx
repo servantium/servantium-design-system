@@ -1,30 +1,30 @@
 /**
  * Layout — the frame every Servantium email shares: Email → Banner → Body → Footer.
  *
- * ── ONE BANNER FOR EVERY EMAIL (founder, 2026-09-24) ──────────────────────────────────────────
- *   > "I want a consistent email header/banner that we can reuse for any type of email… release
- *   > notes, outages, marketing, etc. I like the dark green best… a bit of flare to it."
+ * ── ONE BANNER (design decision, 2026-09-24) ──────────────────────────────────────────────────
+ * The first cut had three sizes and six tones — eighteen combinations and a taxonomy to learn. Now
+ * there is ONE banner: the forest night sky, the logo, a dot and a label, and a headline. It takes
+ * one of three tones and, sometimes, Astro. Every email has a headline in the banner, so the body
+ * always starts with content rather than with a second title.
  *
- * The banner is the forest night sky in every email: the logo top-left, a dot and a label
- * top-right. What varies is only its SIZE (how often the email is sent) and its TONE (what kind of
- * email it is). Size and tone are the only two decisions a template makes about its header.
- *
- *   compact   notifications and anything frequent — a hero on every task would be noise
- *   standard  one headline; security, notices, one-off transactional mail
- *   hero      headline, tagline and Astro; welcome, release notes, marketing
+ * ── WHEN ASTRO APPEARS ────────────────────────────────────────────────────────────────────────
+ * Astro appears when the email is GOOD NEWS and NOT URGENT: a welcome, a milestone, a product
+ * announcement, marketing. He never appears on:
+ *   · security mail — a reset or sign-in alert is the email most often forged; plain is safer
+ *   · attention or urgent mail — a smiling mascot on an outage reads as not taking it seriously
+ *   · legal, billing or money — formality is the point
+ *   · frequent notifications — novelty on every task becomes noise
+ * The first rule is enforced here in code: `astro` only type-checks with the default tone, and the
+ * component throws if it's forced. The rest is judgement, written down in the style sheet.
  *
  * ── OUTLOOK DESKTOP ───────────────────────────────────────────────────────────────────────────
  * Word's renderer ignores CSS background images, so Outlook desktop shows the banner as flat
- * forest — the `bgcolor` fallback. That is a deliberate floor, not a bug: the text was written to
- * read on flat forest first and on the sky second.
+ * forest — the `bgcolor` fallback. The text is designed to read on flat forest first.
  */
 import type { ReactNode } from 'react';
 import { addressLine, footerLinks, type AstroPose } from '@servantium/brand';
 import { useAsset } from '../render';
 import { color, fonts, tones, type Tone } from '../theme';
-
-const ART_SIZE = { compact: 'header-compact.jpg', standard: 'header-standard.jpg', hero: 'header-hero.jpg' } as const;
-export type BannerSize = keyof typeof ART_SIZE;
 
 // ── Email ──────────────────────────────────────────────────────────────────────────────────────
 /** The 600px column. `width="600"` is for Outlook; the inline width lets everything else flex. */
@@ -38,24 +38,30 @@ export function Email({ children }: { children: ReactNode }) {
 }
 
 // ── Banner ─────────────────────────────────────────────────────────────────────────────────────
-export type BannerProps = {
-  tone?: Tone;
-  size?: BannerSize;
-  /** Top-right label. Defaults to the tone's own label ("Account", "Alert"…). */
-  label?: string;
-  /** Serif headline — standard and hero only. */
-  title?: string;
-  /** One line under the title — hero only. */
+type BannerBase = {
+  /** What kind of email this is, top-right: "Welcome", "Task", "Service alert". */
+  label: string;
+  /** The headline. Every email has one. */
+  title: string;
+  /** One line under the headline. Optional. */
   subtitle?: string;
-  /** Astro, beside the title — hero only. */
-  astro?: AstroPose;
 };
 
-export function Banner({ tone = 'brand', size = 'standard', label, title, subtitle, astro }: BannerProps) {
+/** Astro only type-checks alongside the default tone — see the header. */
+export type BannerProps =
+  | (BannerBase & { tone?: 'default'; astro?: AstroPose })
+  | (BannerBase & { tone: Exclude<Tone, 'default'>; astro?: never });
+
+export function Banner(props: BannerProps) {
+  const { label, title, subtitle } = props;
+  const tone: Tone = props.tone ?? 'default';
+  const astro = props.astro;
+  if (astro && tone !== 'default') {
+    throw new Error(`Astro can't appear on a "${tone}" email. He's for good news only — see the style sheet.`);
+  }
   const { url, art } = useAsset();
   const t = tones[tone];
-  const bg = url(`email/${ART_SIZE[size]}`);
-  const pad = size === 'compact' ? '22px 40px' : size === 'hero' ? '28px 40px 34px' : '28px 40px 32px';
+  const bg = url(astro ? 'email/header-hero.jpg' : 'email/header-standard.jpg');
 
   const topRow = (
     <table role="presentation" width="100%" cellPadding={0} cellSpacing={0} border={0}>
@@ -65,18 +71,21 @@ export function Banner({ tone = 'brand', size = 'standard', label, title, subtit
             style={{ display: 'block', width: '132px', height: '31px', border: '0', outline: 'none',
               fontFamily: fonts.body, fontSize: '20px', fontWeight: 700, color: color.onBanner }} />
         </td>
-        <td valign="middle" align="right" style={{ fontFamily: fonts.body, fontSize: '11px', lineHeight: '16px',
-          fontWeight: 700, letterSpacing: '1.6px', textTransform: 'uppercase', color: t.onBanner, whiteSpace: 'nowrap' }}>
-          <span style={{ color: t.accent, fontSize: '10px' }}>&#9679;</span>&nbsp;&nbsp;{label ?? t.label}
+        {/* Not nowrap: a long label ("Scheduled maintenance") must wrap on a phone rather than push
+            the banner wider than the screen. */}
+        <td className="ve-label" valign="middle" align="right" style={{ paddingLeft: '12px', fontFamily: fonts.body, fontSize: '11px',
+          lineHeight: '16px', fontWeight: 700, letterSpacing: '1.6px', textTransform: 'uppercase', color: t.onBanner }}>
+          <span style={{ color: t.accent, fontSize: '10px' }}>&#9679;</span>&nbsp;&nbsp;{label}
         </td>
       </tr></tbody>
     </table>
   );
 
-  const heading = title && (
-    <h1 className={size === 'hero' ? 've-hero-title' : 've-title'} style={{ margin: size === 'hero' ? '30px 0 0' : '26px 0 0',
-      fontFamily: fonts.display, fontSize: size === 'hero' ? '34px' : '30px', lineHeight: size === 'hero' ? '42px' : '38px',
-      fontWeight: 600, color: color.onBanner }}>{title}</h1>
+  const heading = (
+    <h1 className={astro ? 've-hero-title' : 've-title'} style={{ margin: '26px 0 0', fontFamily: fonts.display,
+      fontSize: astro ? '34px' : '30px', lineHeight: astro ? '42px' : '38px', fontWeight: 600, color: color.onBanner }}>
+      {title}
+    </h1>
   );
   const sub = subtitle && (
     <p style={{ margin: '10px 0 0', fontFamily: fonts.body, fontSize: '16px', lineHeight: '24px', color: color.onBannerMuted }}>
@@ -84,34 +93,28 @@ export function Banner({ tone = 'brand', size = 'standard', label, title, subtit
     </p>
   );
 
-  const content = size === 'hero' && astro ? (
-    <>
-      {topRow}
-      <table role="presentation" width="100%" cellPadding={0} cellSpacing={0} border={0}>
-        <tbody><tr>
-          <td valign="bottom">{heading}{sub}</td>
-          <td className="ve-astro-cell" width={132} valign="bottom" align="right" style={{ paddingTop: '18px' }}>
-            <img className="ve-astro" src={url(`astro/astro-${astro}.png`)} width={120} height={120} alt=""
-              style={{ display: 'block', width: '120px', height: '120px', border: '0' }} />
-          </td>
-        </tr></tbody>
-      </table>
-    </>
-  ) : (
-    <>{topRow}{size !== 'compact' && heading}{size !== 'compact' && sub}</>
-  );
-
   return (
     <>
       <tr>
         <td className="ve-px" bgcolor={color.banner} {...(art ? { background: bg } : {})}
-          style={{ padding: pad, backgroundColor: color.banner, borderRadius: '14px 14px 0 0',
+          style={{ padding: '28px 40px 32px', backgroundColor: color.banner, borderRadius: '14px 14px 0 0',
             ...(art ? { backgroundImage: `url(${bg})`, backgroundPosition: 'right top', backgroundSize: 'cover', backgroundRepeat: 'no-repeat' } : {}) }}>
-          {content}
+          {topRow}
+          {astro ? (
+            <table role="presentation" width="100%" cellPadding={0} cellSpacing={0} border={0}>
+              <tbody><tr>
+                <td valign="bottom">{heading}{sub}</td>
+                <td className="ve-astro-cell" width={132} valign="bottom" align="right" style={{ paddingTop: '18px' }}>
+                  <img className="ve-astro" src={url(`astro/astro-${astro}.png`)} width={120} height={120} alt=""
+                    style={{ display: 'block', width: '120px', height: '120px', border: '0' }} />
+                </td>
+              </tr></tbody>
+            </table>
+          ) : (<>{heading}{sub}</>)}
         </td>
       </tr>
-      {/* THE TONE RULE — the only place the type colour runs full width. A table row, so it
-          survives Outlook, image blocking and forced dark mode alike. */}
+      {/* THE TONE RULE — the only place the tone runs full width. A table row, so it survives
+          Outlook, image blocking and forced dark mode alike. */}
       <tr>
         <td height={4} bgcolor={t.accent} style={{ height: '4px', lineHeight: '4px', fontSize: '0', backgroundColor: t.accent }}>&nbsp;</td>
       </tr>

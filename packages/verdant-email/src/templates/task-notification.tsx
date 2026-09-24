@@ -1,11 +1,12 @@
 /**
- * Task notification — the workhorse, so it is compact: the slim banner, the task as a data table,
- * the assigner's note, one action. Sample data is the Halcyon demo org's own task #3; assignee,
+ * Task notification — the workhorse: the headline says who assigned what, the engagement sits under
+ * it, and the body is the task as a data table, the assigner's note and one action. No Astro — it's
+ * sent often, and novelty on every task becomes noise. Sample data is the Halcyon demo org's own task #3; assignee,
  * dates, predecessor and note all match the seed, so the email and the demo tell one story.
  */
 import { company } from '@servantium/brand';
 import { Banner, Body, Email, Footer } from '../components/Layout';
-import { Button, Callout, DataTable, Eyebrow, Heading, Link, Spacer, Text } from '../components/Content';
+import { Button, Callout, DataTable, Link, Spacer, Text } from '../components/Content';
 import { defineTemplate } from '../template';
 
 type Props = {
@@ -26,9 +27,9 @@ type Props = {
 export default defineTemplate<Props>({
   id: 'task-notification',
   name: 'Task notification',
-  tone: 'activity',
-  size: 'compact',
-  sendsVia: 'A sender, triggered when a project_plan_items assignee changes',
+  tone: 'default',
+  stream: 'transactional',
+  sendsVia: 'Postmark template `task-notification`, when a task is assigned',
   sample: {
     assignerName: 'Jules Hart',
     assignerRole: 'Senior Project Manager',
@@ -54,10 +55,8 @@ export default defineTemplate<Props>({
     preheader: `Due ${p.due} · ${p.engagement}`,
     body: (
       <Email>
-        <Banner tone="activity" size="compact" label="Task" />
+        <Banner label="Task" title={`${p.assignerName} assigned you a task`} subtitle={p.engagement} />
         <Body>
-          <Eyebrow>{p.engagement}</Eyebrow>
-          <Heading level={1} margin="0 0 22px">{p.assignerName} assigned you a task</Heading>
           <DataTable title={p.taskName} labelWidth={112} rows={[
             ['Due', <b>{p.due}</b>],
             ['Starts', p.starts],
@@ -66,7 +65,7 @@ export default defineTemplate<Props>({
             ['Waiting on', p.waitingOn],
           ]} />
           <Spacer size={16} />
-          <Callout tone="notice" title={`${p.assignerName} wrote`}>
+          <Callout tone="neutral" title={`${p.assignerName} wrote`}>
             &ldquo;{p.note}&rdquo;
           </Callout>
           <Spacer size={28} />

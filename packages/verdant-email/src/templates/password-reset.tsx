@@ -21,9 +21,9 @@ export const firebasePlaceholders: Props = { email: '%EMAIL%', resetUrl: '%LINK%
 export default defineTemplate<Props>({
   id: 'password-reset',
   name: 'Password reset',
-  tone: 'brand',
-  size: 'standard',
-  sendsVia: 'Firebase — paste firebase/password-reset.html into Authentication → Templates',
+  tone: 'default',
+  stream: 'transactional',
+  sendsVia: 'Firebase today (paste firebase/password-reset.html). Better: Postmark template `password-reset` — see README',
   sample: {
     email: 'jules.hart@halcyon.example',
     resetUrl: `${company.urls.app}/__/auth/action?mode=resetPassword&oobCode=Rt5nW2qZc8LmK3vP9xYh`,
@@ -34,14 +34,14 @@ export default defineTemplate<Props>({
     preheader: "This link expires in 1 hour. If you didn't ask for it, you can ignore this email.",
     body: (
       <Email>
-        <Banner tone="brand" size="standard" label="Security" title="Reset your password." />
+        <Banner label="Security" title="Reset your password." />
         <Body>
           <Text>Hello,</Text>
           <Text margin="0 0 24px">We received a request to reset the password for the Servantium account <b>{p.email}</b>.</Text>
           <Button href={p.resetUrl} width={250}>Choose a new password</Button>
           <Spacer size={12} />
           <Text size="xs" muted margin="0 0 28px">For your security, this link expires in 1 hour and works once.</Text>
-          <Callout tone="brand" title="Didn't request this?">
+          <Callout title="Didn't request this?">
             You can safely ignore this email. Your password won't change unless you use the link above. If you keep
             receiving these, contact your workspace administrator.
           </Callout>

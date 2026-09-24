@@ -107,12 +107,12 @@ function sky({ w, h, seed, count, orbit }) {
 </svg>`;
 }
 
-// Three sizes, each drawn for its own aspect so a short band is never a cropped tall one.
-// Dimensions are 2× the email slot (600px wide).
+// Two drawings of the one banner: `standard`, and `hero`, which is taller and adds Astro's orbit
+// rings. Dimensions are 2× the email slot (600px wide). (A `compact` size existed until the
+// banner was simplified to one, 2026-09-24.)
 const HEADERS = {
   hero: { w: 1200, h: 480, seed: 417, count: 110, orbit: true },
   standard: { w: 1200, h: 360, seed: 1488, count: 90, orbit: false },
-  compact: { w: 1200, h: 168, seed: 27, count: 46, orbit: false },
 };
 
 const browser = await chromium.launch();
@@ -135,4 +135,4 @@ for (const file of readdirSync(ASTRO).filter((f) => f.endsWith('.svg'))) {
 }
 
 await browser.close();
-console.log('rendered: header-{hero,standard,compact}.{svg,jpg}, astro-*.png');
+console.log('rendered: header-{hero,standard}.{svg,jpg}, astro-*.png');
