@@ -1,0 +1,41 @@
+{
+  "$comment": "THE single source for company facts that appear in emails, site footers and documents. Change a value here, release the design system, and every consumer picks it up. Every URL below was checked to return 200 on 2026-09-24; add nothing that has not been checked.",
+  "legalName": "Servantium Inc.",
+  "address": {
+    "line1": "1111B S Governors Ave STE 48074",
+    "city": "Dover",
+    "region": "DE",
+    "postalCode": "19904",
+    "country": "US"
+  },
+  "urls": {
+    "website": "https://servantium.com",
+    "app": "https://app.servantium.com",
+    "help": "https://help.servantium.com",
+    "privacy": "https://servantium.com/privacy",
+    "terms": "https://servantium.com/terms",
+    "trust": "https://trust.servantium.com",
+    "releaseNotes": "https://help.servantium.com/release-notes"
+  },
+  "email": {
+    "noreply": "noreply@servantium.com"
+  },
+  "footerLinks": [
+    {
+      "label": "Help Center",
+      "url": "help"
+    },
+    {
+      "label": "Trust Center",
+      "url": "trust"
+    },
+    {
+      "label": "Privacy",
+      "url": "privacy"
+    },
+    {
+      "label": "Terms",
+      "url": "terms"
+    }
+  ]
+}

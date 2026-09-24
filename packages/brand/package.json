@@ -1,0 +1,16 @@
+{
+  "name": "@servantium/brand",
+  "version": "0.1.0",
+  "description": "Servantium brand assets (logo, Astro the Astronaut, email header art) and company facts, from one source.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./company.json": "./company.json",
+    "./assets/*": "./assets/*"
+  },
+  "files": ["src", "assets", "company.json", "scripts", "README.md"],
+  "scripts": {
+    "render": "node scripts/render.mjs"
+  },
+  "license": "UNLICENSED"
+}

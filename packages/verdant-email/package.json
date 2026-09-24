@@ -1,0 +1,32 @@
+{
+  "name": "@servantium/verdant-email",
+  "version": "0.1.0",
+  "description": "Verdant for email: components that assemble Outlook- and Gmail-safe HTML email, plus the templates built from them.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./templates/*": "./src/templates/*.tsx"
+  },
+  "files": [
+    "src",
+    "scripts",
+    "README.md"
+  ],
+  "scripts": {
+    "tokens": "node scripts/sync-tokens.mjs",
+    "build": "node scripts/sync-tokens.mjs && tsx scripts/export.tsx",
+    "test": "tsx --test test/*.test.tsx"
+  },
+  "dependencies": {
+    "@servantium/brand": "*",
+    "react": "^18.3.0 || ^19.0.0",
+    "react-dom": "^18.3.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.4",
+    "@types/react": "^18.3.0 || ^19.0.0",
+    "@types/react-dom": "^18.3.0 || ^19.0.0",
+    "tsx": "^4.19.0"
+  },
+  "license": "UNLICENSED"
+}
