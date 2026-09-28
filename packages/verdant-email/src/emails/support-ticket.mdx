@@ -1,0 +1,35 @@
+---
+name: Support ticket
+sends: "Postmark template `support-ticket`, transactional, Reply-To help@servantium.com. Sent by whatever handles help@ requests — when a request arrives, when we reply, when it's resolved. The ticket id in the subject keeps replies in one thread."
+subject: "[{{ ticket_id }}] {{ ticket_subject }}"
+preheader: "{{ headline }}"
+label: Support
+title: "{{ headline }}"
+subtitle: "{{ ticket_id }} · {{ status }}"
+stream: transactional
+footer:
+  reason: You're receiving this because you asked Servantium for help.
+fields:
+  first_name: { example: Dana }
+  headline: { example: We've replied to your request, note: "We got your request · We've replied to your request · Your request is resolved" }
+  ticket_id: { example: "#1042", note: Our reference }
+  ticket_subject: { example: Quote total doesn't match my spreadsheet, note: The request's subject as they wrote it }
+  status: { example: Waiting on you, note: "Received · In progress · Waiting on you · Resolved" }
+  message: { example: "Thanks for the screenshots. Totals were rounding each line before summing — we've fixed that for your workspace, and the Aurora quote now shows $184,500. Could you confirm it matches your spreadsheet?", optional: true, note: "Our latest reply. Leave it out for the “we got your request” email." }
+---
+Hi {{ first_name }},
+
+<If field="message">
+  <Callout tone="neutral">{{ . }}</Callout>
+  <Spacer size={20} />
+</If>
+
+<DataTable variant="outline" labelWidth={112} rows={[
+  ["Request", "{{ ticket_subject }}"],
+  ["Reference", "{{ ticket_id }}"],
+  ["Status", <b>{"{{ status }}"}</b>],
+]} />
+
+<Spacer size={20} />
+
+**Reply to this email** to add anything. It goes straight to the people working on your request.

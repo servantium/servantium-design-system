@@ -10,13 +10,13 @@ export { renderEmail, toFirebaseFragment, useAsset, type AssetOptions } from './
 export { Email, Banner, Body, Footer, type BannerProps, type FooterProps } from './components/Layout';
 export {
   Heading, Text, Eyebrow, Link, Button, DataTable, Callout, Chip, Items, Spacer, Divider, LinkFallback,
-  List, ListItem, CodeBlock, Merge, type Tint,
+  List, ListItem, CodeBlock, Merge, Updates, type Tint,
 } from './components/Content';
 export { color, fonts, tones, neutral, type Tone } from './theme';
 export { type Stream } from './template';
 export {
   loadMdxEmail, mdxBody, validate, splitFrontmatter, protectMergeFields, fillPreview, mdxComponents,
-  checkFields, checkSections, usedFields, examples, If, Editable,
-  FrontmatterError, POSTMARK_UNSUBSCRIBE, type Frontmatter, type Field, type MdxEmail,
+  checkContract, compileMdxEmail, isList, examples, If, Editable,
+  FrontmatterError, POSTMARK_UNSUBSCRIBE, type Frontmatter, type Field, type Item, type Values, type MdxEmail,
 } from './mdx';
 export { htmlToText } from './text';

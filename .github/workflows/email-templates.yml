@@ -4,15 +4,18 @@
 # Postmark in step, on the same rhythm engineering's backend already uses:
 #
 #   pull request   build + 33 checks; the rendered gallery is attached to the run for review
-#   merge to main  push every template to the Postmark QA server (used by servantium-qa)
-#   tag email-v*   push every template to the Postmark production server (used by servantium-565c0)
+#   merge to main  sync email images to R2, push every template to the Postmark QA server
+#   tag email-v*   sync email images to R2, push every template to the Postmark production server
+#
+# Images live at https://assets.servantium.com/brand/… (R2 bucket `servantium-assets`). URLs are
+# stable, so replacing an image updates every email, including ones already sent.
 #
 # Postmark is a deployment target, never an editor: anything changed in Postmark's own UI is
 # overwritten on the next push. Templates removed here are NOT deleted from Postmark — remove
 # those by hand.
 #
-# Needs repository secrets POSTMARK_SERVER_TOKEN_QA and POSTMARK_SERVER_TOKEN_PRODUCTION, and the
-# email images hosted at ASSET_BASE. NOT YET RUN — nothing here has executed against Postmark.
+# Secrets: POSTMARK_SERVER_TOKEN_QA, POSTMARK_SERVER_TOKEN_PRODUCTION, CLOUDFLARE_API_TOKEN (R2 write
+# on the one bucket), CLOUDFLARE_ACCOUNT_ID. NOT YET RUN — nothing here has executed.
 
 name: Email templates
 
@@ -56,6 +59,15 @@ jobs:
         with: { sparse-checkout: packages/verdant-email/scripts, path: repo }
       - uses: actions/setup-node@v4
         with: { node-version: '22' }
+      - name: Sync email images to R2
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          cd dist/assets
+          for f in $(find logo astro email -type f); do
+            npx --yes wrangler r2 object put "servantium-assets/brand/$f" --file "$f" --remote --cache-control "public, max-age=86400"
+          done
       - run: cp -r dist repo/packages/verdant-email/dist && node repo/packages/verdant-email/scripts/postmark-validate.mjs
       - run: npx --yes postmark-cli templates push dist/postmark --force --all
 
@@ -73,5 +85,14 @@ jobs:
         with: { sparse-checkout: packages/verdant-email/scripts, path: repo }
       - uses: actions/setup-node@v4
         with: { node-version: '22' }
+      - name: Sync email images to R2
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          cd dist/assets
+          for f in $(find logo astro email -type f); do
+            npx --yes wrangler r2 object put "servantium-assets/brand/$f" --file "$f" --remote --cache-control "public, max-age=86400"
+          done
       - run: cp -r dist repo/packages/verdant-email/dist && node repo/packages/verdant-email/scripts/postmark-validate.mjs
       - run: npx --yes postmark-cli templates push dist/postmark --force --all

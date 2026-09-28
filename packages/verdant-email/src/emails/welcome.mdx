@@ -1,12 +1,11 @@
 ---
-name: Welcome / invitation
-sends: "Postmark template `welcome`, transactional. The backend sends it when an admin adds a user — it is also the invitation, because the new account has no password until they set one."
+name: Welcome — joining a workspace
+sends: "Postmark template `welcome`, transactional. Sent when someone adds a person to an existing workspace. It is also the invitation: the new account has no password until they set one."
 subject: "{{ inviter_name }} added you to {{ workspace_name }} on Servantium"
 preheader: "Set your password to get started. Your link expires in {{ expires_in }}."
 label: Welcome
 title: Welcome to Servantium.
-subtitle: The operating system for services teams.
-astro: waving
+subtitle: "{{ inviter_name }} added you to {{ workspace_name }}"
 stream: transactional
 footer:
   reason: "You received this because {{ inviter_name }} added you to {{ workspace_name }}. Not expecting it? You can ignore this email. Nothing happens until you set a password."

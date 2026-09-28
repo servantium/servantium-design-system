@@ -64,7 +64,8 @@ export function Link({ href, children }: { href: string; children: ReactNode }) 
  * The welcome email's button, made the standard. Outlook desktop gets a VML shape (otherwise it
  * draws a bare link); every other client gets a padded link.
  *
- *   primary    the one action the email exists for. #00C26D with white text (design decision).
+ *   primary    the one action the email exists for. Servantium green with deep-forest text, which
+ *              passes WCAG AA; white text on this green does not.
  *   secondary  an outline, for a second action or for notices, where a filled green button reads
  *              as a marketing call to action.
  *
@@ -75,7 +76,7 @@ export function Button({ href, children, variant = 'primary', width = 220 }: {
 }) {
   const primary = variant === 'primary';
   const fill = primary ? color.brand : color.surface;
-  const fg = primary ? '#FFFFFF' : color.banner;
+  const fg = color.banner; // deep forest on green is ~5:1 — white on green was 2.3:1 and failed AA
   const border = primary ? color.brand : color.banner;
   const stroke = primary ? 'stroke="f"' : `strokecolor="${border}" strokeweight="1.5px"`;
   const h = escAttr(href);
@@ -96,8 +97,10 @@ export function Button({ href, children, variant = 'primary', width = 220 }: {
  * hairlines between rows. `panel` sits on a grey card (details in the flow of a message); `outline`
  * is a white card with a border (a record a reader will refer back to, like a legal summary).
  */
-export function DataTable({ rows, title, variant = 'panel', labelWidth = 128 }: {
-  rows: [label: string, value: ReactNode][]; title?: ReactNode; variant?: 'panel' | 'outline'; labelWidth?: number;
+export function DataTable({ rows = [], title, variant = 'panel', labelWidth = 128, each }: {
+  rows?: [label: string, value: ReactNode][]; title?: ReactNode; variant?: 'panel' | 'outline'; labelWidth?: number;
+  /** A list field whose items ({ label, value }) become extra rows — Postmark repeats them. */
+  each?: string;
 }) {
   const bg = variant === 'panel' ? color.panel : color.surface;
   return (
@@ -118,10 +121,20 @@ export function DataTable({ rows, title, variant = 'panel', labelWidth = 128 }: 
                   <td className="ve-kv-label" width={labelWidth} valign="top" style={{ ...top, padding: '10px 12px 10px 0',
                     fontFamily: fonts.body, fontSize: '13px', lineHeight: '20px', color: color.inkMuted }}>{label}</td>
                   <td valign="top" style={{ ...top, padding: '10px 0', fontFamily: fonts.body, fontSize: '15px',
-                    lineHeight: '22px', color: color.ink }}>{value}</td>
+                    lineHeight: '22px', color: color.ink, wordBreak: 'break-word', overflowWrap: 'anywhere' }}>{value}</td>
                 </tr>
               );
             })}
+            {each && <>
+              {`{{#each ${each}}}`}
+              <tr>
+                <td className="ve-kv-label" width={labelWidth} valign="top" style={{ borderTop: rows.length ? `1px solid ${color.rule}` : '0', padding: '10px 12px 10px 0',
+                  fontFamily: fonts.body, fontSize: '13px', lineHeight: '20px', color: color.inkMuted }}>{'{{ label }}'}</td>
+                <td valign="top" style={{ borderTop: rows.length ? `1px solid ${color.rule}` : '0', padding: '10px 0', fontFamily: fonts.body, fontSize: '15px',
+                  lineHeight: '22px', color: color.ink, wordBreak: 'break-word', overflowWrap: 'anywhere' }}>{'{{ value }}'}</td>
+              </tr>
+              {'{{/each}}'}
+            </>}
           </tbody>
         </table>
       </td></tr></tbody>
@@ -253,4 +266,32 @@ export function CodeBlock({ children }: { children: string }) {
  */
 export function Merge({ name }: { name: string }) {
   return <>{`{{ ${name} }}`}</>;
+}
+
+// ── Updates ────────────────────────────────────────────────────────────────────────────────────
+/**
+ * A list the SENDER fills: one row per item, repeated by Postmark. Each item has a category (shown
+ * as a chip), a time, a title that links to `url`, and a line of context. Used by the digest.
+ */
+export function Updates({ field }: { field: string }) {
+  const p = (extra: object) => ({ margin: 0, fontFamily: fonts.body, ...extra });
+  return (
+    <table role="presentation" width="100%" cellPadding={0} cellSpacing={0} border={0}>
+      <tbody>
+        {`{{#each ${field}}}`}
+        <tr>
+          <td style={{ padding: '14px 0', borderBottom: `1px solid ${color.rule}` }}>
+            <p style={p({ fontSize: '13px', lineHeight: '18px', color: color.inkMuted, marginBottom: '6px' })}>
+              <Chip tone="neutral">{'{{ category }}'}</Chip>&nbsp;&nbsp;{'{{ time }}'}
+            </p>
+            <p style={p({ fontSize: '16px', lineHeight: '24px', fontWeight: 700, marginBottom: '2px' })}>
+              <a href="{{ url }}" style={{ color: color.ink, textDecoration: 'underline', textDecorationColor: color.rule }}>{'{{ title }}'}</a>
+            </p>
+            <p style={p({ fontSize: '14px', lineHeight: '21px', color: color.inkMuted })}>{'{{ context }}'}</p>
+          </td>
+        </tr>
+        {'{{/each}}'}
+      </tbody>
+    </table>
+  );
 }

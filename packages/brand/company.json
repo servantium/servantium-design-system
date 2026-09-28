@@ -18,6 +18,8 @@
     "releaseNotes": "https://help.servantium.com/release-notes/"
   },
   "email": {
+    "from": "notifications@servantium.com",
+    "help": "help@servantium.com",
     "noreply": "noreply@servantium.com"
   },
   "footerLinks": [

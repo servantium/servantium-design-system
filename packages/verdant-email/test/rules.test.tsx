@@ -12,7 +12,7 @@ import { addressLine, footerLinks } from '@servantium/brand';
 import { renderEmail } from '../src/render';
 import { Banner, Email, type BannerProps } from '../src/components/Layout';
 import { Card } from '../scripts/card';
-import { checkSections, FrontmatterError, fillPreview, loadMdxEmail, mdxBody, protectMergeFields } from '../src/mdx';
+import { compileMdxEmail, FrontmatterError, fillPreview, loadMdxEmail, mdxBody, protectMergeFields } from '../src/mdx';
 import { htmlToText } from '../src/text';
 import { SAMPLES } from '../src/stylesheet';
 import { color, neutral, tones } from '../src/theme';
@@ -209,10 +209,9 @@ test('every tone passes AA on the banner and in its callout, and its rule is vis
   aa(neutral.strong, neutral.tint, 'neutral callout title');
 });
 
-test('KNOWN: the primary button is below AA — a design decision, recorded not hidden', () => {
-  // White on #00C26D is ~2.3:1. The decision is "#00C26D with white text"; this test exists so the
-  // number is on record and the day someone changes the button, this fails and says why.
-  assert.ok(ratio('#FFFFFF', color.brand) < 3, 'the button changed — update this test and the README');
+test('button labels pass AA on both button styles', () => {
+  aa(color.banner, color.brand, 'primary button label');
+  aa(color.banner, color.surface, 'secondary button label');
 });
 
 // ── Firebase ────────────────────────────────────────────────────────────────────────────────────
@@ -228,28 +227,32 @@ test('the Firebase export is a body fragment with Firebase placeholders', async 
 
 // ── The contract with engineering ───────────────────────────────────────────────────────────────
 test('every master declares exactly the fields it uses', async () => {
-  // collect() already threw if not; this pins the failure modes.
+  // collect() already threw if a master broke this; these pin the failure modes.
   const body = 'Hi {{ first_name }}.';
   const base = 'subject: s\npreheader: p\nlabel: l\ntitle: t\nstream: transactional\nfooter:\n  reason: r';
-  await assert.rejects(loadMdxEmail(`---\n${base}\n---\n${body}`), /uses `\{\{ first_name \}\}` but doesn't declare it/);
-  await assert.rejects(loadMdxEmail(`---\n${base}\nfields:\n  first_name: Jules\n  spare: x\n---\n${body}`), /declares `spare`/);
-  await assert.doesNotReject(loadMdxEmail(`---\n${base}\nfields:\n  first_name: Jules\n---\n${body}`));
+  await assert.rejects(compileMdxEmail(`---\n${base}\n---\n${body}`), /uses `\{\{ first_name \}\}` but doesn't declare it/);
+  await assert.rejects(compileMdxEmail(`---\n${base}\nfields:\n  first_name: Jules\n  spare: x\n---\n${body}`), /declares `spare`/);
+  await assert.doesNotReject(compileMdxEmail(`---\n${base}\nfields:\n  first_name: Jules\n---\n${body}`));
 });
 
 test('every field has an example, so every email can be previewed and tested', () => {
-  for (const e of emails) for (const [k, f] of Object.entries(e.fields)) assert.ok(f.example.trim(), `${e.id}: ${k} has no example`);
+  for (const e of emails) for (const [k, f] of Object.entries(e.fields)) assert.ok(Array.isArray(f.example) ? f.example.length : f.example.trim(), `${e.id}: ${k} has no example`);
 });
 
-test('a section may only print its own value (Postmark scopes sections)', () => {
-  assert.throws(() => checkSections('{{#note}}{{ assigner_name }}{{/note}}'), /inside the `note` section/);
-  assert.doesNotThrow(() => checkSections('{{#note}}“{{ . }}”{{/note}}'));
+test('sections and lists follow Postmark scoping', async () => {
+  const fm = (fields: string, body: string) =>
+    `---\nsubject: s\npreheader: p\nlabel: l\ntitle: t\nstream: transactional\nfooter:\n  reason: r\nfields:\n${fields}\n---\n${body}`;
+  await assert.rejects(compileMdxEmail(fm('  note: { example: n, optional: true }\n  who: w', '<If field="note">{{ who }}</If>')), /inside the `note` section/);
+  await assert.doesNotReject(compileMdxEmail(fm('  note: { example: n, optional: true }', '<If field="note">“{{ . }}”</If>')));
+  await assert.rejects(compileMdxEmail(fm('  items: { example: [{ category: a, time: b, url: c, title: d }] }', '<Updates field="items" />')), /context/);
+  await assert.doesNotReject(compileMdxEmail(fm('  items: { example: [{ category: a, time: b, url: c, title: d, context: e }] }', '<Updates field="items" />')));
 });
 
 test('optional content disappears cleanly when its field is missing', () => {
-  const task = emails.find((e) => e.id === 'task-notification')!;
-  const without = fillPreview(task.sent.html, { ...task.model, note: '' });
-  assert.doesNotMatch(without, /Their note/, 'the note panel should vanish without a note');
-  assert.match(fillPreview(task.sent.html, task.model), /Their note/);
+  const task = emails.find((e) => e.id === 'task')!;
+  const without = fillPreview(task.sent.html, { ...task.model, message: '' });
+  assert.doesNotMatch(without, /What they wrote/, "the note panel should vanish without a message");
+  assert.match(fillPreview(task.sent.html, task.model), /What they wrote/);
 });
 
 test('an Editable block shows the default unless the sender overrides it', async () => {

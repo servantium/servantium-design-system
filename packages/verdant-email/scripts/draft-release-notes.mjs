@@ -36,7 +36,7 @@ if (!from || !/^\d{4}-\d{2}$/.test(month ?? '')) {
   process.exit(1);
 }
 const picks = (arg('pick') ?? '').split(',').map((s) => s.trim()).filter(Boolean);
-const out = arg('out') ?? join(HERE, `../src/emails/release-notes-${month}.mdx`);
+const out = arg('out') ?? join(HERE, '../src/emails/release-notes.mdx');
 
 const monthName = new Date(`${month}-01T00:00:00Z`).toLocaleString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
 
@@ -72,13 +72,13 @@ const more = rest.length + fixes.length;
 // ── Write the draft ─────────────────────────────────────────────────────────────────────────────
 const js = (s) => JSON.stringify(s);
 const mdx = `---
-sends: "Postmark template \`release-notes-${month}\`, broadcast stream. A monthly job sends it to active users in batches of 500; Postmark skips anyone who has unsubscribed."
+name: Release notes
+sends: "Postmark template \`release-notes\`, broadcast stream. Rewritten each month from the help site’s release notes, then sent to active users in batches of 500. Postmark skips anyone who has unsubscribed."
 subject: ${js(`What's new in Servantium — ${monthName}`)}
 preheader: ${js(`${chosen.slice(0, 2).map((c) => c.title).join(', ')}, and ${more} more improvements.`)}
 label: Release notes
 title: What's new in Servantium
 subtitle: ${js(monthName)}
-astro: professor
 stream: broadcast
 footer:
   reason: You're receiving product updates because you're a Servantium user.

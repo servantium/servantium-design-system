@@ -38,8 +38,9 @@ import { ASTRO_POSES, company, type AstroPose } from '@servantium/brand';
 import { Banner, Body, Email, Footer } from './components/Layout';
 import {
   Button, Callout, Chip, CodeBlock, DataTable, Divider, Eyebrow, Heading, Items, Link, LinkFallback,
-  List, ListItem, Spacer, Text,
+  List, ListItem, Spacer, Text, Updates,
 } from './components/Content';
+import { renderEmail, type AssetOptions } from './render';
 import { tones, type Tone } from './theme';
 import type { Stream } from './template';
 
@@ -66,7 +67,11 @@ export type Frontmatter = {
   fields: Record<string, Field>;
 };
 
-export type Field = { example: string; note?: string; optional?: boolean };
+/** A field is text, or a list of items (each item a map of text fields) that the email repeats. */
+export type Item = Record<string, string>;
+export type Field = { example: string | Item[]; note?: string; optional?: boolean };
+export const isList = (f: Field): f is Field & { example: Item[] } => Array.isArray(f.example);
+const itemKeys = (f: Field) => [...new Set((f.example as Item[]).flatMap((i) => Object.keys(i)))];
 
 const TONES = Object.keys(tones) as Tone[];
 
@@ -99,7 +104,11 @@ export function validate(raw: unknown, where = 'email'): Frontmatter {
     if (typeof v === 'string' || typeof v === 'number') fields[name] = { example: String(v) };
     else if (v && typeof v === 'object' && 'example' in v) {
       const o = v as Record<string, unknown>;
-      fields[name] = { example: String(o.example), note: o.note as string | undefined, optional: o.optional === true };
+      const ex = Array.isArray(o.example)
+        ? (o.example as Record<string, unknown>[]).map((i) => Object.fromEntries(Object.entries(i).map(([k, x]) => [k, String(x)])))
+        : String(o.example);
+      if (Array.isArray(ex) && !ex.length) problems.push(`list field \`${name}\` needs at least one example item`);
+      fields[name] = { example: ex, note: o.note as string | undefined, optional: o.optional === true };
     } else problems.push(`field \`${name}\` needs an example`);
   }
   if (problems.length) throw new FrontmatterError(`${where}:\n  · ${problems.join('\n  · ')}`);
@@ -120,37 +129,47 @@ export function validate(raw: unknown, where = 'email'): Frontmatter {
   };
 }
 
-/** Every field an email uses: `{{ name }}` anywhere, plus <If field> and <Editable field>. */
-export function usedFields(fm: Frontmatter, body: string): Set<string> {
-  const text = [fm.subject, fm.preheader, fm.label, fm.title, fm.subtitle ?? '', fm.footer.reason, fm.footer.settings ?? '', body].join('\n');
-  const used = new Set<string>();
-  for (const m of text.matchAll(/\{\{\s*([\w]+)\s*\}\}/g)) used.add(m[1]);
-  for (const m of body.matchAll(/<(?:If|Editable)\s+field="([\w]+)"/g)) used.add(m[1]);
-  return used;
-}
-
-/** The contract check: declared fields and used fields must match exactly. */
-export function checkFields(fm: Frontmatter, body: string, where = 'email') {
-  const used = usedFields(fm, body);
-  const declared = new Set(Object.keys(fm.fields));
-  const problems = [
-    ...[...used].filter((f) => !declared.has(f)).map((f) => `uses \`{{ ${f} }}\` but doesn't declare it under \`fields\``),
-    ...[...declared].filter((f) => !used.has(f)).map((f) => `declares \`${f}\` under \`fields\` but never uses it`),
-  ];
-  if (problems.length) throw new FrontmatterError(`${where}:\n  · ${problems.join('\n  · ')}`);
-}
-
 /**
- * Postmark sections change scope: inside {{#note}}…{{/note}} only {{ . }} (the note itself) is
- * visible; anything else needs `../`, which standard Mustache doesn't understand. So inside a
- * section, the only field allowed is the section's own — checked on the compiled HTML.
+ * The contract check, run on the COMPILED email (subject, preheader, banner, body and footer are all
+ * in it). Postmark scopes sections and loops, so the rules follow Postmark:
+ *   · outside any section, every {{ field }} must be a declared text field;
+ *   · inside {{#each list}}, only that list's item fields;
+ *   · inside {{#field}} or {{^field}} (from <If> and <Editable>), only {{ . }};
+ *   · every declared field must be used somewhere.
  */
-export function checkSections(html: string, where = 'email') {
-  const bad: string[] = [];
-  for (const m of html.matchAll(/\{\{([#^])(\w+)\}\}([\s\S]*?)\{\{\/\2\}\}/g)) {
-    for (const f of m[3].matchAll(/\{\{\s*([\w.]+)\s*\}\}/g)) if (f[1] !== '.') bad.push(`\`{{ ${f[1]} }}\` inside the \`${m[2]}\` section — only the section's own value ({{ . }}) is allowed there`);
+export function checkContract(fm: Frontmatter, html: string, where = 'email') {
+  const problems: string[] = [];
+  const used = new Set<string>();
+  let rest = html;
+
+  rest = rest.replace(/\{\{#each (\w+)\}\}([\s\S]*?)\{\{\/each\}\}/g, (_, name: string, inner: string) => {
+    used.add(name);
+    const f = fm.fields[name];
+    if (!f) problems.push(`repeats \`${name}\` but doesn't declare it under \`fields\``);
+    else if (!isList(f)) problems.push(`repeats \`${name}\`, but its example isn't a list of items`);
+    const keys = f && isList(f) ? itemKeys(f) : [];
+    for (const m of inner.matchAll(/\{\{\s*([\w.]+)\s*\}\}/g)) {
+      if (!keys.includes(m[1])) problems.push(`\`{{ ${m[1]} }}\` inside the \`${name}\` list isn't one of its item fields (${keys.join(', ')})`);
+    }
+    return '';
+  });
+  rest = rest.replace(/\{\{([#^])(\w+)\}\}([\s\S]*?)\{\{\/\2\}\}/g, (_, _k: string, name: string, inner: string) => {
+    used.add(name);
+    if (!fm.fields[name]) problems.push(`shows content only when \`${name}\` is set, but doesn't declare it under \`fields\``);
+    for (const m of inner.matchAll(/\{\{\s*([\w.]+)\s*\}\}/g)) {
+      if (m[1] !== '.') problems.push(`\`{{ ${m[1]} }}\` inside the \`${name}\` section — only the section's own value ({{ . }}) is allowed there`);
+    }
+    return '';
+  });
+  for (const m of rest.matchAll(/\{\{\s*([\w.]+)\s*\}\}/g)) {
+    const name = m[1];
+    used.add(name);
+    const f = fm.fields[name];
+    if (!f) problems.push(`uses \`{{ ${name} }}\` but doesn't declare it under \`fields\``);
+    else if (isList(f)) problems.push(`uses the list \`${name}\` as text — repeat it with a list component instead`);
   }
-  if (bad.length) throw new FrontmatterError(`${where}:\n  · ${bad.join('\n  · ')}`);
+  for (const name of Object.keys(fm.fields)) if (!used.has(name)) problems.push(`declares \`${name}\` under \`fields\` but never uses it`);
+  if (problems.length) throw new FrontmatterError(`${where}:\n  · ${[...new Set(problems)].join('\n  · ')}`);
 }
 
 export function splitFrontmatter(source: string): { data: unknown; body: string } {
@@ -221,11 +240,15 @@ const escHtml = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').re
  * Postmark does: {{#f}}…{{/f}} shows when f has a value (with {{ . }} as that value), {{^f}}…{{/f}}
  * when it doesn't.
  */
-export const fillPreview = (html: string, values: Record<string, string> = {}, escape = true) => {
-  const v = (name: string) => (escape ? escHtml(values[name]) : values[name]);
+export type Values = Record<string, string | Item[]>;
+export const fillPreview = (html: string, values: Values = {}, escape = true): string => {
+  const v = (name: string) => (escape ? escHtml(String(values[name])) : String(values[name]));
+  const present = (name: string) => (Array.isArray(values[name]) ? (values[name] as Item[]).length > 0 : Boolean(values[name]));
   return html
-    .replace(/\{\{#(\w+)\}\}([\s\S]*?)\{\{\/\1\}\}/g, (_, name: string, inner: string) => (values[name] ? inner.replace(/\{\{\s*\.\s*\}\}/g, v(name)) : ''))
-    .replace(/\{\{\^(\w+)\}\}([\s\S]*?)\{\{\/\1\}\}/g, (_, name: string, inner: string) => (values[name] ? '' : inner))
+    .replace(/\{\{#each (\w+)\}\}([\s\S]*?)\{\{\/each\}\}/g, (_, name: string, inner: string) =>
+      (Array.isArray(values[name]) ? (values[name] as Item[]).map((item) => fillPreview(inner, item, escape)).join('') : ''))
+    .replace(/\{\{#(\w+)\}\}([\s\S]*?)\{\{\/\1\}\}/g, (_, name: string, inner: string) => (present(name) ? inner.replace(/\{\{\s*\.\s*\}\}/g, v(name)) : ''))
+    .replace(/\{\{\^(\w+)\}\}([\s\S]*?)\{\{\/\1\}\}/g, (_, name: string, inner: string) => (present(name) ? '' : inner))
     .replace(MERGE, (tag, name: string) => (name in values ? v(name) : tag));
 };
 
@@ -280,7 +303,7 @@ const markdown = {
 export const mdxComponents = {
   ...markdown,
   Button: MdxButton, Callout, Chip, DataTable, Divider, Eyebrow, Items, LinkFallback, Spacer, Text, Heading, Link, CodeBlock,
-  CompanyLink, If, Editable,
+  CompanyLink, If, Editable, Updates,
 };
 
 // ── Load ────────────────────────────────────────────────────────────────────────────────────────
@@ -297,7 +320,7 @@ export async function mdxBody(source: string): Promise<ReactElement> {
   return <Content components={mdxComponents as never} />;
 }
 
-export const examples = (fm: Frontmatter) =>
+export const examples = (fm: Frontmatter): Values =>
   Object.fromEntries(Object.entries(fm.fields).map(([k, f]) => [k, f.example]));
 
 export type MdxEmail = {
@@ -308,13 +331,12 @@ export type MdxEmail = {
   /** `{{ fields }}` filled with the declared examples. For the gallery only. */
   preview: (html: string) => string;
   /** Field name → example, for tests and previews. */
-  examples: Record<string, string>;
+  examples: Values;
 };
 
 export async function loadMdxEmail(source: string, where = 'email', opts: LoadOptions = {}): Promise<MdxEmail> {
   const { data, body } = splitFrontmatter(source);
   const fm = validate(data, where);
-  checkFields(fm, body, where);
 
   const content = await mdxBody(body);
 
@@ -337,4 +359,12 @@ export async function loadMdxEmail(source: string, where = 'email', opts: LoadOp
     preview: (html) => fillPreview(html, examples(fm)),
     examples: examples(fm),
   };
+}
+
+/** Load, render and contract-check a master in one step — what the build and the tests use. */
+export async function compileMdxEmail(source: string, where = 'email', assets?: AssetOptions) {
+  const email = await loadMdxEmail(source, where);
+  const html = renderEmail({ subject: email.subject, preheader: email.preheader, children: email.body, assets });
+  checkContract(email.frontmatter, html, where);
+  return { email, html };
 }

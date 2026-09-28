@@ -22,7 +22,7 @@
  * forest — the `bgcolor` fallback. The text is designed to read on flat forest first.
  */
 import type { ReactNode } from 'react';
-import { addressLine, footerLinks, type AstroPose } from '@servantium/brand';
+import { addressLine, company, footerLinks, type AstroPose } from '@servantium/brand';
 import { useAsset } from '../render';
 import { color, fonts, tones, type Tone } from '../theme';
 
@@ -167,6 +167,7 @@ export function Footer({ reason, settingsHref, unsubscribeHref }: FooterProps) {
           ))}
         </p>
         <p style={small}>{reason}</p>
+        <p style={small}>Questions? Reply to this email or write to <a href={`mailto:${company.email.help}`} style={a}>{company.email.help}</a>.</p>
         {unsubscribeHref && (
           <p style={small}><a href={unsubscribeHref} style={a}>Unsubscribe</a> from these emails.</p>
         )}

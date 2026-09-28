@@ -13,7 +13,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { company } from '@servantium/brand';
 import { renderEmail, toFirebaseFragment } from '../src/render';
-import { checkSections, fillPreview, loadMdxEmail, type Field } from '../src/mdx';
+import { compileMdxEmail, fillPreview, loadMdxEmail, type Field, type Values } from '../src/mdx';
 import type { Stream } from '../src/template';
 import type { Tone } from '../src/theme';
 
@@ -42,12 +42,12 @@ export type Built = {
   /** The contract: every field the sender supplies. */
   fields: Record<string, Field>;
   /** Field → example, as a Postmark test model. */
-  model: Record<string, string>;
+  model: Values;
 };
 
-const ORDER = ['welcome', 'password-reset', 'task-notification', 'regulatory-notice', 'incident', 'maintenance', 'incident-resolved', 'release-notes'];
+const ORDER = ['welcome', 'welcome-workspace', 'password-reset', 'task', 'notification', 'digest', 'support-ticket', 'incident', 'incident-resolved', 'maintenance', 'release-notes', 'regulatory-notice'];
 const rank = (id: string) => {
-  const i = ORDER.findIndex((o) => id === o || id.startsWith(`${o}-2`));
+  const i = ORDER.indexOf(id);
   return i === -1 ? ORDER.length : i;
 };
 
@@ -57,10 +57,8 @@ export async function collect(): Promise<Built[]> {
     const id = file.replace(/\.mdx$/, '');
     const where = `src/emails/${file}`;
     const source = readFileSync(join(EMAILS_DIR, file), 'utf8');
-    const e = await loadMdxEmail(source, where);
+    const { email: e, html: sentHtml } = await compileMdxEmail(source, where, { base: SENT_ASSET_BASE, art: true });
     const fm = e.frontmatter;
-    const sentHtml = renderEmail({ subject: fm.subject, preheader: fm.preheader, children: e.body, assets: { base: SENT_ASSET_BASE, art: true } });
-    checkSections(sentHtml, where);
     out.push({
       id, name: fm.name ?? id, file: where, source, tone: fm.tone, stream: fm.stream,
       sends: fm.sends ?? `Postmark template \`${id}\`, ${fm.stream} stream`,

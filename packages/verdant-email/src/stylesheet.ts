@@ -16,7 +16,7 @@ export const FRONTMATTER: { field: string; required: boolean; values: string; no
   { field: 'title', required: true, values: 'text', note: 'The banner headline. Every email has one, so the body starts with content.' },
   { field: 'subtitle', required: false, values: 'text', note: 'One line under the headline.' },
   { field: 'tone', required: false, values: 'default · attention · urgent', note: 'Defaults to default. See Tones.' },
-  { field: 'astro', required: false, values: 'waving · captain · detective · professor · cowboy', note: 'Only with the default tone — the build fails otherwise. See Astro.' },
+  { field: 'astro', required: false, values: 'waving · captain · detective · professor · cowboy', note: 'The mascot. Off for now: no email uses it. The banner keeps room for one, and the build still refuses it on attention or urgent mail.' },
   { field: 'stream', required: true, values: 'transactional · broadcast', note: 'Which Postmark stream sends it. Broadcast gets an unsubscribe link; transactional never does.' },
   { field: 'footer.reason', required: true, values: 'text', note: 'Why this person got this email. The build fails without it.' },
   { field: 'footer.settings', required: false, values: 'URL', note: 'Adds "Notification settings" to the footer, for notifications people can tune.' },
@@ -62,7 +62,30 @@ export const TONE_GUIDE: Record<Tone, { answer: string; use: string; examples: s
   },
 };
 
-// ── Astro ───────────────────────────────────────────────────────────────────────────────────────
+// ── Writing ─────────────────────────────────────────────────────────────────────────────────────
+export const WRITING: [rule: string, example: string][] = [
+  ['The subject says what happened.', '“Jules Hart assigned you: Manifest reconciliation”, not “Update from Servantium”. Aim for 60 characters.'],
+  ['The preheader adds something the subject doesn’t.', 'A due date, an amount, the next step. Aim for 90 characters.'],
+  ['The first line says why they’re reading.', 'The banner headline carries the event; the body opens with what it means for them.'],
+  ['One primary action.', 'Button labels are a verb and an object, 24 characters at most: “Open task”, “Set your password”. Never “Click here”.'],
+  ['Links say where they go.', '“View the full project plan”, not “here”. Every link is also in the plain-text version.'],
+  ['Plain, warm, specific.', 'Short sentences, active voice, no jargon. One exclamation mark at most, and only for good news.'],
+  ['Numbers are formatted before sending.', 'Dates in the reader’s time zone, money with its currency. The template never formats; the sender does.'],
+  ['Every email says why it arrived.', '`footer.reason` is required. If we can’t explain why someone got it, we shouldn’t send it.'],
+];
+
+// ── Accessibility ───────────────────────────────────────────────────────────────────────────────
+export const ACCESSIBILITY: [rule: string, how: string][] = [
+  ['Contrast', 'Every text colour pair passes WCAG AA (4.5:1), including both button styles. The tests compute it.'],
+  ['Type size', 'Body text 16px, nothing smaller than 13px. Mobile keeps the same sizes.'],
+  ['Structure', 'The document declares its language; the banner headline is the one h1 and section headings are h2; layout tables are marked presentation so screen readers skip them.'],
+  ['Images', 'Every image has alt text or is decorative. No meaning lives only in an image — the email reads in full with images off.'],
+  ['Colour is never the only signal', 'Tones also change the label and headline; chips carry words, not just colour.'],
+  ['Real links', 'Buttons are ordinary links with visible text, so they work with keyboards, screen readers and plain-text mail.'],
+  ['A plain-text version', 'Generated from the HTML for every email, so nobody maintains a second copy.'],
+];
+
+// ── Mascot (off for now) ──────────────────────────────────────────────────────────────────────────────────────
 export const ASTRO_RULE = 'Astro appears when the email is good news AND not urgent.';
 export const ASTRO_USE = [
   'Welcome and onboarding',

@@ -9,6 +9,7 @@
  *   banners.html              the one banner, in its three tones and with Astro
  *   <id>.html                 each email with sample data, images from ./assets
  *   postmark/<id>/            content.html + content.txt + meta.json — the layout `postmark templates push` reads
+ *   servantium_email_contract.py   the same contract as Python TypedDicts, for the backend
  *   contract.json             per alias: stream, who sends it, and every field with an example and a note —
  *                             the contract engineering wires against
  *   firebase/password-reset.html   paste into Firebase → Authentication → Templates, until reset moves to Postmark
@@ -19,7 +20,7 @@ import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { ReactNode } from 'react';
-import { ASTRO_POSES } from '@servantium/brand';
+import { ASTRO_POSES, company } from '@servantium/brand';
 import { renderEmail } from '../src/render';
 import { Banner, Body, Email } from '../src/components/Layout';
 import { Text } from '../src/components/Content';
@@ -27,10 +28,11 @@ import { fillPreview, mdxBody } from '../src/mdx';
 import { htmlToText } from '../src/text';
 import { color, tones, type Tone } from '../src/theme';
 import {
-  ASTRO_NEVER, ASTRO_RULE, ASTRO_USE, BANNED, FRONTMATTER, FRONTMATTER_EXAMPLE, SAMPLES, TONE_GUIDE, TONE_QUESTION,
+  ACCESSIBILITY, ASTRO_NEVER, ASTRO_RULE, BANNED, FRONTMATTER, FRONTMATTER_EXAMPLE, SAMPLES, TONE_GUIDE, TONE_QUESTION, WRITING,
 } from '../src/stylesheet';
 import { Card } from './card';
 import { collect, firebaseReset, SENT_ASSET_BASE } from './collect';
+import { pythonContract } from './contract-py';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DIST = join(HERE, '../dist');
@@ -63,12 +65,14 @@ for (const e of emails) {
   // Postmark's default stream ids: `outbound` (transactional) and `broadcast`.
   contract[e.id] = {
     name: e.name, stream: e.stream, messageStream: e.stream === 'broadcast' ? 'broadcast' : 'outbound',
+    from: `Servantium <${company.email.from}>`, replyTo: company.email.help,
     subject: e.sent.subject, sends: e.sends, fields: e.fields,
   };
 
   rows.push(`  ${e.id.padEnd(24)} ${e.tone.padEnd(9)} ${e.stream.padEnd(13)} ${kb(e.preview.html)}`);
 }
 writeFileSync(join(DIST, 'contract.json'), `${JSON.stringify(contract, null, 2)}\n`);
+writeFileSync(join(DIST, 'servantium_email_contract.py'), pythonContract(emails));
 
 // Firebase sends the reset itself until the backend sends it through Postmark.
 writeFileSync(join(DIST, 'firebase', 'password-reset.html'), await firebaseReset());
@@ -79,7 +83,6 @@ const frame = (children: ReactNode) =>
 
 const BANNERS: { key: string; tone: Tone; astro?: (typeof ASTRO_POSES)[number]; label: string; title: string; note: string }[] = [
   { key: 'default', tone: 'default', label: 'Task', title: 'Jules Hart assigned you a task', note: 'default — nothing is wrong' },
-  { key: 'astro', tone: 'default', astro: 'professor', label: 'Release notes', title: "What's new in Servantium", note: 'default + Astro — good news, not urgent' },
   { key: 'attention', tone: 'attention', label: 'Scheduled maintenance', title: 'Planned maintenance on Saturday', note: 'attention — act or plan soon' },
   { key: 'urgent', tone: 'urgent', label: 'Service disruption', title: "Quotes aren't loading", note: 'urgent — broken now' },
 ];
@@ -205,7 +208,7 @@ const sampleHtml = await Promise.all(SAMPLES.map(async (g) => {
 const stylesheet = page(
   'Email style sheet',
   'Everything a Servantium email can contain. Write an email as MDX: frontmatter builds the banner and footer, the body is Markdown plus these components. Every sample on this page is rendered by the same code that renders a real email.',
-  [['#frontmatter', 'Frontmatter'], ['#tones', 'Tones'], ['#astro', 'Astro'], ['#components', 'Components'], ['#banned', 'Banned'], ['#streams', 'Streams'], ['index.html', 'All emails →']],
+  [['#frontmatter', 'Frontmatter'], ['#writing', 'Writing'], ['#tones', 'Tones'], ['#components', 'Components'], ['#accessibility', 'Accessibility'], ['#banned', 'Banned'], ['#streams', 'Streams'], ['#mascot', 'Mascot'], ['index.html', 'All emails →']],
   `
 <section class="panel" id="frontmatter"><h2>Frontmatter</h2>
 <p class="lead">The top of every MDX email, between the <code>---</code> lines. It is checked like a schema: a missing field or a broken rule fails the build and says which.</p>
@@ -222,17 +225,18 @@ ${FRONTMATTER.map((f) => `<tr><td><code>${esc(f.field)}</code></td><td>${f.requi
 <p><b>${esc(TONE_GUIDE[t].answer)}.</b> ${esc(TONE_GUIDE[t].use)}</p><p style="color:var(--ink3)">${esc(TONE_GUIDE[t].examples)}</p></div>`;
   }).join('')}</div></section>
 
-<section class="panel" id="astro"><h2>Astro</h2>
-<p class="lead"><b>${esc(ASTRO_RULE)}</b> He sits in the banner's right corner, and the banner grows a little to fit him. Five poses:</p>
-<div class="astro-row">${ASTRO_POSES.map((p) => `<figure><img src="assets/astro/astro-${p}.png" alt="Astro, ${p}"><figcaption><code>${p}</code></figcaption></figure>`).join('')}</div>
-<div class="cols"><div><h3><span class="yes">Use him on</span></h3><ul class="clean">${ASTRO_USE.map((u) => `<li>${esc(u)}</li>`).join('')}</ul></div>
-<div><h3><span class="no">Never on</span></h3><ul class="clean">${ASTRO_NEVER.map(([w, why]) => `<li><b>${esc(w)}</b> — ${esc(why)}</li>`).join('')}</ul></div></div>
-<div class="astro-banner">${srcdoc(bannerDoc(BANNERS[1]), 'Banner with Astro')}</div></section>
+<section class="panel" id="writing"><h2>Writing</h2>
+<p class="lead">Every email is read on a phone, between other things, by someone deciding in two seconds whether it matters. Write for that.</p>
+<table class="ref"><tbody>${WRITING.map(([r, ex]) => `<tr><td><b>${esc(r)}</b></td><td>${esc(ex).replace(/`([^`]+)`/g, '<code>$1</code>')}</td></tr>`).join('')}</tbody></table></section>
 
 <section class="panel" id="components"><h2>Components</h2>
 <p class="lead">MDX on the left, the email it makes on the right. Components need no import. Anything not on this page isn't available — ask before adding one, so it's added here, once, for every email.</p>
 <div class="toggle">Preview at <button data-v="desktop" aria-pressed="true" onclick="view('desktop')">Desktop 640</button><button data-v="phone" aria-pressed="false" onclick="view('phone')">Phone 375</button></div>
 ${sampleHtml.join('')}</section>
+
+<section class="panel" id="accessibility"><h2>Accessibility</h2>
+<p class="lead">Built in, and most of it tested on every build, so no email can quietly fall below it.</p>
+<table class="ref"><tbody>${ACCESSIBILITY.map(([r, how]) => `<tr><td><b>${esc(r)}</b></td><td>${esc(how)}</td></tr>`).join('')}</tbody></table></section>
 
 <section class="panel" id="banned"><h2>Banned</h2>
 <p class="lead">Rules marked <span class="req">enforced</span> fail <code>npm test</code> or the build. The others are for reviewers.</p>
@@ -246,6 +250,10 @@ ${BANNED.map((b) => `<tr><td><b>${esc(b.rule)}</b></td><td>${b.enforced ? '<span
 <tr><td><code>transactional</code></td><td>About this person's account or something they did: welcome, reset, tasks, incidents, maintenance, required notices.</td><td>Never. It must always arrive. The footer says why they got it.</td></tr>
 <tr><td><code>broadcast</code></td><td>Optional reading sent to many: release notes, newsletters, marketing.</td><td>Always. Added automatically: Postmark's <code>{{{ pm:unsubscribe }}}</code>.</td></tr>
 </tbody></table></section>
+
+<section class="panel" id="mascot"><h2>Mascot</h2>
+<p class="lead"><b>Off for now.</b> No email uses one. The banner keeps a slot on the right, so switching a mascot on later is one line in an email's frontmatter, and nothing else moves. When it's on, one rule holds: it appears only when the email is good news and not urgent.</p>
+<ul class="clean">${ASTRO_NEVER.map(([w, why]) => `<li><b>Never on ${esc(w.toLowerCase())}</b> — ${esc(why)}</li>`).join('')}</ul></section>
 `,
   fit,
 );
