@@ -1,0 +1,46 @@
+---
+name: Regulatory notice
+sends: "Postmark template `regulatory-notice`, transactional, one message per workspace administrator. Set ReplyTo to a monitored inbox — the body invites objections by reply."
+subject: "Notice: changes to Servantium's sub-processors, effective {{ effective_date }}"
+preheader: No action is needed. You may object within 30 days under your Data Processing Addendum.
+label: Service notice
+title: Changes to our sub-processors
+stream: transactional
+footer:
+  reason: "This is a required service notice about your organization's Servantium account. It is sent to workspace administrators and is not marketing, so it can't be unsubscribed from."
+fields:
+  admin_first_name: { example: Dana }
+  workspace_name: { example: Halcyon Bioanalytical Services }
+  effective_date: { example: "October 24, 2026", note: At least 30 days after sending }
+  reference: { example: SVC-2026-0917, note: Our reference for this notice }
+---
+{/* SAMPLE CONTENT: the change described is illustrative. Formal on purpose — default tone, no
+    Astro, and a SECONDARY button, because a filled green button on a legal notice reads as a sales
+    pitch. Transactional stream: a required notice can't carry an unsubscribe. */}
+
+Hello {{ admin_first_name }},
+
+We're writing to tell you about a change to the sub-processors Servantium uses to provide the service to **{{ workspace_name }}**. Under our Data Processing Addendum we give you at least 30 days' notice before a change like this takes effect.
+
+<DataTable variant="outline" labelWidth={136} rows={[
+  ["Effective date", <b>{"{{ effective_date }}"}</b>],
+  ["Applies to", "{{ workspace_name }}"],
+  ["Action required", "None. You may object before the effective date."],
+  ["Notice reference", "{{ reference }}"],
+]} />
+
+## What's changing
+
+We're adding a sub-processor to deliver in-app email notifications, such as task assignments and password resets. It will process your users' names and email addresses only. It will not process project, quote or financial data.
+
+## What you need to do
+
+Nothing. If you have a reasonable objection, reply to this email before {{ effective_date }} and we'll work through it with you.
+
+<Spacer size={12} />
+
+<Button to="trust" variant="secondary" width={270}>View the sub-processor list</Button>
+
+<Spacer size={28} />
+
+<Text size="sm" muted margin="0">Servantium Privacy &amp; Security</Text>

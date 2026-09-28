@@ -11,8 +11,8 @@
  *   stream: broadcast
  *   footer:
  *     reason: You're receiving product updates because you're a Servantium user.
- *   preview:
- *     first_name: Jules
+ *   fields:
+ *     first_name: { example: Jules, note: The recipient's first name }
  *   ---
  *   Hi {{ first_name }},
  *
@@ -20,7 +20,9 @@
  *   <Items items={[...]} />
  *   <Button href="https://help.servantium.com/release-notes">Read the full release notes</Button>
  *
- * FRONTMATTER builds the frame — banner, footer, stream, merge-field previews. The BODY is Markdown
+ * FRONTMATTER builds the frame — banner, footer, stream — and declares the FIELDS: the data the
+ * sender must supply. That list is the contract with engineering; the build fails if the email
+ * uses a field it doesn't declare, or declares one it never uses. The BODY is Markdown
  * plus the components in the style sheet. Markdown maps onto email-safe components: a paragraph is
  * <Text>, `##` is <Heading>, a `-` list is <List>, a link is <Link>, `---` is <Divider>.
  *
@@ -32,7 +34,7 @@ import type { ReactElement, ReactNode } from 'react';
 import { evaluate } from '@mdx-js/mdx';
 import * as runtime from 'react/jsx-runtime';
 import { parse as parseYaml } from 'yaml';
-import { ASTRO_POSES, type AstroPose } from '@servantium/brand';
+import { ASTRO_POSES, company, type AstroPose } from '@servantium/brand';
 import { Banner, Body, Email, Footer } from './components/Layout';
 import {
   Button, Callout, Chip, CodeBlock, DataTable, Divider, Eyebrow, Heading, Items, Link, LinkFallback,
@@ -56,9 +58,15 @@ export type Frontmatter = {
   astro?: AstroPose;
   stream: Stream;
   footer: { reason: string; settings?: string };
-  /** Merge-field values for the preview only. The sent email keeps `{{ field }}` for the sender. */
-  preview?: Record<string, string>;
+  /**
+   * The data the sender supplies — the contract with engineering. Each field has an example (the
+   * gallery shows it; it is never sent), an optional note for whoever wires it, and `optional: true`
+   * when the email reads fine without it (see <If>).
+   */
+  fields: Record<string, Field>;
 };
+
+export type Field = { example: string; note?: string; optional?: boolean };
 
 const TONES = Object.keys(tones) as Tone[];
 
@@ -83,6 +91,17 @@ export function validate(raw: unknown, where = 'email'): Frontmatter {
   if (typeof footer.reason !== 'string' || !footer.reason.trim()) {
     problems.push('`footer.reason` is required — every email must say why the reader got it');
   }
+  const fields: Record<string, Field> = {};
+  const rawFields = (fm.fields ?? {}) as Record<string, unknown>;
+  if (typeof rawFields !== 'object' || Array.isArray(rawFields)) problems.push('`fields` must be a map of field name → example');
+  for (const [name, v] of Object.entries(rawFields)) {
+    if (!/^[a-z][a-z0-9_]*$/.test(name)) problems.push(`field \`${name}\` must be snake_case`);
+    if (typeof v === 'string' || typeof v === 'number') fields[name] = { example: String(v) };
+    else if (v && typeof v === 'object' && 'example' in v) {
+      const o = v as Record<string, unknown>;
+      fields[name] = { example: String(o.example), note: o.note as string | undefined, optional: o.optional === true };
+    } else problems.push(`field \`${name}\` needs an example`);
+  }
   if (problems.length) throw new FrontmatterError(`${where}:\n  · ${problems.join('\n  · ')}`);
 
   return {
@@ -97,8 +116,41 @@ export function validate(raw: unknown, where = 'email'): Frontmatter {
     astro: fm.astro as AstroPose | undefined,
     stream: fm.stream as Stream,
     footer: { reason: footer.reason as string, settings: footer.settings as string | undefined },
-    preview: fm.preview as Record<string, string> | undefined,
+    fields,
   };
+}
+
+/** Every field an email uses: `{{ name }}` anywhere, plus <If field> and <Editable field>. */
+export function usedFields(fm: Frontmatter, body: string): Set<string> {
+  const text = [fm.subject, fm.preheader, fm.label, fm.title, fm.subtitle ?? '', fm.footer.reason, fm.footer.settings ?? '', body].join('\n');
+  const used = new Set<string>();
+  for (const m of text.matchAll(/\{\{\s*([\w]+)\s*\}\}/g)) used.add(m[1]);
+  for (const m of body.matchAll(/<(?:If|Editable)\s+field="([\w]+)"/g)) used.add(m[1]);
+  return used;
+}
+
+/** The contract check: declared fields and used fields must match exactly. */
+export function checkFields(fm: Frontmatter, body: string, where = 'email') {
+  const used = usedFields(fm, body);
+  const declared = new Set(Object.keys(fm.fields));
+  const problems = [
+    ...[...used].filter((f) => !declared.has(f)).map((f) => `uses \`{{ ${f} }}\` but doesn't declare it under \`fields\``),
+    ...[...declared].filter((f) => !used.has(f)).map((f) => `declares \`${f}\` under \`fields\` but never uses it`),
+  ];
+  if (problems.length) throw new FrontmatterError(`${where}:\n  · ${problems.join('\n  · ')}`);
+}
+
+/**
+ * Postmark sections change scope: inside {{#note}}…{{/note}} only {{ . }} (the note itself) is
+ * visible; anything else needs `../`, which standard Mustache doesn't understand. So inside a
+ * section, the only field allowed is the section's own — checked on the compiled HTML.
+ */
+export function checkSections(html: string, where = 'email') {
+  const bad: string[] = [];
+  for (const m of html.matchAll(/\{\{([#^])(\w+)\}\}([\s\S]*?)\{\{\/\2\}\}/g)) {
+    for (const f of m[3].matchAll(/\{\{\s*([\w.]+)\s*\}\}/g)) if (f[1] !== '.') bad.push(`\`{{ ${f[1]} }}\` inside the \`${m[2]}\` section — only the section's own value ({{ . }}) is allowed there`);
+  }
+  if (bad.length) throw new FrontmatterError(`${where}:\n  · ${bad.join('\n  · ')}`);
 }
 
 export function splitFrontmatter(source: string): { data: unknown; body: string } {
@@ -135,6 +187,11 @@ export function protectMergeFields(src: string): string {
         const close = src.indexOf('`', i + 1);
         if (close > -1) { out += src.slice(i, close + 1); i = close; continue; }
       }
+      if (c === ']' && src[i + 1] === '(') {
+        // A Markdown link's URL is literal — `[plan]({{ plan_url }})` must stay as written.
+        const close = src.indexOf(')', i + 2);
+        if (close > -1) { out += src.slice(i, close + 1); i = close; continue; }
+      }
       const m = /^\{\{\s*[\w.]+\s*\}\}/.exec(src.slice(i, i + 80));
       if (m) {
         // Alone on its line, MDX would treat the expression as a block and skip the paragraph
@@ -159,9 +216,43 @@ export function protectMergeFields(src: string): string {
 const MERGE = /\{\{\s*([\w.]+)\s*\}\}/g;
 const escHtml = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-/** Fill `{{ name }}` from the frontmatter's `preview` block — for the gallery, never for a send. */
-export const fillPreview = (html: string, values: Record<string, string> = {}, escape = true) =>
-  html.replace(MERGE, (tag, name: string) => (name in values ? (escape ? escHtml(values[name]) : values[name]) : tag));
+/**
+ * Fill fields with their examples — for the gallery, never for a send. Handles sections the way
+ * Postmark does: {{#f}}…{{/f}} shows when f has a value (with {{ . }} as that value), {{^f}}…{{/f}}
+ * when it doesn't.
+ */
+export const fillPreview = (html: string, values: Record<string, string> = {}, escape = true) => {
+  const v = (name: string) => (escape ? escHtml(values[name]) : values[name]);
+  return html
+    .replace(/\{\{#(\w+)\}\}([\s\S]*?)\{\{\/\1\}\}/g, (_, name: string, inner: string) => (values[name] ? inner.replace(/\{\{\s*\.\s*\}\}/g, v(name)) : ''))
+    .replace(/\{\{\^(\w+)\}\}([\s\S]*?)\{\{\/\1\}\}/g, (_, name: string, inner: string) => (values[name] ? '' : inner))
+    .replace(MERGE, (tag, name: string) => (name in values ? v(name) : tag));
+};
+
+// ── Postmark-native building blocks ─────────────────────────────────────────────────────────────
+/** Shows its content only when the sender supplies `field`. Inside, {{ . }} is that value. */
+export function If({ field, children }: { field: string; children?: ReactNode }) {
+  return <>{`{{#${field}}}`}{children}{`{{/${field}}}`}</>;
+}
+
+/**
+ * Copy an admin can override later WITHOUT a template change: the sender passes `field` to replace
+ * the default; leave it out and the default shows. Postmark does this natively, so admin-editable
+ * emails need data, not a new rendering system.
+ */
+export function Editable({ field, children }: { field: string; children?: ReactNode }) {
+  return <>{`{{#${field}}}`}<Text>{'{{ . }}'}</Text>{`{{/${field}}}{{^${field}}}`}<Text>{children}</Text>{`{{/${field}}}`}</>;
+}
+
+type UrlKey = keyof typeof company.urls;
+/** A link to a Servantium address from company.json — so body links move when the address does. */
+function CompanyLink({ to, children }: { to: UrlKey; children?: ReactNode }) {
+  return <Link href={company.urls[to]}>{children ?? company.urls[to].replace(/^https:\/\//, '').replace(/\/$/, '')}</Link>;
+}
+/** Button that also accepts `to="trust"` for a company.json address. */
+function MdxButton({ to, href, ...rest }: { to?: UrlKey; href?: string; children: string; variant?: 'primary' | 'secondary'; width?: number }) {
+  return <Button href={to ? company.urls[to] : (href ?? '#')} {...rest} />;
+}
 
 // ── Markdown → email components ─────────────────────────────────────────────────────────────────
 const Pre = ({ children }: { children?: ReactNode }) => {
@@ -188,7 +279,8 @@ const markdown = {
 /** Everything an MDX email may use. The style sheet documents each one. */
 export const mdxComponents = {
   ...markdown,
-  Button, Callout, Chip, DataTable, Divider, Eyebrow, Items, LinkFallback, Spacer, Text, Heading, Link, CodeBlock,
+  Button: MdxButton, Callout, Chip, DataTable, Divider, Eyebrow, Items, LinkFallback, Spacer, Text, Heading, Link, CodeBlock,
+  CompanyLink, If, Editable,
 };
 
 // ── Load ────────────────────────────────────────────────────────────────────────────────────────
@@ -205,18 +297,24 @@ export async function mdxBody(source: string): Promise<ReactElement> {
   return <Content components={mdxComponents as never} />;
 }
 
+export const examples = (fm: Frontmatter) =>
+  Object.fromEntries(Object.entries(fm.fields).map(([k, f]) => [k, f.example]));
+
 export type MdxEmail = {
   frontmatter: Frontmatter;
   subject: string;
   preheader: string;
   body: ReactElement;
-  /** `{{ fields }}` filled from the frontmatter's `preview` block. For the gallery only. */
+  /** `{{ fields }}` filled with the declared examples. For the gallery only. */
   preview: (html: string) => string;
+  /** Field name → example, for tests and previews. */
+  examples: Record<string, string>;
 };
 
 export async function loadMdxEmail(source: string, where = 'email', opts: LoadOptions = {}): Promise<MdxEmail> {
   const { data, body } = splitFrontmatter(source);
   const fm = validate(data, where);
+  checkFields(fm, body, where);
 
   const content = await mdxBody(body);
 
@@ -236,6 +334,7 @@ export async function loadMdxEmail(source: string, where = 'email', opts: LoadOp
         <Footer reason={fm.footer.reason} settingsHref={fm.footer.settings} unsubscribeHref={unsubscribe} />
       </Email>
     ),
-    preview: (html) => fillPreview(html, fm.preview),
+    preview: (html) => fillPreview(html, examples(fm)),
+    examples: examples(fm),
   };
 }

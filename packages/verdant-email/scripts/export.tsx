@@ -1,5 +1,5 @@
 /**
- * export — renders every email, TSX and MDX, to dist/.
+ * export — renders every master email (src/emails/*.mdx) to dist/.
  *
  *   npm run build      (syncs Verdant tokens first)
  *
@@ -9,7 +9,8 @@
  *   banners.html              the one banner, in its three tones and with Astro
  *   <id>.html                 each email with sample data, images from ./assets
  *   postmark/<id>/            content.html + content.txt + meta.json — the layout `postmark templates push` reads
- *   postmark/send.json        per alias: the stream to send on, and the model to send (with sample values)
+ *   contract.json             per alias: stream, who sends it, and every field with an example and a note —
+ *                             the contract engineering wires against
  *   firebase/password-reset.html   paste into Firebase → Authentication → Templates, until reset moves to Postmark
  *   assets/                   logo, Astro and header art, copied from @servantium/brand
  */
@@ -18,10 +19,8 @@ import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { ReactNode } from 'react';
-import { ASTRO_POSES, company } from '@servantium/brand';
-import { renderEmail, toFirebaseFragment } from '../src/render';
-import { templates } from '../src/index';
-import { firebasePlaceholders } from '../src/templates/password-reset';
+import { ASTRO_POSES } from '@servantium/brand';
+import { renderEmail } from '../src/render';
 import { Banner, Body, Email } from '../src/components/Layout';
 import { Text } from '../src/components/Content';
 import { fillPreview, mdxBody } from '../src/mdx';
@@ -31,7 +30,7 @@ import {
   ASTRO_NEVER, ASTRO_RULE, ASTRO_USE, BANNED, FRONTMATTER, FRONTMATTER_EXAMPLE, SAMPLES, TONE_GUIDE, TONE_QUESTION,
 } from '../src/stylesheet';
 import { Card } from './card';
-import { collect, SENT_ASSET_BASE } from './collect';
+import { collect, firebaseReset, SENT_ASSET_BASE } from './collect';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DIST = join(HERE, '../dist');
@@ -50,7 +49,7 @@ const kb = (s: string) => `${(Buffer.byteLength(s) / 1024).toFixed(1)} KB`;
 
 // ── Every email: preview, Postmark template, plain text ─────────────────────────────────────────
 const emails = await collect();
-const send: Record<string, { stream: string; messageStream: string; model: Record<string, string> }> = {};
+const contract: Record<string, unknown> = {};
 const rows: string[] = [];
 
 for (const e of emails) {
@@ -62,19 +61,17 @@ for (const e of emails) {
   writeFileSync(join(dir, 'content.txt'), htmlToText(e.sent.html));
   writeFileSync(join(dir, 'meta.json'), `${JSON.stringify({ Name: e.name, Alias: e.id, Subject: e.sent.subject, TemplateType: 'Standard' }, null, 2)}\n`);
   // Postmark's default stream ids: `outbound` (transactional) and `broadcast`.
-  send[e.id] = { stream: e.stream, messageStream: e.stream === 'broadcast' ? 'broadcast' : 'outbound', model: e.model };
+  contract[e.id] = {
+    name: e.name, stream: e.stream, messageStream: e.stream === 'broadcast' ? 'broadcast' : 'outbound',
+    subject: e.sent.subject, sends: e.sends, fields: e.fields,
+  };
 
-  rows.push(`  ${e.id.padEnd(24)} ${e.source}  ${e.tone.padEnd(9)} ${e.stream.padEnd(13)} ${kb(e.preview.html)}`);
+  rows.push(`  ${e.id.padEnd(24)} ${e.tone.padEnd(9)} ${e.stream.padEnd(13)} ${kb(e.preview.html)}`);
 }
-writeFileSync(join(DIST, 'postmark', 'send.json'), `${JSON.stringify(send, null, 2)}\n`);
+writeFileSync(join(DIST, 'contract.json'), `${JSON.stringify(contract, null, 2)}\n`);
 
-// Firebase sends this one itself: absolute logo URL (servantium.com already hosts it), and no
-// header art until the art is hosted somewhere Firebase's recipients can reach.
-const fb = templates.passwordReset.build(firebasePlaceholders);
-writeFileSync(join(DIST, 'firebase', 'password-reset.html'), toFirebaseFragment(renderEmail({
-  subject: fb.subject, preheader: fb.preheader, children: fb.body,
-  assets: { base: null, art: false, overrides: { 'logo/servantium-logo-white.png': `${company.urls.website}/brand/servantium-logo-white.png` } },
-})));
+// Firebase sends the reset itself until the backend sends it through Postmark.
+writeFileSync(join(DIST, 'firebase', 'password-reset.html'), await firebaseReset());
 
 // ── Small renders for the style sheet ───────────────────────────────────────────────────────────
 const frame = (children: ReactNode) =>
@@ -257,7 +254,7 @@ writeFileSync(join(DIST, 'stylesheet.html'), stylesheet);
 // ── Gallery ─────────────────────────────────────────────────────────────────────────────────────
 const cards = emails.map((e) => `
 <section class="tpl">
-  <header><div><span class="tier"><i style="background:${TONE_DOT[e.tone]}"></i>${e.tone} · ${e.stream} · ${e.source}</span><h2>${esc(e.name)}</h2></div>
+  <header><div><span class="tier"><i style="background:${TONE_DOT[e.tone]}"></i>${e.tone} · ${e.stream} · ${e.id}.mdx</span><h2>${esc(e.name)}</h2></div>
     <a href="${e.id}.html" target="_blank">Open ↗</a></header>
   <dl><dt>Subject</dt><dd>${esc(e.preview.subject)}</dd><dt>Preview</dt><dd style="color:var(--ink2)">${esc(e.preview.preheader)}</dd>
     <dt>Sends via</dt><dd>${esc(e.sends).replace(/`([^`]+)`/g, '<code>$1</code>')}</dd>
@@ -272,7 +269,7 @@ writeFileSync(join(DIST, 'index.html'), page(
   'Verdant Email',
   'One banner, a handful of components, every Servantium email. Colours from Verdant; company details and images from @servantium/brand. Sample data is the Halcyon demo org; incident and maintenance values are illustrative.',
   [['stylesheet.html', 'Style sheet →'], ['banners.html', 'Banners']],
-  `<section class="panel"><h2>How to read this</h2><p class="lead" style="margin:0">Each card is one email. The tag line says its <b>tone</b>, the Postmark <b>stream</b> that sends it, and whether it's written in <b>TSX</b> (fixed words, product data) or <b>MDX</b> (a person writes it). The <a href="stylesheet.html">style sheet</a> shows every component and rule.</p></section>
+  `<section class="panel"><h2>How to read this</h2><p class="lead" style="margin:0">Each card is one master email: one MDX file in <code>src/emails/</code>, whose name is its Postmark template alias. The tag line says its <b>tone</b>, the Postmark <b>stream</b> that sends it, and the file. The <a href="stylesheet.html">style sheet</a> shows every component and rule; <a href="contract.json">contract.json</a> lists every field each email needs.</p></section>
 ${cards.join('')}`,
 ));
 

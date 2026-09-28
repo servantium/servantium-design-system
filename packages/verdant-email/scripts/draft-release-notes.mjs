@@ -72,6 +72,7 @@ const more = rest.length + fixes.length;
 // ── Write the draft ─────────────────────────────────────────────────────────────────────────────
 const js = (s) => JSON.stringify(s);
 const mdx = `---
+sends: "Postmark template \`release-notes-${month}\`, broadcast stream. A monthly job sends it to active users in batches of 500; Postmark skips anyone who has unsubscribed."
 subject: ${js(`What's new in Servantium — ${monthName}`)}
 preheader: ${js(`${chosen.slice(0, 2).map((c) => c.title).join(', ')}, and ${more} more improvements.`)}
 label: Release notes
@@ -81,8 +82,8 @@ astro: professor
 stream: broadcast
 footer:
   reason: You're receiving product updates because you're a Servantium user.
-preview:
-  first_name: Jules
+fields:
+  first_name: { example: Jules, note: "From the user's profile" }
 ---
 {/* DRAFT from ${releases.map((r) => r.file).join(', ')}. Edit freely; the help site stays the record. */}
 

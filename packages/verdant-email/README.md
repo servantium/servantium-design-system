@@ -35,44 +35,55 @@ The build enforces the attention/urgent rule. The others are listed in the style
 
 Outlook desktop ignores background images, so there the banner shows as flat forest. The text is designed to read on flat forest first.
 
-## Two ways to write an email
+## The masters
 
-| | TSX, in `src/templates/` | MDX, in `src/emails/` |
+Every email is one MDX file in `src/emails/`. The file name is its Postmark template alias. There is no other copy to keep in step: the gallery, the tests, the Postmark templates and the field contract are all generated from these files.
+
+| Master | Stream | Sent by |
 |---|---|---|
-| For | Product emails. The words are fixed; the product supplies the data. | Emails a person writes, or that non-engineers should be able to edit. |
-| Today | welcome, password-reset, task-notification, regulatory-notice | release notes, incident, maintenance, incident-resolved |
-| Data | Typed props, with `placeholders` for the sender | `{{ merge_fields }}` anywhere, with `preview` values |
+| `welcome.mdx` | transactional | Backend, when an admin adds a user. This is also the invitation. |
+| `password-reset.mdx` | transactional | Backend callable. Until then, Firebase sends a pasted copy. |
+| `task-notification.mdx` | transactional | Backend, when a task's assignee changes. |
+| `regulatory-notice.mdx` | transactional | A person, to every workspace admin. |
+| `incident.mdx`, `maintenance.mdx`, `incident-resolved.mdx` | transactional | Later. The status page covers incidents first. |
+| `release-notes-<month>.mdx` | broadcast | A monthly job, in batches of 500. |
 
-Both kinds come out the same way: as a Postmark template with an HTML part and a text part. Nothing downstream can tell them apart.
-
-### Writing MDX
+### Writing one
 
 ```mdx
 ---
-subject: "Scheduled maintenance on {{ date }}"
-preheader: "Servantium will be unavailable for up to {{ duration }}."
-label: Scheduled maintenance
-title: "Planned maintenance on {{ date }}"
-tone: attention
+subject: "{{ assigner_name }} assigned you: {{ task_name }}"
+preheader: "Due {{ due }} · {{ engagement }}"
+label: Task
+title: "{{ assigner_name }} assigned you a task"
 stream: transactional
 footer:
-  reason: "You're receiving this because you're an administrator of {{ workspace_name }}."
-preview:
-  date: Saturday, Oct 24
-  duration: 2 hours
-  workspace_name: Halcyon Bioanalytical Services
+  reason: "You're receiving this because you were assigned a task in {{ workspace_name }}."
+fields:
+  assigner_name: { example: Jules Hart, note: Who made the assignment }
+  task_name: { example: Clinical sample manifest reconciliation }
+  due: { example: "Fri, Oct 16, 2026" }
+  engagement: { example: AUR-417 — Phase II }
+  note: { example: "Flag anything outside tolerance.", optional: true }
+  task_url: { example: "https://app.servantium.com/…" }
+  workspace_name: { example: Halcyon Bioanalytical Services }
 ---
-Hi {{ first_name }},
+<DataTable title="{{ task_name }}" rows={[["Due", <b>{"{{ due }}"}</b>]]} />
 
-<DataTable variant="outline" rows={[["Starts", "{{ starts }}"], ["Ends by", "{{ ends }}"]]} />
+<If field="note">
+  <Callout tone="neutral" title="Their note">“{{ . }}”</Callout>
+</If>
 
-<Button href="{{ status_url }}" variant="secondary">View the status page</Button>
+<Button href="{{ task_url }}">Open task</Button>
 ```
 
-- **Frontmatter builds the frame**: the banner, the footer and the stream. It's validated like a schema. A missing `footer.reason`, an unknown tone, or Astro on an urgent email fails the build with a sentence saying what's wrong.
+- **The frontmatter builds the frame**: the banner, the footer and the stream. It's validated like a schema. A missing `footer.reason`, an unknown tone, or Astro on an urgent email fails the build with a sentence saying what's wrong.
+- **`fields` is the contract with engineering.** Every `{{ field }}` the email uses must be declared, with an example and, where useful, a note on where the value comes from. The build fails if the email uses a field it doesn't declare, or declares one it never uses. The build writes all of them to `dist/contract.json`.
 - **The body is Markdown plus the style-sheet components.** A paragraph becomes `Text`, `##` becomes `Heading`, `-` becomes `List`, `---` becomes `Divider`. Components need no import.
-- **`{{ field }}` works anywhere**: in text, in a component prop, and in the frontmatter. It reaches Postmark untouched. The gallery fills it from `preview`. Inside a component, write the field as a string: `"{{ field }}"`.
-- Add the file to `src/emails/`, run `npm run build`, and it shows up in the gallery, the tests and the Postmark export.
+- **`{{ field }}` works anywhere**: in text, in a component prop, and in the frontmatter. It reaches Postmark untouched. The gallery fills it with the examples.
+- **`<If field="x">`** shows its content only when the sender supplies `x`. Inside, `{{ . }}` is that value. Nothing else can be referenced inside, because Postmark scopes sections; the build enforces that.
+- **`<Editable field="x">default</Editable>`** is copy an admin can override later without a template change. The sender passes `x` to replace the default.
+- **`<CompanyLink to="app" />`** and **`<Button to="trust">`** take addresses from `company.json`, so they move when the address does.
 
 ### Release notes are drafted, not written twice
 
@@ -98,11 +109,15 @@ The build writes `dist/postmark/<alias>/` for every email:
 - `content.txt`
 - `meta.json`
 
-That is the folder layout the [Postmark CLI](https://github.com/ActiveCampaign/postmark-cli/wiki/templates-command) reads. It also writes `dist/postmark/send.json`, which gives each alias's stream and the model it expects, with sample values.
+That is the folder layout the [Postmark CLI](https://github.com/ActiveCampaign/postmark-cli/wiki/templates-command) reads. The build also writes `dist/contract.json`: each alias's stream, who sends it, and every field with an example and a note.
 
-```bash
-postmark templates push dist/postmark    # needs POSTMARK_SERVER_TOKEN — see "Before real sends"
-```
+**The pipeline** (`.github/workflows/email-templates.yml`, not yet run) follows the backend's own rhythm:
+
+- **Pull request:** build and test. The gallery is attached to the run for review.
+- **Merge to main:** push every template to the Postmark QA server.
+- **Tag `email-v*`:** push every template to the Postmark production server.
+
+Before each push, `scripts/postmark-validate.mjs` asks Postmark itself to render every template, with and without the optional fields. Postmark is a deployment target only: edits made in its UI are overwritten on the next push.
 
 Product code then sends by alias and supplies only the data:
 
@@ -151,14 +166,16 @@ This is a pasted copy, so it won't follow later design changes. The better path 
 - A sent email whose images don't load from an absolute URL.
 - An email with no readable plain-text part.
 - A text colour pair below WCAG AA (4.5:1), or a tone rule below 3:1 on the banner.
-- A bad frontmatter field.
+- A bad frontmatter field, a field used but not declared, or declared but never used.
+- A field referenced inside an `<If>` or `<Editable>` section other than the section's own.
 
 One known exception is recorded as a test rather than hidden. **The primary button is white on #00C26D, about 2.3:1**, which is a design decision. Changing the fill to `#037A47` would pass.
 
 ## Before real sends
 
 - **Host the images.** Sent templates load from `https://assets.servantium.com/brand/…`, which is proposed, not live (see `@servantium/brand` → Hosting). Don't push `dist/postmark/` until it is. `ASSET_BASE=… npm run build` points the export elsewhere.
-- **Postmark access.** A server token in a secret store, never in the repo. Separate sending subdomains for transactional and broadcast mail, so a marketing complaint can't hurt password resets.
+- **Postmark account.** Two servers, QA and production, each with a transactional and a broadcast stream. Domain verification (DKIM and Return-Path DNS records). Tokens in GitHub secrets for the pipeline and in Firebase secrets for the backend — never in the repo.
+- **Validate once by hand.** Run `scripts/postmark-validate.mjs` against the QA server before the pipeline's first push; it's the only check against Postmark's own engine.
 - **Test in real clients.** Everything follows Outlook- and Gmail-safe patterns and is checked in a browser at 640 and 375px. None of it has been through Outlook desktop, Gmail or Apple Mail yet. A Litmus or Email on Acid run is the next step.
 - **Status page.** The incident and maintenance emails link to `{{ status_url }}`. `status.servantium.com` doesn't exist yet.
 - **Sample content.** The regulatory notice, incident and maintenance values are illustrative. Release notes come from the help site. Confirm the picks with engineering before sending.

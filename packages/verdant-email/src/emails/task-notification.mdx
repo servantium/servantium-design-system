@@ -1,0 +1,47 @@
+---
+name: Task notification
+sends: "Postmark template `task-notification`, transactional. The backend sends it when a task's assignee changes to a person with an email address (not a placeholder role)."
+subject: "{{ assigner_name }} assigned you: {{ task_name }}"
+preheader: "Due {{ due }} · {{ engagement }}"
+label: Task
+title: "{{ assigner_name }} assigned you a task"
+subtitle: "{{ engagement }}"
+stream: transactional
+footer:
+  reason: "You're receiving this because you were assigned a task in {{ workspace_name }}."
+fields:
+  assigner_name: { example: Jules Hart, note: Who made the assignment }
+  task_name: { example: Clinical sample manifest reconciliation }
+  due: { example: "Fri, Oct 16, 2026", note: Formatted for the recipient }
+  starts: { example: "Thu, Oct 8 · 7 days", note: Start date and duration }
+  engagement: { example: "AUR-417 — Phase II Immunogenicity & PK", note: Engagement code and name }
+  client: { example: Aurora Pharmaceuticals }
+  waiting_on: { example: Project kickoff & study handoff, note: "The predecessor task, or “Nothing — ready to start”" }
+  note: { example: "Please reconcile the Wave 1 manifest against Aurora's forecast before the first PK run. Flag anything outside the 10% tolerance.", optional: true, note: The note on the task. Leave it out and the note panel doesn't appear. }
+  task_url: { example: "https://app.servantium.com/engagements/eng-aur-417/project_plans?task=ppi-manifest" }
+  plan_url: { example: "https://app.servantium.com/engagements/eng-aur-417/project_plans" }
+  workspace_name: { example: Halcyon Bioanalytical Services }
+---
+{/* No Astro: this is sent often, and a mascot on every assignment becomes noise. No "notification
+    settings" link yet either — there are no email preferences in the app to link to. */}
+
+<DataTable title="{{ task_name }}" labelWidth={112} rows={[
+  ["Due", <b>{"{{ due }}"}</b>],
+  ["Starts", "{{ starts }}"],
+  ["Engagement", "{{ engagement }}"],
+  ["Client", "{{ client }}"],
+  ["Waiting on", "{{ waiting_on }}"],
+]} />
+
+<If field="note">
+  <Spacer size={16} />
+  <Callout tone="neutral" title="Their note">“{{ . }}”</Callout>
+</If>
+
+<Spacer size={28} />
+
+<Button href="{{ task_url }}" width={180}>Open task</Button>
+
+<Spacer size={18} />
+
+<Text size="sm" margin="0"><Link href="{{ plan_url }}">View the full project plan</Link></Text>

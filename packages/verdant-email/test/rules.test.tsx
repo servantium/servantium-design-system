@@ -8,17 +8,15 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { addressLine, company, footerLinks } from '@servantium/brand';
-import { renderEmail, toFirebaseFragment } from '../src/render';
-import { templates } from '../src/index';
-import { firebasePlaceholders } from '../src/templates/password-reset';
+import { addressLine, footerLinks } from '@servantium/brand';
+import { renderEmail } from '../src/render';
 import { Banner, Email, type BannerProps } from '../src/components/Layout';
 import { Card } from '../scripts/card';
-import { FrontmatterError, loadMdxEmail, mdxBody, protectMergeFields } from '../src/mdx';
+import { checkSections, FrontmatterError, fillPreview, loadMdxEmail, mdxBody, protectMergeFields } from '../src/mdx';
 import { htmlToText } from '../src/text';
 import { SAMPLES } from '../src/stylesheet';
 import { color, neutral, tones } from '../src/theme';
-import { collect } from '../scripts/collect';
+import { collect, firebaseReset } from '../scripts/collect';
 
 const emails = await collect();
 const both = emails.flatMap((e) => [
@@ -218,15 +216,47 @@ test('KNOWN: the primary button is below AA — a design decision, recorded not 
 });
 
 // ── Firebase ────────────────────────────────────────────────────────────────────────────────────
-test('the Firebase export is a body fragment with Firebase placeholders', () => {
-  const s = templates.passwordReset.build(firebasePlaceholders);
-  const frag = toFirebaseFragment(renderEmail({
-    subject: s.subject, preheader: s.preheader, children: s.body,
-    assets: { base: null, art: false, overrides: { 'logo/servantium-logo-white.png': `${company.urls.website}/brand/servantium-logo-white.png` } },
-  }));
+test('the Firebase export is a body fragment with Firebase placeholders', async () => {
+  const frag = await firebaseReset();
   assert.doesNotMatch(frag, /<head|<style|<html/i, 'Firebase drops the head; the fragment must not rely on it');
   assert.match(frag, /%LINK%/);
   assert.match(frag, /%EMAIL%/);
+  assert.doesNotMatch(frag, /\{\{/, 'a Postmark placeholder leaked into the Firebase copy');
   assert.match(frag, /src="https:\/\//, 'Firebase sends it — every image must be an absolute URL');
   assert.doesNotMatch(frag, /header-\w+\.jpg/, 'the header art is not hosted yet');
+});
+
+// ── The contract with engineering ───────────────────────────────────────────────────────────────
+test('every master declares exactly the fields it uses', async () => {
+  // collect() already threw if not; this pins the failure modes.
+  const body = 'Hi {{ first_name }}.';
+  const base = 'subject: s\npreheader: p\nlabel: l\ntitle: t\nstream: transactional\nfooter:\n  reason: r';
+  await assert.rejects(loadMdxEmail(`---\n${base}\n---\n${body}`), /uses `\{\{ first_name \}\}` but doesn't declare it/);
+  await assert.rejects(loadMdxEmail(`---\n${base}\nfields:\n  first_name: Jules\n  spare: x\n---\n${body}`), /declares `spare`/);
+  await assert.doesNotReject(loadMdxEmail(`---\n${base}\nfields:\n  first_name: Jules\n---\n${body}`));
+});
+
+test('every field has an example, so every email can be previewed and tested', () => {
+  for (const e of emails) for (const [k, f] of Object.entries(e.fields)) assert.ok(f.example.trim(), `${e.id}: ${k} has no example`);
+});
+
+test('a section may only print its own value (Postmark scopes sections)', () => {
+  assert.throws(() => checkSections('{{#note}}{{ assigner_name }}{{/note}}'), /inside the `note` section/);
+  assert.doesNotThrow(() => checkSections('{{#note}}“{{ . }}”{{/note}}'));
+});
+
+test('optional content disappears cleanly when its field is missing', () => {
+  const task = emails.find((e) => e.id === 'task-notification')!;
+  const without = fillPreview(task.sent.html, { ...task.model, note: '' });
+  assert.doesNotMatch(without, /Their note/, 'the note panel should vanish without a note');
+  assert.match(fillPreview(task.sent.html, task.model), /Their note/);
+});
+
+test('an Editable block shows the default unless the sender overrides it', async () => {
+  const src = '---\nsubject: s\npreheader: p\nlabel: l\ntitle: t\nstream: transactional\nfooter:\n  reason: r\nfields:\n  intro: { example: Custom intro, optional: true }\n---\n<Editable field="intro">Default intro</Editable>';
+  const e = await loadMdxEmail(src);
+  const html = renderEmail({ subject: 's', preheader: 'p', children: e.body });
+  assert.match(fillPreview(html, {}), /Default intro/);
+  assert.doesNotMatch(fillPreview(html, { intro: 'Custom intro' }), /Default intro/);
+  assert.match(fillPreview(html, { intro: 'Custom intro' }), /Custom intro/);
 });

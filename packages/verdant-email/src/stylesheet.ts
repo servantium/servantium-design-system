@@ -20,8 +20,8 @@ export const FRONTMATTER: { field: string; required: boolean; values: string; no
   { field: 'stream', required: true, values: 'transactional · broadcast', note: 'Which Postmark stream sends it. Broadcast gets an unsubscribe link; transactional never does.' },
   { field: 'footer.reason', required: true, values: 'text', note: 'Why this person got this email. The build fails without it.' },
   { field: 'footer.settings', required: false, values: 'URL', note: 'Adds "Notification settings" to the footer, for notifications people can tune.' },
-  { field: 'preview', required: false, values: 'field: value', note: 'Sample values for {{ fields }} in the gallery. Never sent.' },
-  { field: 'name · sends', required: false, values: 'text', note: 'For the gallery: a display name, and who sends it and when.' },
+  { field: 'fields', required: true, values: 'name: { example, note, optional }', note: 'Every {{ field }} the email uses — the contract with engineering. The build fails if the email uses a field it doesn’t declare, or declares one it never uses. Examples fill the gallery; they are never sent.' },
+  { field: 'name · sends', required: false, values: 'text', note: 'A display name, and who sends it and when. Both go into the contract.' },
 ];
 
 export const FRONTMATTER_EXAMPLE = `---
@@ -34,8 +34,8 @@ astro: professor
 stream: broadcast
 footer:
   reason: You're receiving product updates because you're a Servantium user.
-preview:
-  first_name: Jules
+fields:
+  first_name: { example: Jules, note: "From the user's profile" }
 ---
 Hi {{ first_name }},
 
@@ -219,6 +219,31 @@ export const SAMPLES: { group: string; intro: string; items: Sample[] }[] = [
         use: 'Inside a component, a field is a string: "{{ field }}". To make it bold, {"{{ field }}"} inside the tag.',
         mdx: '<DataTable rows={[\n  ["Client", "{{ client }}"],\n  ["Due", <b>{"{{ due }}"}</b>],\n]} />\n\n<Spacer size={20} />\n\n<Button href="{{ quote_url }}">Open quote</Button>',
         preview: { client: 'Aurora Pharmaceuticals', due: 'Fri, Oct 16', quote_url: 'https://app.servantium.com' },
+      },
+    ],
+  },
+  {
+    group: 'Optional and editable content',
+    intro: 'Two building blocks that Postmark understands natively. No new system is needed to hide content that has no data, or to let an admin replace a paragraph later.',
+    items: [
+      {
+        name: 'If — optional content',
+        use: 'Content that should only appear when the sender supplies a field: a note, a reason, a comment. Inside, {{ . }} is that field’s value — Postmark scopes sections, so nothing else can be referenced inside.',
+        props: 'field',
+        mdx: '<If field="note">\n  <Callout tone="neutral" title="Their note">“{{ . }}”</Callout>\n</If>\n\nThe rest of the email.',
+        preview: { note: 'Flag anything outside the 10% tolerance.' },
+      },
+      {
+        name: 'Editable — a paragraph an admin can override',
+        use: 'Copy a workspace admin might want to change later — an intro, a sign-off. The default shows until the sender passes a value for the field. Only text can change; the design can’t.',
+        props: 'field',
+        mdx: '<Editable field="welcome_intro">Your team uses Servantium to scope, price and deliver every project.</Editable>',
+      },
+      {
+        name: 'Company link',
+        use: 'Any link to a Servantium address in the body. The address comes from company.json, so moving the app or the trust centre updates every email. Buttons take `to` the same way.',
+        props: 'to: website · app · help · privacy · terms · trust · releaseNotes',
+        mdx: 'Sign in at <CompanyLink to="app" />.\n\n<Button to="trust" variant="secondary" width={250}>View the trust centre</Button>',
       },
     ],
   },

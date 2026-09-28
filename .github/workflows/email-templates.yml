@@ -1,0 +1,77 @@
+# Email templates → Postmark.
+#
+# The masters are packages/verdant-email/src/emails/*.mdx. This workflow compiles them and keeps
+# Postmark in step, on the same rhythm engineering's backend already uses:
+#
+#   pull request   build + 33 checks; the rendered gallery is attached to the run for review
+#   merge to main  push every template to the Postmark QA server (used by servantium-qa)
+#   tag email-v*   push every template to the Postmark production server (used by servantium-565c0)
+#
+# Postmark is a deployment target, never an editor: anything changed in Postmark's own UI is
+# overwritten on the next push. Templates removed here are NOT deleted from Postmark — remove
+# those by hand.
+#
+# Needs repository secrets POSTMARK_SERVER_TOKEN_QA and POSTMARK_SERVER_TOKEN_PRODUCTION, and the
+# email images hosted at ASSET_BASE. NOT YET RUN — nothing here has executed against Postmark.
+
+name: Email templates
+
+on:
+  pull_request:
+    paths: ['packages/verdant-email/**', 'packages/brand/**']
+  push:
+    branches: [main]
+    tags: ['email-v*']
+    paths: ['packages/verdant-email/**', 'packages/brand/**']
+  workflow_dispatch:
+
+env:
+  ASSET_BASE: https://assets.servantium.com/brand
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - run: npm ci
+      - run: npm run build --workspace @servantium/verdant-email
+      - run: npm test --workspace @servantium/verdant-email
+      - uses: actions/upload-artifact@v4
+        with:
+          name: email-templates
+          path: packages/verdant-email/dist
+
+  qa:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      POSTMARK_SERVER_TOKEN: ${{ secrets.POSTMARK_SERVER_TOKEN_QA }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: email-templates, path: dist }
+      - uses: actions/checkout@v4
+        with: { sparse-checkout: packages/verdant-email/scripts, path: repo }
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - run: cp -r dist repo/packages/verdant-email/dist && node repo/packages/verdant-email/scripts/postmark-validate.mjs
+      - run: npx --yes postmark-cli templates push dist/postmark --force --all
+
+  production:
+    if: startsWith(github.ref, 'refs/tags/email-v')
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      POSTMARK_SERVER_TOKEN: ${{ secrets.POSTMARK_SERVER_TOKEN_PRODUCTION }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: email-templates, path: dist }
+      - uses: actions/checkout@v4
+        with: { sparse-checkout: packages/verdant-email/scripts, path: repo }
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - run: cp -r dist repo/packages/verdant-email/dist && node repo/packages/verdant-email/scripts/postmark-validate.mjs
+      - run: npx --yes postmark-cli templates push dist/postmark --force --all
