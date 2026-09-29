@@ -8,7 +8,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { addressLine, footerLinks } from '@servantium/brand';
+import { addressLine, footerLinks, social } from '@servantium/brand';
 import { renderEmail } from '../src/render';
 import { Banner, Email, type BannerProps } from '../src/components/Layout';
 import { Card } from '../scripts/card';
@@ -42,6 +42,14 @@ test('footer links and address come from company.json, in every email', () => {
   for (const { id, html } of both) {
     assert.ok(html.includes(addressLine()), `${id} is missing the company address`);
     for (const l of footerLinks()) assert.ok(html.includes(`href="${l.href}"`), `${id} is missing ${l.label}`);
+  }
+});
+
+test('every footer carries LinkedIn, and hides the status page until it is live', () => {
+  for (const { id, html } of both) {
+    assert.ok(html.includes(`href="${social.linkedin}"`), `${id} has no LinkedIn link`);
+    assert.match(html, /alt="Servantium on LinkedIn"/, `${id}: the LinkedIn icon needs its alt text`);
+    assert.doesNotMatch(html, /status\.servantium\.com"[^>]*>Status</, `${id} links to a status page that doesn't exist yet`);
   }
 });
 

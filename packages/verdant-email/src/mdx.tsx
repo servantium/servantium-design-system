@@ -100,6 +100,8 @@ export function validate(raw: unknown, where = 'email'): Frontmatter {
   const footer = (fm.footer ?? {}) as Record<string, unknown>;
   if (typeof footer.reason !== 'string' || !footer.reason.trim()) {
     problems.push('`footer.reason` is required — every email must say why the reader got it');
+  } else if (footer.reason.length > 90) {
+    problems.push(`\`footer.reason\` is ${footer.reason.length} characters; keep it to one short sentence (90 at most)`);
   }
   const fields: Record<string, Field> = {};
   const rawFields = (fm.fields ?? {}) as Record<string, unknown>;

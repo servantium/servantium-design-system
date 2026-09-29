@@ -7,7 +7,7 @@ label: Welcome
 title: Welcome to Servantium
 stream: transactional
 footer:
-  reason: "You received this because a Servantium organization was created for {{ organization_name }} with this address as its administrator. Not expecting it? Reply and tell us."
+  reason: "Sent because {{ organization_name }} was set up with you as its administrator."
 fields:
   first_name: { example: Dana, note: The administrator's first name }
   organization_name: { example: Halcyon Bioanalytical Services }
@@ -25,7 +25,7 @@ Hi {{ first_name }},
 
 <Spacer size={16} />
 
-<Text size="sm" muted>This link expires in {{ expires_in }} and works once. After that, sign in at <CompanyLink to="app" /> with {{ email }}.</Text>
+<Text size="sm" muted>This link expires in {{ expires_in }} and works once. After that, sign in at <CompanyLink to="app" /> with {{ email }}. Not expecting this? Reply and tell us.</Text>
 
 ## Your first steps
 

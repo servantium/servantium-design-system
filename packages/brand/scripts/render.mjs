@@ -136,5 +136,17 @@ for (const file of readdirSync(ASTRO).filter((f) => f.endsWith('.svg'))) {
   await page.screenshot({ path: join(ASTRO, file.replace('.svg', '.png')), omitBackground: true, clip: { x: 0, y: 0, width: 240, height: 240 } });
 }
 
+// ── Social: LinkedIn, as a forest circle with the white “in” mark ─────────────────────────────
+// The “in” letters are the same path the website footer uses (grove SiteFooter), minus its square;
+// the circle is Verdant deep forest, so it sits with the rest of the email in any client.
+const SOCIAL = join(ROOT, 'assets/social');
+mkdirSync(SOCIAL, { recursive: true });
+const IN = 'M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452z';
+const linkedin = `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="24" fill="${T.forest ?? '#023E25'}"/><g transform="translate(13.2 12.6) scale(0.9)"><path fill="#FFFFFF" d="${IN}"/></g></svg>`;
+writeFileSync(join(SOCIAL, 'linkedin.svg'), linkedin);
+await page.setViewportSize({ width: 48, height: 48 });
+await page.setContent(`<html><body style="margin:0;background:transparent">${linkedin}</body></html>`);
+await page.screenshot({ path: join(SOCIAL, 'linkedin.png'), omitBackground: true, clip: { x: 0, y: 0, width: 48, height: 48 } });
+
 await browser.close();
-console.log('rendered: header-{hero,standard}.{svg,jpg}, astro-*.png');
+console.log('rendered: header-{hero,standard}.{svg,jpg}, footer-bar.{svg,jpg}, astro-*.png, social/linkedin.{svg,png}');

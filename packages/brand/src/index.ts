@@ -23,9 +23,17 @@ export const addressLine = (): string => {
   return `${company.legalName} · ${a.line1}, ${a.city}, ${a.region} ${a.postalCode}`;
 };
 
-/** Footer links, resolved from their keys so a URL changes in exactly one place. */
+/**
+ * Footer links, resolved from their keys so a URL changes in exactly one place. A link marked
+ * `live: false` (the status page, until it exists) is left out everywhere until someone flips it.
+ */
 export const footerLinks = (): { label: string; href: string }[] =>
-  company.footerLinks.map((l) => ({ label: l.label, href: company.urls[l.url as UrlKey] }));
+  company.footerLinks
+    .filter((l) => (l as { live?: boolean }).live !== false)
+    .map((l) => ({ label: l.label, href: company.urls[l.url as UrlKey] }));
+
+/** Where we are on social media. One place, so a handle change reaches every footer. */
+export const social = company.social;
 
 /**
  * The public origin that brand assets are served from. `null` until the hosting in the README is

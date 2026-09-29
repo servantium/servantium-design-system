@@ -86,7 +86,8 @@ Postmark is a deployment target only: edits made in its interface are overwritte
 
 `npm test` checks every email, both the preview and the version that gets sent, plus every style-guide sample. It fails on any of these:
 
-- **Design:** no coloured bar down the side of anything, one banner on every email, footer links and address from `company.json`, at most one primary button.
+- **Design:** no coloured bar down the side of anything, one banner on every email, at most one primary button. The banner title is one fixed line of 24 characters or fewer, and the footer's reason is one short sentence.
+- **Footer:** three lines on every email: the links; why they got it plus help@; the address with LinkedIn. All of it comes from `company.json`. The Status link stays hidden until `status` is marked live there.
 - **Mail clients:** over 102 KB (Gmail clips it), SVG, flex or grid layout, a button without its Outlook shape, an image without an absolute URL, or no plain-text version.
 - **Accessibility:** every text colour pair and both button styles pass WCAG AA (4.5:1), every image has alt text, and tone marks are visible on the banner (3:1).
 - **Streams:** broadcast mail carries Postmark's unsubscribe link; transactional mail never does.
@@ -100,3 +101,4 @@ Postmark is a deployment target only: edits made in its interface are overwritte
 - Run `scripts/postmark-validate.mjs` once by hand against the QA server.
 - Test in Outlook desktop, Gmail and Apple Mail.
 - Get legal review of the regulatory notice.
+- When the status page exists, set `live: true` on the Status footer link in `packages/brand/company.json`.

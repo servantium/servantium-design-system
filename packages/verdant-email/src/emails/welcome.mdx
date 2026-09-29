@@ -7,7 +7,7 @@ label: Welcome
 title: Welcome to Servantium
 stream: transactional
 footer:
-  reason: "You received this because {{ inviter_name }} added you to {{ organization_name }}. Not expecting it? You can ignore this email. Nothing happens until you set a password."
+  reason: "Sent because {{ inviter_name }} added you to {{ organization_name }}."
 fields:
   first_name: { example: Jules, note: The new user's first name }
   inviter_name: { example: Dana Whitfield, note: The person who added them }
@@ -26,7 +26,7 @@ Hi {{ first_name }},
 
 <Spacer size={16} />
 
-<Text size="sm" muted>This link expires in {{ expires_in }} and works once. After that, sign in at <CompanyLink to="app" /> with {{ email }}.</Text>
+<Text size="sm" muted>This link expires in {{ expires_in }} and works once. After that, sign in at <CompanyLink to="app" /> with {{ email }}. Not expecting this? Ignore it — nothing happens until a password is set.</Text>
 
 ## What you'll find
 

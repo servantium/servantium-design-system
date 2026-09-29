@@ -1,5 +1,5 @@
 {
-  "$comment": "THE single source for company facts that appear in emails, site footers and documents. Change a value here, release the design system, and every consumer picks it up. Every URL below was checked to return 200 on 2026-09-24; add nothing that has not been checked.",
+  "$comment": "THE single source for company facts that appear in emails, site footers and documents. Change a value here, release the design system, and every consumer picks it up. Every URL below was checked to return 200 on 2026-09-24, except `status`, which is planned: its footer link stays hidden (`live: false`) until the status page exists — flip it then.",
   "legalName": "Servantium Inc.",
   "address": {
     "line1": "1111B S Governors Ave STE 48074",
@@ -15,7 +15,8 @@
     "privacy": "https://servantium.com/privacy/",
     "terms": "https://servantium.com/terms/",
     "trust": "https://trust.servantium.com",
-    "releaseNotes": "https://help.servantium.com/release-notes/"
+    "releaseNotes": "https://help.servantium.com/release-notes/",
+    "status": "https://status.servantium.com"
   },
   "email": {
     "from": "notifications@servantium.com",
@@ -26,6 +27,11 @@
     {
       "label": "Help Center",
       "url": "help"
+    },
+    {
+      "label": "Status",
+      "url": "status",
+      "live": false
     },
     {
       "label": "Trust Center",
@@ -39,5 +45,8 @@
       "label": "Terms",
       "url": "terms"
     }
-  ]
+  ],
+  "social": {
+    "linkedin": "https://www.linkedin.com/company/servantium"
+  }
 }

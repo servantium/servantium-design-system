@@ -22,7 +22,7 @@
  * forest — the `bgcolor` fallback. The text is designed to read on flat forest first.
  */
 import type { ReactNode } from 'react';
-import { addressLine, company, footerLinks, type AstroPose } from '@servantium/brand';
+import { addressLine, company, footerLinks, social, type AstroPose } from '@servantium/brand';
 import { useAsset } from '../render';
 import { color, fonts, tones, type Tone } from '../theme';
 
@@ -143,20 +143,25 @@ export function Body({ children }: { children: ReactNode }) {
 
 // ── Footer ─────────────────────────────────────────────────────────────────────────────────────
 export type FooterProps = {
-  /** Why this person received this email. Required: every email must be able to answer it. */
+  /** Why this person received this email, in one short sentence. Required on every email. */
   reason: string;
   /** Notification emails link to their settings. */
   settingsHref?: string;
-  /** Marketing ONLY. Transactional and legal mail must not offer it — see README. */
+  /** Broadcast mail ONLY. Transactional and legal mail must not offer it. */
   unsubscribeHref?: string;
 };
 
 /**
- * Links and address come from @servantium/brand's company.json — never typed here. Move the help
- * centre and every template follows on the next release.
+ * Three lines, every email:
+ *   1. the links (Help Center, Trust Center, Privacy, Terms — and Status once it's live);
+ *   2. why they got it, and where to ask a question (plus Unsubscribe on broadcast mail);
+ *   3. the company address, with LinkedIn beside it.
+ * Links, address, help@ and LinkedIn come from @servantium/brand's company.json — never typed
+ * here — so each changes in one place for every email.
  */
 export function Footer({ reason, settingsHref, unsubscribeHref }: FooterProps) {
-  const small = { margin: '0 0 8px', fontFamily: fonts.body, fontSize: '12px', lineHeight: '18px', color: color.inkMuted };
+  const { url } = useAsset();
+  const small = { margin: '0 0 10px', fontFamily: fonts.body, fontSize: '12px', lineHeight: '18px', color: color.inkMuted };
   const a = { color: color.link, fontWeight: 600, textDecoration: 'underline' };
   const links = [
     ...(settingsHref ? [{ label: 'Notification settings', href: settingsHref }] : []),
@@ -164,8 +169,8 @@ export function Footer({ reason, settingsHref, unsubscribeHref }: FooterProps) {
   ];
   return (
     <tr>
-      <td className="ve-px" style={{ padding: '24px 40px 0' }}>
-        <p style={{ ...small, fontSize: '13px', lineHeight: '20px', margin: '0 0 12px' }}>
+      <td className="ve-px" style={{ padding: '22px 40px 0' }}>
+        <p style={{ ...small, fontSize: '13px', lineHeight: '20px', margin: '0 0 10px' }}>
           {links.map((l, i) => (
             <span key={l.href}>
               {i > 0 && <span style={{ color: color.rule }}>&nbsp;&nbsp;|&nbsp;&nbsp;</span>}
@@ -173,12 +178,21 @@ export function Footer({ reason, settingsHref, unsubscribeHref }: FooterProps) {
             </span>
           ))}
         </p>
-        <p style={small}>{reason}</p>
-        <p style={small}>Questions? Reply to this email or write to <a href={`mailto:${company.email.help}`} style={a}>{company.email.help}</a>.</p>
-        {unsubscribeHref && (
-          <p style={small}><a href={unsubscribeHref} style={a}>Unsubscribe</a> from these emails.</p>
-        )}
-        <p style={{ ...small, margin: '0' }}>{addressLine()}</p>
+        <p style={small}>
+          {reason} Questions? <a href={`mailto:${company.email.help}`} style={a}>{company.email.help}</a>
+          {unsubscribeHref && <>&nbsp;·&nbsp;<a href={unsubscribeHref} style={a}>Unsubscribe</a></>}
+        </p>
+        <table role="presentation" width="100%" cellPadding={0} cellSpacing={0} border={0}>
+          <tbody><tr>
+            <td valign="middle" style={{ ...small, margin: 0 }}>{addressLine()}</td>
+            <td valign="middle" align="right" width={36} style={{ paddingLeft: '12px' }}>
+              <a href={social.linkedin} style={{ display: 'inline-block', lineHeight: 0 }}>
+                <img src={url('social/linkedin.png')} width={24} height={24} alt="Servantium on LinkedIn"
+                  style={{ display: 'block', width: '24px', height: '24px', border: '0' }} />
+              </a>
+            </td>
+          </tr></tbody>
+        </table>
       </td>
     </tr>
   );

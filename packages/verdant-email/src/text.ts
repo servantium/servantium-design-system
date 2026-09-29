@@ -28,11 +28,14 @@ export function htmlToText(html: string): string {
   s = s
     .replace(/<div style="display:none[\s\S]*?<\/div>/, '')          // the preheader
     .replace(/<!--[\s\S]*?-->/g, '')                                  // Outlook-only markup, incl. VML buttons
-    .replace(/<img[^>]*>/gi, '')
     .replace(/<a\s[^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/gi, (_, href: string, inner: string) => {
-      const label = inner.replace(/<[^>]+>/g, '').trim();
-      return !label || decode(label) === decode(href) ? href : `${label} (${href})`;
+      // An image-only link (the LinkedIn icon) reads as its alt text.
+      const alt = /<img[^>]*\salt="([^"]+)"/i.exec(inner)?.[1];
+      const label = (alt ?? inner.replace(/<[^>]+>/g, '')).trim();
+      const target = href.replace(/^mailto:/i, '');
+      return !label || decode(label) === decode(target) ? target : `${label} (${target})`;
     })
+    .replace(/<img[^>]*>/gi, '')
     .replace(/<br\s*\/?>/gi, '\n')
     .replace(/<\/(p|h1|h2|h3|table)>/gi, '\n\n')
     .replace(/<\/(tr|div)>/gi, '\n')
@@ -43,9 +46,12 @@ export function htmlToText(html: string): string {
     .replace(/●\s*/g, '')                                        // the banner's tone dot
     .split('\n')
     .map((line) => {
-      // A row of cells: "Label<td>Value" reads as "Label: Value"; a bullet keeps its space.
-      const cells = line.split('\t').map((c) => c.replace(/[  ]+/g, ' ').trim()).filter(Boolean);
-      return cells.length === 2 && cells[0] !== '•' ? `${cells[0]}: ${cells[1]}` : cells.join(' ');
+      // A row of cells: a short label and its value read as "Label: Value" (data tables); a bullet
+      // keeps its space; anything else (the address beside LinkedIn) goes on separate lines.
+      const cells = line.split('\t').map((c) => c.replace(/[ \u00A0]+/g, ' ').trim()).filter(Boolean);
+      if (cells.length === 2 && cells[0] === '\u2022') return cells.join(' ');
+      if (cells.length === 2 && cells[0].length <= 30) return `${cells[0]}: ${cells[1]}`;
+      return cells.join('\n');
     })
     .join('\n')
     .replace(/\n{3,}/g, '\n\n')

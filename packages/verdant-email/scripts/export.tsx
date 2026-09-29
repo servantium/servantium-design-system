@@ -41,7 +41,7 @@ const BRAND = dirname(require.resolve('@servantium/brand/company.json'));
 
 rmSync(DIST, { recursive: true, force: true });
 for (const d of ['', 'postmark', 'firebase', 'assets']) mkdirSync(join(DIST, d), { recursive: true });
-for (const d of ['logo', 'astro', 'email']) {
+for (const d of ['logo', 'astro', 'email', 'social']) {
   cpSync(join(BRAND, 'assets', d), join(DIST, 'assets', d), { recursive: true, filter: (src) => !src.endsWith('.svg') });
 }
 

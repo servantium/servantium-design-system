@@ -65,7 +65,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           cd dist/assets
-          for f in $(find logo astro email -type f); do
+          for f in $(find logo astro email social -type f); do
             npx --yes wrangler r2 object put "servantium-assets/brand/$f" --file "$f" --remote --cache-control "public, max-age=86400"
           done
       - run: cp -r dist repo/packages/verdant-email/dist && node repo/packages/verdant-email/scripts/postmark-validate.mjs
@@ -91,7 +91,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           cd dist/assets
-          for f in $(find logo astro email -type f); do
+          for f in $(find logo astro email social -type f); do
             npx --yes wrangler r2 object put "servantium-assets/brand/$f" --file "$f" --remote --cache-control "public, max-age=86400"
           done
       - run: cp -r dist repo/packages/verdant-email/dist && node repo/packages/verdant-email/scripts/postmark-validate.mjs
