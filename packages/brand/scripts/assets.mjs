@@ -34,6 +34,22 @@ export const BUCKET = 'servantium-assets';
 const HASH_LENGTH = 10;
 
 const IMMUTABLE = 'public, max-age=31536000, immutable';
+
+/**
+ * Keep search engines out: these are brand files for email and embeds, not pages. Mail clients'
+ * image proxies fetch on a reader's behalf and don't read robots.txt, so emails are unaffected.
+ * Link-preview bots are let in, so a social card hosted here still renders when a page is shared.
+ */
+const ROBOTS = `# assets.servantium.com: Servantium's brand files, for email and embeds. Not for search.
+User-agent: Twitterbot
+User-agent: facebookexternalhit
+User-agent: LinkedInBot
+User-agent: Slackbot
+Allow: /
+
+User-agent: *
+Disallow: /
+`;
 const CATALOGUE = 'public, max-age=300';
 
 const TYPES = {
@@ -126,6 +142,7 @@ function catalogueHtml(m) {
     return `<figure>${preview}<figcaption><b>${esc(path)}</b><span>${(a.bytes / 1024).toFixed(1)} KB · ${esc(a.type)}</span><code>${esc(url)}</code></figcaption></figure>`;
   }).join('')}</div>`).join('');
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
 <title>Servantium assets</title>
 <style>
 :root{--bg:#F4F6F5;--card:#fff;--ink:#17201B;--ink2:#4A564F;--rule:#DCE3DF;--forest:#023E25;--check:#E9EDEB}
@@ -161,6 +178,12 @@ async function publish({ dryRun }) {
     uploaded++;
   }
   console.log(`${uploaded} ${dryRun ? 'to upload' : 'uploaded'}, ${skipped} already live`);
+
+  // robots.txt is fixed policy, not reviewed content, so it goes up from any branch.
+  const robotsDir = mkdtempSync(join(tmpdir(), 'servantium-robots-'));
+  writeFileSync(join(robotsDir, 'robots.txt'), ROBOTS);
+  console.log(`${dryRun ? 'would refresh' : 'refresh'}  robots.txt`);
+  if (!dryRun) put('robots.txt', join(robotsDir, 'robots.txt'), 'text/plain; charset=utf-8', CATALOGUE);
 
   if (!onPublishedMain()) {
     console.log('Catalogue not refreshed: that happens only from a clean main that matches GitHub.');

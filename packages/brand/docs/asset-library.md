@@ -16,7 +16,7 @@ packages/brand/assets/logo/servantium-logo-white.png
 - **A changed file gets a new address.** Change the logo, and the next email release points at the new file.
 - **Nothing is overwritten or deleted.** Everything already sent, and every deck already made, keeps showing exactly what it was made with. That's how a record should behave, like the postal address in an email footer.
 - **Files can be cached for a year**, because the file at an address never changes.
-- **The only files that change in place** are `manifest.json` and `index.html`. They record which address is current.
+- **The only files that change in place** are `manifest.json` and `index.html`, which record which address is current, and `robots.txt`.
 
 Why not one fixed address per file, replaced when it changes? Because replacing a file doesn't reliably update old emails anyway:
 
@@ -33,6 +33,7 @@ Old emails would end up a random mix of old and new. Fingerprinted addresses giv
 assets.servantium.com/
 ├── manifest.json            current address of every file (changes in place; 5-minute cache)
 ├── index.html               browsable catalogue (changes in place)
+├── robots.txt               keeps search engines out (changes in place)
 ├── logo/                    wordmark and symbol
 ├── icon/                    favicons and the touch icon
 │   └── glyph/               24px line icons, stroke in currentColor
@@ -108,6 +109,7 @@ Emails pick up a new address at their next release.
 | Listing | None. Files are served by exact address; `index.html` is the catalogue. |
 | Headers | Each file's `Content-Type`. `Cache-Control: public, max-age=31536000, immutable` on files, and `public, max-age=300` on the catalogue. No `Cross-Origin-Resource-Policy: same-site`. |
 | Writes | From a workstation, with Cloudflare credentials that include "Workers R2 Storage: Edit". No Cloudflare credential is stored in GitHub; CI only checks that files are live. |
+| Search engines | Kept out by `/robots.txt` on this domain, which is uploaded by `npm run publish`, and by a `noindex` tag on the catalogue. Link-preview bots (X, LinkedIn, Facebook, Slack) are allowed, so a social card hosted here still renders. Mail clients' image proxies fetch on a reader's behalf and don't read `robots.txt`. It's a file in the bucket, not a zone setting, so the website is untouched. |
 | Bots | The zone's browser check refuses a few scripting clients' default user agents, such as Python's `urllib` (error 1010). Mail-client image proxies, browsers, `curl` and Node are served. A script that fetches files should send its own user agent. |
 | Cost | Within R2's free tier: 10 GB stored, a million writes and ten million reads a month, no egress fees. |
 
