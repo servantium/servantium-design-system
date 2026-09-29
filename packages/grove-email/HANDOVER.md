@@ -14,7 +14,7 @@
 - **Where the emails live.** Every email is one MDX file in [`src/emails/`](./src/emails/). The file name is the Postmark template alias.
 - **How they ship.** A GitHub workflow builds and tests them. Each `grove-email@X.Y.Z` tag publishes a GitHub release with the templates in Postmark's folder layout, plus the contract. You push that release into Postmark.
 - **How to send one.** The backend calls Postmark's `/email/withTemplate` with an alias and a `TemplateModel`. It never builds email HTML.
-- **The contract.** Each email declares its fields. Every release carries them as `contract.json` and as Python `TypedDict`s (`servantium_email_contract.py`). [docs/templates.md](./docs/templates.md) lists every field with its note and example.
+- **The contract.** Each email declares its fields. Every release carries them as `contract.json`, and [docs/templates.md](./docs/templates.md) lists every field with its note and example.
 - **Images.** Every image loads from a permanent, fingerprinted address at `assets.servantium.com`. A changed image gets a new address, so an email already sent never changes. The domain is kept out of search results.
 
 ## The path of a change
@@ -30,7 +30,7 @@
 | Area | Work |
 |---|---|
 | **Postmark** | Two servers, QA and production, each with `outbound` and `broadcast` streams. The `servantium.com` sender domain (DKIM, Return-Path). From `notifications@servantium.com`, Reply-To `help@servantium.com`. Link tracking off for `welcome`, `welcome-organization` and `password-reset`. |
-| **A push workflow** | Download a release, run `scripts/postmark-validate.mjs` against QA, push with the Postmark CLI, then promote to production behind an approval. There's a [reference workflow](./docs/engineering-handover.md#3-the-workflow-to-build). |
+| **A push workflow** | Download a release, push it to QA with the Postmark CLI, then promote the same bundle to production behind an approval. There's a [reference workflow](./docs/engineering-handover.md#3-the-workflow-to-build). |
 | **The backend** | Map each event to an alias ([when each email is sent](./docs/engineering-handover.md#when-each-email-is-sent)). Build the `TemplateModel` from the contract, and format dates, money and names first. Leave optional fields out. |
 | **For now** | Until the backend sends resets, paste `firebase/password-reset.html` from the release into the Firebase console. |
 
@@ -63,5 +63,4 @@
 | Releases and maintenance | [docs/maintaining.md](./docs/maintaining.md) |
 | The emails | [src/emails/](./src/emails/) |
 | The workflow | [.github/workflows/grove-email.yml](../../.github/workflows/grove-email.yml) |
-| The Postmark validator | [scripts/postmark-validate.mjs](./scripts/postmark-validate.mjs) |
 | The asset library | [../brand/docs/asset-library.md](../brand/docs/asset-library.md) · [catalogue](https://assets.servantium.com/index.html) |

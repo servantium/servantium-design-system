@@ -9,7 +9,6 @@
  *   banners.html              the one banner, in its three tones and with Astro
  *   <id>.html                 each email with sample data, images from ./assets
  *   postmark/<id>/            content.html + content.txt + meta.json — the layout `postmark templates push` reads
- *   servantium_email_contract.py   the same contract as Python TypedDicts, for the backend
  *   contract.json             per alias: stream, who sends it, and every field with an example and a note —
  *                             the contract engineering wires against
  *   firebase/password-reset.html   paste into Firebase → Authentication → Templates, until reset moves to Postmark
@@ -31,9 +30,7 @@ import {
 } from '../src/stylesheet';
 import { Card } from './card';
 import { collect, firebaseReset } from './collect';
-import { pythonContract } from './contract-py';
-import { styleGuideMarkdown } from './style-guide-md';
-import { templatesMarkdown } from './templates-md';
+import { styleGuideMarkdown, templatesMarkdown } from './docs-md';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DIST = join(HERE, '../dist');
@@ -73,9 +70,8 @@ for (const e of emails) {
   rows.push(`  ${e.id.padEnd(24)} ${e.tone.padEnd(9)} ${e.stream.padEnd(13)} ${kb(e.preview.html)}`);
 }
 writeFileSync(join(DIST, 'contract.json'), `${JSON.stringify(contract, null, 2)}\n`);
-writeFileSync(join(DIST, 'servantium_email_contract.py'), pythonContract(emails));
 
-// The style guide as Markdown, committed, for anyone reading on GitHub.
+// The generated docs, committed, for anyone reading on GitHub.
 writeFileSync(join(HERE, '../docs/style-guide.md'), styleGuideMarkdown());
 writeFileSync(join(HERE, '../docs/templates.md'), templatesMarkdown(emails));
 
