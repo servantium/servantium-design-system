@@ -92,7 +92,7 @@ Made on 2026-09-29, when the vectors came in from Figma:
 
 1. Put the file in `packages/brand/assets/<folder>/`. For generated art, edit the master or `scripts/render.mjs` and run `npm run render`.
 2. Run `npm run manifest`. This writes `assets.manifest.json`, giving the new file its fingerprinted address.
-3. Run `npm run publish`. It uploads every file the bucket doesn't have yet. This is safe from any branch: a new address can't change anything already sent. Use `npm run publish -- --dry-run` to see what would upload.
+3. Run `npm run publish`. It uploads every file the bucket doesn't have yet. This is safe from any branch: a new address can't change anything already sent. Use `npm run publish -- --dry-run` to see what would upload. Don't open a new address in a browser before it's published: Cloudflare caches the "not found" for a few minutes. The script's own check avoids this.
 4. Commit and open a pull request. The checks fail if the manifest is stale or a file isn't live.
 5. After the merge, run `npm run publish` again from an up-to-date `main`. That refreshes `manifest.json` and `index.html`; only reviewed work reaches the catalogue.
 
@@ -102,12 +102,13 @@ Emails pick up a new address at their next release.
 
 | Setting | Value |
 |---|---|
-| Name | `servantium-assets`, in Servantium's Cloudflare account, beside the `servantium.com` zone |
-| Public access | The custom domain `assets.servantium.com` only; the `r2.dev` URL is off |
+| Name | `servantium-assets`, in Servantium's Cloudflare account, beside the `servantium.com` zone. Created 2026-09-29; location chosen automatically (eastern North America). |
+| Public access | The custom domain `assets.servantium.com` only (TLS 1.2 or later); the `r2.dev` URL is off |
 | Storage class | Standard. Infrequent Access charges for every read. |
 | Listing | None. Files are served by exact address; `index.html` is the catalogue. |
 | Headers | Each file's `Content-Type`. `Cache-Control: public, max-age=31536000, immutable` on files, and `public, max-age=300` on the catalogue. No `Cross-Origin-Resource-Policy: same-site`. |
 | Writes | From a workstation, with Cloudflare credentials that include "Workers R2 Storage: Edit". No Cloudflare credential is stored in GitHub; CI only checks that files are live. |
+| Bots | The zone's browser check refuses a few scripting clients' default user agents, such as Python's `urllib` (error 1010). Mail-client image proxies, browsers, `curl` and Node are served. A script that fetches files should send its own user agent. |
 | Cost | Within R2's free tier: 10 GB stored, a million writes and ten million reads a month, no egress fees. |
 
 ## Scripts

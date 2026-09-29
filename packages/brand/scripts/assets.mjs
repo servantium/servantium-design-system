@@ -77,9 +77,16 @@ export function buildManifest() {
 const serialise = (m) => `${JSON.stringify(m, null, 2)}\n`;
 
 // ── Publishing ──────────────────────────────────────────────────────────────────────────────────
-async function isLive(key) {
+/**
+ * Is the file at this address? `bypassCache` asks with a throwaway query string, so the check never
+ * reaches Cloudflare's cache for the real address. Publishing needs that: asking for an address
+ * before its file exists would cache a "not found" for it. Verifying doesn't: it wants the answer
+ * a recipient would get.
+ */
+async function isLive(key, { bypassCache = false } = {}) {
   try {
-    const res = await fetch(`${ORIGIN}/${key}`, { method: 'HEAD' });
+    const url = `${ORIGIN}/${key}${bypassCache ? `?publish-check=${Date.now()}` : ''}`;
+    const res = await fetch(url, { method: 'HEAD' });
     return res.status === 200;
   } catch {
     return false; // the domain isn't reachable yet: treat as missing
@@ -148,7 +155,7 @@ async function publish({ dryRun }) {
   let uploaded = 0;
   let skipped = 0;
   for (const [path, a] of Object.entries(m.assets)) {
-    if (await isLive(a.key)) { skipped++; continue; }
+    if (await isLive(a.key, { bypassCache: true })) { skipped++; continue; }
     console.log(`${dryRun ? 'would upload' : 'upload'}  ${a.key}`);
     if (!dryRun) put(a.key, join(ASSETS, path), a.type, IMMUTABLE);
     uploaded++;
