@@ -9,7 +9,7 @@
 export { renderEmail, toFirebaseFragment, useAsset, type AssetOptions } from './render';
 export {
   Email, Banner, Body, Footer, Heading, Text, Eyebrow, Link, CompanyLink, Button, DataTable, Callout, Chip, Items,
-  Spacer, Divider, LinkFallback, List, ListItem, CodeBlock, Merge, Updates, Steps, Paragraphs, Thread, If, Editable,
+  Spacer, Divider, LinkFallback, List, ListItem, CodeBlock, Updates, Steps, Paragraphs, Thread, If, Editable,
   mdxComponents, type BannerProps, type FooterProps,
 } from './components';
 export { color, fonts, tones, neutral, tint, type Tone, type Tint } from './theme';

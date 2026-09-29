@@ -16,9 +16,8 @@ Each email release is a git tag, `grove-email@X.Y.Z`, and a GitHub release on [s
 
 | File | What it is |
 |---|---|
-| `grove-email-X.Y.Z.tar.gz` | `postmark/<alias>/{content.html, content.txt, meta.json}` for every template, plus `contract.json`, `servantium_email_contract.py` and `firebase/password-reset.html` |
+| `grove-email-X.Y.Z.tar.gz` | `postmark/<alias>/{content.html, content.txt, meta.json}` for every template, plus `contract.json` and `firebase/password-reset.html` |
 | `contract.json` | Every template's stream, sender, reply-to, subject and fields, with notes and examples |
-| `servantium_email_contract.py` | The same contract as Python `TypedDict`s: one per template, `NotRequired` for optional fields, and a `TEMPLATES` table of alias → stream and type |
 
 ```bash
 gh release download grove-email@0.1.0 --repo servantium/servantium-design-system
@@ -43,7 +42,7 @@ The same files come from `npm run build` in `packages/grove-email` (they land in
 
 The job is to push a release's templates into Postmark QA, then, after an approval, the same bundle into production. Where it lives is your choice: engineering's own repo, or a workflow in this one using your secrets.
 
-Pushing uses the official [Postmark CLI](https://github.com/ActiveCampaign/postmark-cli), which reads exactly the folder layout in the bundle. `scripts/postmark-validate.mjs` in this package asks Postmark's own template engine to render every template, with and without its optional fields, before you push.
+Pushing uses the official [Postmark CLI](https://github.com/ActiveCampaign/postmark-cli), which reads exactly the folder layout in the bundle. Before the first push, it's worth asking Postmark's own template engine to render each template (its `/templates/validate` endpoint), with and without the optional fields, using the examples in `contract.json`.
 
 A reference version (not active anywhere):
 
@@ -61,9 +60,6 @@ jobs:
       - run: gh release download "${{ inputs.tag }}" --repo servantium/servantium-design-system --pattern '*.tar.gz'
         env: { GH_TOKEN: '${{ github.token }}' }
       - run: mkdir dist && tar -xzf grove-email-*.tar.gz -C dist
-      - uses: actions/checkout@v4
-        with: { repository: servantium/servantium-design-system, ref: '${{ inputs.tag }}', path: ds, sparse-checkout: packages/grove-email/scripts }
-      - run: cp -r dist ds/packages/grove-email/dist && node ds/packages/grove-email/scripts/postmark-validate.mjs
       - run: npx --yes postmark-cli templates push dist/postmark --force --all
   production:
     needs: qa
@@ -81,7 +77,6 @@ Notes:
 
 - A push adds and updates templates. It never deletes one. When a template is retired, remove it from both servers by hand.
 - Rolling back means pushing the previous release.
-- The validator hasn't been run against a real Postmark server yet. Run it once by hand against QA first.
 
 ## 4. Sending from the backend
 
@@ -89,17 +84,16 @@ Every send is one call: `POST https://api.postmarkapp.com/email/withTemplate` wi
 
 ```python
 import requests
-from servantium_email_contract import FROM, REPLY_TO, TEMPLATES, TaskData
 
-def send(alias: str, to: str, model: dict, token: str) -> None:
+def send(alias: str, to: str, model: dict, stream: str, token: str) -> None:
     requests.post(
         "https://api.postmarkapp.com/email/withTemplate",
         headers={"X-Postmark-Server-Token": token, "Accept": "application/json"},
         json={
-            "From": FROM,
+            "From": "Servantium <notifications@servantium.com>",
             "To": to,
-            "ReplyTo": REPLY_TO,
-            "MessageStream": TEMPLATES[alias]["message_stream"],
+            "ReplyTo": "help@servantium.com",
+            "MessageStream": stream,          # contract.json → messageStream: "outbound" or "broadcast"
             "TemplateAlias": alias,
             "TemplateModel": model,
             "Tag": alias,
@@ -107,7 +101,7 @@ def send(alias: str, to: str, model: dict, token: str) -> None:
         timeout=10,
     ).raise_for_status()
 
-model: TaskData = {
+send("task", "priya.nair@halcyon.example", {
     "actor_name": "Jules Hart",
     "action": "assigned you",
     "task_name": "Clinical sample manifest reconciliation",
@@ -118,8 +112,7 @@ model: TaskData = {
     "task_url": "https://app.servantium.com/engagements/eng-aur-417/project_plans?task=ppi-manifest",
     "organization_name": "Halcyon Bioanalytical Services",
     # "message" and "plan_url" are optional: leave them out and their sections disappear
-}
-send("task", "priya.nair@halcyon.example", model, token)
+}, stream="outbound", token=token)
 ```
 
 Rules that apply to every email:
@@ -174,7 +167,7 @@ In the Firebase console, open Authentication → Templates → Password reset. P
 
 ## 7. Testing
 
-- Run `postmark-validate.mjs` against QA once, then push.
+- Validate the templates against Postmark QA once, then push.
 - Send every v1 template from QA to test inboxes in:
   - Outlook desktop (Windows)
   - Outlook.com

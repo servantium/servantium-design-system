@@ -6,6 +6,11 @@ Each release is a git tag, `grove-email@<version>`, that matches `package.json`,
 - **minor:** a new template, or a new optional field
 - **major:** a removed or renamed template or field, or a field that becomes required
 
+## Unreleased
+
+- **Removed:** the Python contract (`servantium_email_contract.py`) and the Postmark validator script. The contract is `contract.json`; engineering builds whatever types and checks its own code needs.
+- **Removed:** the unused `Merge` component.
+
 ## 0.1.0 (2026-09-29)
 
 The first release: 13 system emails, ready for Postmark.

@@ -170,7 +170,6 @@ The build turns the master into everything the backend needs, and nothing it has
 
 - **`dist/postmark/task/`**: the template, its plain-text version and its metadata, ready for Postmark. A release bundles these.
 - **`dist/contract.json`**: the task entry, with its stream, sender, reply-to, subject and every field with its note and example.
-- **`dist/servantium_email_contract.py`**: the same contract as a Python type, `TaskData`, where optional fields are `NotRequired`.
 
 Sending it is one Postmark call, by alias, with the data. Engineering owns that code; this is what it looks like:
 

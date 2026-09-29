@@ -88,7 +88,7 @@ packages/grove-email/
 │   ├── theme.ts         Verdant tokens mapped to email roles; the three tones
 │   ├── stylesheet.ts    the style guide's content: samples, writing rules, tones, bans
 │   └── text.ts          HTML → the plain-text version
-├── scripts/             build (export.tsx), contract and docs writers, release-notes drafter, Postmark validator
+├── scripts/             the build (export.tsx), the generated docs, and the monthly release-notes drafter
 ├── test/                the rules
 └── docs/                how it works, writing an email, fields, templates, style guide, maintaining, engineering handover
 ```

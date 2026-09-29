@@ -59,7 +59,6 @@ This repo's workflow, [`.github/workflows/grove-email.yml`](../../../.github/wor
 |---|---|
 | `dist/postmark/<alias>/` | The template in the folder layout the Postmark CLI pushes: `content.html`, `content.txt`, `meta.json` |
 | `dist/contract.json` | Every template's stream, sender, reply-to, subject and fields, with examples and notes |
-| `dist/servantium_email_contract.py` | The same contract as Python `TypedDict`s, for the backend |
 | `dist/index.html` | The gallery: every email with its examples, at desktop and phone width |
 | `dist/stylesheet.html` | The style guide, rendered |
 | `dist/firebase/password-reset.html` | The reset email as a Firebase console template, while Firebase still sends resets |

@@ -88,26 +88,11 @@ The build enforces the last two, so an email can't quietly print nothing.
 
 ## What the contract becomes
 
-Every build writes the contract two ways, from the frontmatter:
+Every build writes the contract from the frontmatter:
 
 **`dist/contract.json`**: for every template alias, its stream (`outbound` or `broadcast`), sender, reply-to, subject, a sentence on when it's sent, and every field with its example, note and whether it's optional.
 
-**`dist/servantium_email_contract.py`**: the same as Python types for the backend. One `TypedDict` per template, with optional fields as `NotRequired`, and one per list item:
-
-```python
-class TaskData(TypedDict):
-    """Task message. transactional stream."""
-    actor_name: str  # Who did it
-    action: str  # Lower-case, reads after the name: assigned you · commented on · …
-    due: str  # Formatted for the recipient
-    message: NotRequired[str]  # The comment that came with the event…
-    task_url: str
-    …
-
-TEMPLATES = {"task": {"message_stream": "outbound", "data": TaskData}, …}
-```
-
-Both are generated. Never edit them; change the master.
+It's generated. Never edit it; change the master. Engineering can generate whatever types their code needs from it.
 
 ## Changing fields safely
 

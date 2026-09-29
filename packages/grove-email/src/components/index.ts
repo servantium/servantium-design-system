@@ -37,7 +37,6 @@ export { Banner, type BannerProps } from './Banner';
 export { Body } from './Body';
 export { Footer, type FooterProps } from './Footer';
 export { List, ListItem } from './List';
-export { Merge } from './Merge';
 export {
   Button, Callout, Chip, CodeBlock, CompanyLink, DataTable, Divider, Editable, Eyebrow, Heading, If, Items, Link,
   LinkFallback, markdown, Paragraphs, Spacer, Steps, Text, Thread, Updates,

@@ -1,7 +1,8 @@
 /**
- * The style guide as Markdown, for GitHub: docs/style-guide.md. Written from the same source as
- * dist/stylesheet.html (src/stylesheet.ts), by the build, and checked by the tests, so the page
- * people read on GitHub can't drift from the components.
+ * The two generated docs, for GitHub. Both are written by the build and checked by the tests, so
+ * what people read can't drift from the code:
+ *   docs/style-guide.md  from src/stylesheet.ts, the same source as dist/stylesheet.html
+ *   docs/templates.md    from the emails' frontmatter: every template and the data it needs
  */
 import { existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -10,6 +11,8 @@ import {
   ACCESSIBILITY, BANNED, FRONTMATTER, FRONTMATTER_EXAMPLE, SAMPLES, TONE_GUIDE, TONE_QUESTION, WRITING,
 } from '../src/stylesheet';
 import type { Tone } from '../src/theme';
+import { isList } from '../src/mdx';
+import type { Built } from './collect';
 
 const COMPONENTS = join(dirname(fileURLToPath(import.meta.url)), '../src/components');
 
@@ -103,5 +106,50 @@ ${ACCESSIBILITY.map(([r, how]) => `| **${cell(r)}** | ${cell(how)} |`).join('\n'
 ${BANNED.map((b) => `| ${cell(b.rule)} | ${b.enforced ? 'enforced' : 'review'} | ${cell(b.why)} |`).join('\n')}
 `);
 
+  return `${out.join('\n').trim()}\n`;
+}
+
+// ── The template catalogue ──────────────────────────────────────────────────────────────────────
+const ex = (s: string) => (s.length > 90 ? `${s.slice(0, 87)}…` : s);
+
+export function templatesMarkdown(emails: Built[]): string {
+  const out: string[] = [`# Email templates
+
+<!-- GENERATED from src/emails/*.mdx by \`npm run build\`. Edit the masters, not this page; \`npm test\` fails if it's stale. -->
+
+Every email, with the data its sender supplies. The alias is the Postmark template alias and the master's file name. Streams are Postmark's: \`outbound\` for transactional mail, \`broadcast\` for mail people can unsubscribe from. Every email is sent from \`Servantium <notifications@servantium.com>\` with Reply-To \`help@servantium.com\` unless its notes say otherwise. How to name and format values: [fields.md](./fields.md).
+
+| Alias | Name | Stream | Fields |
+|---|---|---|---|
+${emails.map((e) => `| [\`${e.id}\`](#${e.id}) | ${cell(e.name)} | ${e.stream === 'broadcast' ? 'broadcast' : 'outbound'} | ${Object.keys(e.fields).length} |`).join('\n')}
+`];
+
+  for (const e of emails) {
+    const fm = e.frontmatter;
+    out.push(`## ${e.id}
+
+**${cell(e.name)}** · [\`src/emails/${e.id}.mdx\`](../src/emails/${e.id}.mdx)
+
+${e.sends}
+
+| | |
+|---|---|
+| Stream | ${e.stream === 'broadcast' ? '`broadcast`' : '`outbound`'} |
+| Subject | \`${cell(fm.subject)}\` |
+| Preheader | \`${cell(fm.preheader)}\` |
+| Banner | ${cell(fm.label)} · “${cell(fm.title)}” · ${fm.tone} tone |
+| Footer reason | ${cell(fm.footer.reason)} |
+
+| Field | | Note | Example |
+|---|---|---|---|
+${Object.entries(e.fields).map(([name, f]) => {
+      const kind = isList(f)
+        ? `list of { ${[...new Set(f.example.flatMap((i) => Object.keys(i)))].join(', ')} }`
+        : 'text';
+      const example = isList(f) ? `${f.example.length} items, e.g. ${ex(Object.values(f.example[0]).join(' · '))}` : ex(f.example as string);
+      return `| \`${name}\` | ${kind}${f.optional ? ', optional' : ''} | ${cell(f.note ?? '')} | ${cell(example)} |`;
+    }).join('\n')}
+`);
+  }
   return `${out.join('\n').trim()}\n`;
 }
