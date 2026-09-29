@@ -10,13 +10,16 @@ import assert from 'node:assert/strict';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { addressLine, footerLinks, social } from '@servantium/brand';
 import { renderEmail } from '../src/render';
-import { Banner, Email, type BannerProps } from '../src/components/Layout';
+import { Banner, Email, type BannerProps } from '../src/components';
 import { Card } from '../scripts/card';
 import { compileMdxEmail, FrontmatterError, fillPreview, loadMdxEmail, mdxBody, protectMergeFields } from '../src/mdx';
 import { htmlToText } from '../src/text';
 import { SAMPLES } from '../src/stylesheet';
 import { color, neutral, tones } from '../src/theme';
 import { collect, firebaseReset } from '../scripts/collect';
+import { MARKDOWN, styleGuideMarkdown } from '../scripts/style-guide-md';
+import { mdxComponents } from '../src/components';
+import { readFileSync, existsSync } from 'node:fs';
 
 const emails = await collect();
 const both = emails.flatMap((e) => [
@@ -279,4 +282,20 @@ test('an Editable block shows the default unless the sender overrides it', async
   assert.match(fillPreview(html, {}), /Default intro/);
   assert.doesNotMatch(fillPreview(html, { intro: 'Custom intro' }), /Default intro/);
   assert.match(fillPreview(html, { intro: 'Custom intro' }), /Custom intro/);
+});
+
+// ── Docs ────────────────────────────────────────────────────────────────────────────────────────
+test('docs/style-guide.md is current with the style sheet (run npm run build)', () => {
+  const file = new URL('../docs/style-guide.md', import.meta.url);
+  assert.ok(existsSync(file), 'docs/style-guide.md is missing — run npm run build');
+  assert.equal(readFileSync(file, 'utf8'), styleGuideMarkdown(), 'docs/style-guide.md is stale — run npm run build and commit it');
+});
+
+test('every component a master can use has a sample in the style guide', () => {
+  const markdownOnly = new Set(['p', 'h1', 'h2', 'h3', 'a', 'ul', 'ol', 'li', 'hr', 'pre', 'code']);
+  const sampled = SAMPLES.flatMap((g) => g.items.map((s) => s.mdx)).join('\n');
+  const viaMarkdown = new Set(Object.values(MARKDOWN));
+  for (const name of Object.keys(mdxComponents).filter((n) => !markdownOnly.has(n) && !viaMarkdown.has(n))) {
+    assert.match(sampled, new RegExp(`<${name}\\b`), `<${name}> has no style-guide sample — add one to src/stylesheet.ts`);
+  }
 });

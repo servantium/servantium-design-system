@@ -6,11 +6,13 @@ The one place Servantium's identity lives. If a logo, Astro, the email header ar
 
 | Path | What | Source of truth |
 |---|---|---|
-| `company.json` | Legal name, postal address, public URLs, footer link order | This file. Every URL was checked to return 200 when added. |
+| `company.json` | Legal name, postal address, public URLs, email addresses, LinkedIn, footer link order | This file. Every live URL was checked to return 200 when added; `status` is planned and its footer link stays hidden (`live: false`). |
 | `assets/logo/` | `servantium-logo.png` (on light), `servantium-logo-white.png` (on dark) | Copied from servantium.com, 723×170 |
 | `assets/astro/astro-<pose>.svg` | **Astro the Astronaut** — waving, captain, detective, professor, cowboy | Copied from the Flutter app's `assets/astronaut_*.svg` |
 | `assets/astro/astro-<pose>.png` | Astro rasterised, 240×240 | **Generated** — `npm run render` |
-| `assets/email/header-{standard,hero}.{svg,jpg}` | The email banner art ("forest night sky"): standard, and a taller hero for when Astro is in the banner | **Generated**, seeded so a re-render isn't a redesign |
+| `assets/email/header-{standard,hero}.{svg,jpg}` | The email banner art ("forest night sky"): standard, and a taller hero for when a mascot is in the banner | **Generated**, seeded so a re-render isn't a redesign |
+| `assets/email/footer-bar.{svg,jpg}` | The bookend strip of the same sky under every email | **Generated**, same seed |
+| `assets/social/linkedin.{svg,png}` | The LinkedIn circle in the email footer | SVG from the website footer; PNG **generated** |
 
 SVG is the master; PNG and JPG are build outputs. Email clients can't show SVG, so anything an email uses has a raster version — but nobody hand-exports one. Edit the SVG (or the art generator in `scripts/render.mjs`), run `npm run render`, commit both.
 
@@ -41,16 +43,11 @@ https://assets.servantium.com/brand/email/header-hero.jpg
 
 Because the email loads the image when it's opened, replacing the file at that address updates **every email ever sent** — last year's welcome emails show this year's Astro. That only works if the addresses never change, so they are unversioned on purpose.
 
-### Proposed hosting (not set up yet)
+### Hosting
 
-| | |
-|---|---|
-| **Where** | A Cloudflare R2 bucket on a custom domain, `assets.servantium.com` |
-| **Published by** | The design-system release workflow: on tag, upload `packages/brand/assets/**` |
-| **Headers** | `Cross-Origin-Resource-Policy: cross-origin` · `Cache-Control: public, max-age=86400` |
-| **Why not servantium.com/brand?** | It already hosts the logo, but every response carries `Cross-Origin-Resource-Policy: same-site`, which tells browser engines to refuse the image anywhere else. Gmail and Outlook fetch through their own servers and don't care; Apple Mail with Privacy Protection off does. It also ties brand assets to website deploys. |
+They'll be served from a Cloudflare R2 bucket, `servantium-assets`, on `assets.servantium.com`, uploaded by the email workflow on each production release. **Not set up yet.** [docs/hosting.md](./docs/hosting.md) is the plan: what goes in the bucket, its structure, headers, access, cost and the setup steps.
 
-Until that exists, `DEFAULT_ASSET_BASE` in `src/index.ts` is `null` and assets resolve to relative paths — right for previews, wrong for a real send.
+Until it exists, `DEFAULT_ASSET_BASE` in `src/index.ts` is `null` and assets resolve to relative paths. That's right for previews and wrong for a real send.
 
 The Flutter app bundles its own copies of Astro. That's engineering's repo; when Astro changes, copy the SVGs from here or point the app at the hosted URLs.
 

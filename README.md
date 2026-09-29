@@ -1,6 +1,6 @@
 # Servantium Design System
 
-Single source of truth for visual design, brand assets and documentation components across every Servantium surface. Private monorepo.
+Single source of truth for visual design, brand assets, documentation components and system email across every Servantium surface. Monorepo.
 
 ## Packages
 
@@ -8,8 +8,8 @@ Single source of truth for visual design, brand assets and documentation compone
 |---|---|---|
 | **[`@servantium/verdant`](./packages/verdant)** | CSS custom properties (colors, typography, spacing, easing), optional base/reset styles. Pure CSS, framework-agnostic. | servantium-website, servantium-help, servantium-internal (portal) |
 | **[`@servantium/grove`](./packages/grove)** | Astro documentation components (`DocsLayout`, `DocsSidebar`, `DocsSearch`, `TableOfContents`, `DocsAside`, `DocsSteps`, `DocsTabs`, `DocsPagination`, `ReleaseTimeline`). | servantium-website, servantium-help |
-| **[`@servantium/brand`](./packages/brand)** | Logo, Astro the Astronaut, email header art, and `company.json` (legal name, address, public links). SVG masters; PNG/JPG generated. | email; intended for every surface |
-| **[`@servantium/verdant-email`](./packages/verdant-email)** | Email components (`Banner`, `Button`, `DataTable`, `Callout`, `Footer`…), the Servantium emails (TSX and MDX), and the email style sheet. Builds Outlook/Gmail-safe HTML and exports it as Postmark templates. | Postmark (templates pushed from here), Firebase (password reset, for now) |
+| **[`@servantium/brand`](./packages/brand)** | Logo, Astro the Astronaut, email banner art, the LinkedIn icon, and `company.json` (legal name, address, public links, email addresses). SVG masters; PNG/JPG generated. Hosted for email at `assets.servantium.com` ([plan](./packages/brand/docs/hosting.md)). | email; intended for every surface |
+| **[`@servantium/verdant-email`](./packages/verdant-email)** | Every system email as an MDX master, the email components (one file each), the style guide and the field contract. Builds Outlook- and Gmail-safe HTML and pushes it to Postmark. | Postmark (templates pushed from here); the Servantium backend (sends by alias with the contract's data); Firebase (password reset, for now) |
 
 ## Repo layout
 
@@ -21,14 +21,23 @@ servantium-design-system/
 │   │   ├── base.css              # optional reset + typography defaults
 │   │   ├── package.json
 │   │   └── README.md
-│   └── grove/                    # @servantium/grove
-│       ├── src/
-│       │   ├── components/       # Individual .astro files + index.ts
-│       │   └── index.ts          # Public root (stub — use deep imports)
-│       ├── package.json
-│       └── README.md
+│   ├── grove/                    # @servantium/grove
+│   │   ├── src/
+│   │   │   ├── components/       # Individual .astro files + index.ts
+│   │   │   └── index.ts          # Public root (stub — use deep imports)
+│   │   ├── package.json
+│   │   └── README.md
+│   ├── brand/                    # @servantium/brand
+│   │   ├── company.json          # company facts every surface reads
+│   │   ├── assets/               # logo, Astro, email art, icons (SVG masters + rasters)
+│   │   └── docs/hosting.md       # the assets.servantium.com (R2) plan
+│   └── verdant-email/            # @servantium/verdant-email
+│       ├── src/emails/           # one .mdx per email = one Postmark template
+│       ├── src/components/       # one file per email component
+│       └── docs/                 # how it works, writing an email, fields, style guide, maintaining
 ├── .github/workflows/
-│   └── publish.yml               # Publishes both packages + notifies consumers on tag push
+│   ├── publish.yml               # Publishes verdant + grove on v* tags
+│   └── email-templates.yml       # Builds + tests emails; pushes to Postmark QA on main, production on email-v* tags
 ├── package.json                  # Workspaces root (not published)
 └── README.md
 ```
@@ -66,6 +75,10 @@ servantium-design-system/
 ```
 
 **Each consumer has a `.design-system-ref` file at its root** pinning it to a specific tag or SHA. On tag push here, the `publish.yml` workflow dispatches to both consumers; each consumer's `update-design-system.yml` bumps its pin and opens a PR against `develop`. The PR preview-deploys automatically. A human reviewer merges to promote.
+
+## Email
+
+Emails don't follow the package flow above. They're compiled here and pushed to Postmark by `email-templates.yml`: to the QA server on merge to `main`, and to production on an `email-v*` tag. The backend sends them by alias. Start with [`packages/verdant-email/README.md`](./packages/verdant-email/README.md).
 
 ## Release flow
 

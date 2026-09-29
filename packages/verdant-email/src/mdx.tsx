@@ -3,13 +3,12 @@
  *
  *   ---
  *   subject: What's new in Servantium — June 2026
- *   preheader: Search that respects your access rules, and contact workspaces.
+ *   preheader: Secure Search, Contact Workspaces, and 83 more improvements.
  *   label: Release notes
  *   title: What's new in Servantium
- *   astro: professor
  *   stream: broadcast
  *   footer:
- *     reason: You're receiving product updates because you're a Servantium user.
+ *     reason: Sent to Servantium users about product updates.
  *   fields:
  *     first_name: { example: Jules, note: The recipient's first name }
  *   ---
@@ -29,16 +28,12 @@
  * style sheet's rules: Astro only on the default tone, an unsubscribe on broadcast mail and never on
  * transactional mail. A rule broken in the frontmatter fails the build with a sentence, not a stack.
  */
-import type { ReactElement, ReactNode } from 'react';
+import type { ReactElement } from 'react';
 import { evaluate } from '@mdx-js/mdx';
 import * as runtime from 'react/jsx-runtime';
 import { parse as parseYaml } from 'yaml';
-import { ASTRO_POSES, company, type AstroPose } from '@servantium/brand';
-import { Banner, Body, Email, Footer } from './components/Layout';
-import {
-  Button, Callout, Chip, CodeBlock, DataTable, Divider, Eyebrow, Heading, Items, Link, LinkFallback,
-  List, ListItem, Paragraphs, Spacer, Steps, Text, Thread, Updates,
-} from './components/Content';
+import { ASTRO_POSES, type AstroPose } from '@servantium/brand';
+import { Banner, Body, Email, Footer, mdxComponents } from './components';
 import { renderEmail, type AssetOptions } from './render';
 import { tones, type Tone } from './theme';
 import type { Stream } from './template';
@@ -256,60 +251,6 @@ export const fillPreview = (html: string, values: Values = {}, escape = true): s
     .replace(/\{\{#(\w+)\}\}([\s\S]*?)\{\{\/\1\}\}/g, (_, name: string, inner: string) => (present(name) ? inner.replace(/\{\{\s*\.\s*\}\}/g, v(name)) : ''))
     .replace(/\{\{\^(\w+)\}\}([\s\S]*?)\{\{\/\1\}\}/g, (_, name: string, inner: string) => (present(name) ? '' : inner))
     .replace(MERGE, (tag, name: string) => (name in values ? v(name) : tag));
-};
-
-// ── Postmark-native building blocks ─────────────────────────────────────────────────────────────
-/** Shows its content only when the sender supplies `field`. Inside, {{ . }} is that value. */
-export function If({ field, children }: { field: string; children?: ReactNode }) {
-  return <>{`{{#${field}}}`}{children}{`{{/${field}}}`}</>;
-}
-
-/**
- * Copy an admin can override later WITHOUT a template change: the sender passes `field` to replace
- * the default; leave it out and the default shows. Postmark does this natively, so admin-editable
- * emails need data, not a new rendering system.
- */
-export function Editable({ field, children }: { field: string; children?: ReactNode }) {
-  return <>{`{{#${field}}}`}<Text>{'{{ . }}'}</Text>{`{{/${field}}}{{^${field}}}`}<Text>{children}</Text>{`{{/${field}}}`}</>;
-}
-
-type UrlKey = keyof typeof company.urls;
-/** A link to a Servantium address from company.json — so body links move when the address does. */
-function CompanyLink({ to, children }: { to: UrlKey; children?: ReactNode }) {
-  return <Link href={company.urls[to]}>{children ?? company.urls[to].replace(/^https:\/\//, '').replace(/\/$/, '')}</Link>;
-}
-/** Button that also accepts `to="trust"` for a company.json address. */
-function MdxButton({ to, href, ...rest }: { to?: UrlKey; href?: string; children: string; variant?: 'primary' | 'secondary'; width?: number }) {
-  return <Button href={to ? company.urls[to] : (href ?? '#')} {...rest} />;
-}
-
-// ── Markdown → email components ─────────────────────────────────────────────────────────────────
-const Pre = ({ children }: { children?: ReactNode }) => {
-  const code = (children as { props?: { children?: string } })?.props?.children ?? '';
-  return <CodeBlock>{String(code).replace(/\n$/, '')}</CodeBlock>;
-};
-
-const markdown = {
-  p: ({ children }: { children?: ReactNode }) => <Text>{children}</Text>,
-  h1: ({ children }: { children?: ReactNode }) => <Heading level={1}>{children}</Heading>,
-  h2: ({ children }: { children?: ReactNode }) => <Heading>{children}</Heading>,
-  h3: ({ children }: { children?: ReactNode }) => <Heading>{children}</Heading>,
-  a: ({ href, children }: { href?: string; children?: ReactNode }) => <Link href={href ?? '#'}>{children}</Link>,
-  ul: ({ children }: { children?: ReactNode }) => <List>{children}</List>,
-  ol: ({ children }: { children?: ReactNode }) => <List>{children}</List>,
-  li: ({ children }: { children?: ReactNode }) => <ListItem>{children}</ListItem>,
-  hr: () => <Divider />,
-  pre: Pre,
-  code: ({ children }: { children?: ReactNode }) => (
-    <code style={{ fontFamily: "Menlo, Consolas, 'Courier New', monospace", fontSize: '13px', backgroundColor: '#F5F6F7', padding: '1px 4px', borderRadius: '4px' }}>{children}</code>
-  ),
-};
-
-/** Everything an MDX email may use. The style sheet documents each one. */
-export const mdxComponents = {
-  ...markdown,
-  Button: MdxButton, Callout, Chip, DataTable, Divider, Eyebrow, Items, LinkFallback, Spacer, Text, Heading, Link, CodeBlock,
-  CompanyLink, If, Editable, Updates, Steps, Paragraphs, Thread,
 };
 
 // ── Load ────────────────────────────────────────────────────────────────────────────────────────

@@ -8,7 +8,14 @@
     "./company.json": "./company.json",
     "./assets/*": "./assets/*"
   },
-  "files": ["src", "assets", "company.json", "scripts", "README.md"],
+  "files": [
+    "src",
+    "assets",
+    "company.json",
+    "scripts",
+    "docs",
+    "README.md"
+  ],
   "scripts": {
     "render": "node scripts/render.mjs"
   },

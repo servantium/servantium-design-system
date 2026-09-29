@@ -22,8 +22,7 @@ import { fileURLToPath } from 'node:url';
 import type { ReactNode } from 'react';
 import { ASTRO_POSES, company } from '@servantium/brand';
 import { renderEmail } from '../src/render';
-import { Banner, Body, Email } from '../src/components/Layout';
-import { Text } from '../src/components/Content';
+import { Banner, Body, Email, Text } from '../src/components';
 import { fillPreview, mdxBody } from '../src/mdx';
 import { htmlToText } from '../src/text';
 import { color, tones, type Tone } from '../src/theme';
@@ -33,6 +32,7 @@ import {
 import { Card } from './card';
 import { collect, firebaseReset, SENT_ASSET_BASE } from './collect';
 import { pythonContract } from './contract-py';
+import { styleGuideMarkdown } from './style-guide-md';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DIST = join(HERE, '../dist');
@@ -74,6 +74,9 @@ for (const e of emails) {
 writeFileSync(join(DIST, 'contract.json'), `${JSON.stringify(contract, null, 2)}\n`);
 writeFileSync(join(DIST, 'servantium_email_contract.py'), pythonContract(emails));
 
+// The style guide as Markdown, committed, for anyone reading on GitHub.
+writeFileSync(join(HERE, '../docs/style-guide.md'), styleGuideMarkdown());
+
 // Firebase sends the reset itself until the backend sends it through Postmark.
 writeFileSync(join(DIST, 'firebase', 'password-reset.html'), await firebaseReset());
 
@@ -82,9 +85,9 @@ const frame = (children: ReactNode) =>
   renderEmail({ subject: 'Sample', preheader: '', children }).replace('padding:32px 12px 40px;', 'padding:12px;');
 
 const BANNERS: { key: string; tone: Tone; astro?: (typeof ASTRO_POSES)[number]; label: string; title: string; note: string }[] = [
-  { key: 'default', tone: 'default', label: 'Task', title: 'Jules Hart assigned you a task', note: 'default — nothing is wrong' },
-  { key: 'attention', tone: 'attention', label: 'Scheduled maintenance', title: 'Planned maintenance on Saturday', note: 'attention — act or plan soon' },
-  { key: 'urgent', tone: 'urgent', label: 'Service disruption', title: "Quotes aren't loading", note: 'urgent — broken now' },
+  { key: 'default', tone: 'default', label: 'Task', title: 'Task update', note: 'default — nothing is wrong' },
+  { key: 'attention', tone: 'attention', label: 'Maintenance', title: 'Planned maintenance', note: 'attention — act or plan soon' },
+  { key: 'urgent', tone: 'urgent', label: 'Service status', title: 'Service disruption', note: 'urgent — broken now' },
 ];
 const bannerDoc = (b: (typeof BANNERS)[number], body?: ReactNode) => frame(
   <Email>
@@ -97,7 +100,7 @@ const bannerDoc = (b: (typeof BANNERS)[number], body?: ReactNode) => frame(
 
 writeFileSync(join(DIST, 'banners.html'), renderEmail({
   subject: 'Servantium email banner',
-  preheader: 'One banner, three tones, and Astro for good news.',
+  preheader: 'One banner, three tones.',
   children: (
     <>
       {BANNERS.map((b) => (

@@ -6,6 +6,7 @@
  * and test/rules.test.tsx runs the rules over each one, so the style sheet can't show something
  * that doesn't work.
  */
+import type { Values } from './mdx';
 import type { Tone } from './theme';
 
 // ── Frontmatter ─────────────────────────────────────────────────────────────────────────────────
@@ -28,10 +29,9 @@ subject: "What's new in Servantium — June 2026"
 preheader: "Secure Search, Contact Workspaces, and 83 more improvements."
 label: Release notes
 title: What's new in Servantium
-astro: professor
 stream: broadcast
 footer:
-  reason: You're receiving product updates because you're a Servantium user.
+  reason: Sent to Servantium users about product updates.
 fields:
   first_name: { example: Jules, note: "From the user's profile" }
 ---
@@ -64,7 +64,7 @@ export const TONE_GUIDE: Record<Tone, { answer: string; use: string; examples: s
 export const WRITING: [rule: string, example: string][] = [
   ['The subject says what happened.', '“Jules Hart assigned you: Manifest reconciliation”, not “Update from Servantium”. Aim for 60 characters.'],
   ['The preheader adds something the subject doesn’t.', 'A due date, an amount, the next step. Aim for 90 characters.'],
-  ['The first line says why they’re reading.', 'The banner headline carries the event; the body opens with what it means for them.'],
+  ['The first line says what happened.', 'The banner names the kind of email, the same on every send; the body’s first line says what happened and what it means for them.'],
   ['One primary action.', 'Button labels are a verb and an object, 24 characters at most: “Open task”, “Set your password”. Never “Click here”.'],
   ['Links say where they go.', '“View the full project plan”, not “here”. Every link is also in the plain-text version.'],
   ['Plain, warm, specific.', 'Short sentences, active voice, no jargon. One exclamation mark at most, and only for good news.'],
@@ -78,7 +78,7 @@ export const ACCESSIBILITY: [rule: string, how: string][] = [
   ['Type size', 'Body text 16px, nothing smaller than 13px. Mobile keeps the same sizes.'],
   ['Structure', 'The document declares its language; the banner headline is the one h1 and section headings are h2; layout tables are marked presentation so screen readers skip them.'],
   ['Images', 'Every image has alt text or is decorative. No meaning lives only in an image — the email reads in full with images off.'],
-  ['Colour is never the only signal', 'Tones also change the label and headline; chips carry words, not just colour.'],
+  ['Colour is never the only signal', 'An urgent email says so in words, in its label and headline; chips carry words too.'],
   ['Real links', 'Buttons are ordinary links with visible text, so they work with keyboards, screen readers and plain-text mail.'],
   ['A plain-text version', 'Generated from the HTML for every email, so nobody maintains a second copy.'],
 ];
@@ -109,8 +109,8 @@ export type Sample = {
   /** The props, in one line. */
   props?: string;
   mdx: string;
-  /** Values for {{ fields }} in the rendered sample. */
-  preview?: Record<string, string>;
+  /** Values for {{ fields }} in the rendered sample. A list field takes a list of items. */
+  preview?: Values;
 };
 
 export const SAMPLES: { group: string; intro: string; items: Sample[] }[] = [
@@ -122,6 +122,14 @@ export const SAMPLES: { group: string; intro: string; items: Sample[] }[] = [
         name: 'Paragraph',
         use: 'Most of any email. Short paragraphs — two or three sentences.',
         mdx: 'Paragraphs are plain Markdown. **Bold** for the one fact that matters, and [a link](https://help.servantium.com) where the reader might want more.',
+      },
+      {
+        name: 'Link',
+        use: 'A Markdown link in running text. Write <Link> when the address is a field inside a component, or inside <If>. The words say where it goes.',
+        avoid: '“Click here” or a bare URL (except in LinkFallback).',
+        props: 'href',
+        mdx: 'Everything that changed is in the [release notes](https://help.servantium.com/release-notes/).\n\n<Text size="sm" margin="0"><Link href="{{ plan_url }}">View the full project plan</Link></Text>',
+        preview: { plan_url: 'https://app.servantium.com' },
       },
       {
         name: 'Section heading',
@@ -233,6 +241,43 @@ export const SAMPLES: { group: string; intro: string; items: Sample[] }[] = [
     ],
   },
   {
+    group: 'Lists the sender fills',
+    intro: 'When the number of rows depends on the data — a day\'s updates, a reply\'s paragraphs, a conversation — the sender supplies a list and Postmark repeats the row. Declare the field with a list of example items; the build checks every item field the component reads.',
+    items: [
+      {
+        name: 'Updates',
+        use: 'A digest of events: one row each, with a category chip, a time, a linked title and a line of context.',
+        props: 'field — a list of { category, time, title, context, url }',
+        mdx: '<Updates field="items" />',
+        preview: { items: [
+          { category: 'Task', time: '9:14 AM', title: 'Jules Hart assigned you “Clinical sample manifest reconciliation”', context: 'AUR-417 · due Fri, Oct 16', url: 'https://app.servantium.com' },
+          { category: 'Quote', time: '11:02 AM', title: 'Dana Whitfield approved the Phase II quote', context: 'AUR-417 · Aurora Pharmaceuticals · $184,500', url: 'https://app.servantium.com' },
+        ] },
+      },
+      {
+        name: 'Paragraphs',
+        use: 'Free text a person wrote — a support reply. The sender splits it on blank lines, one { text } per paragraph. Escaped, so a message can\'t inject HTML.',
+        avoid: 'Copy we write ourselves — that goes in the master as Markdown.',
+        props: 'field — a list of { text }',
+        mdx: '<Paragraphs field="reply" />',
+        preview: { reply: [
+          { text: 'Thanks for the screenshots — we\'ve found the cause.' },
+          { text: 'We\'ve fixed it for your organization. Could you check the total matches on your side?' },
+        ] },
+      },
+      {
+        name: 'Thread',
+        use: 'The earlier messages in a conversation, newest first, quieter than the new message above them.',
+        props: 'field — a list of { author, time, excerpt } · title',
+        mdx: '<Thread field="thread" title="Earlier in this conversation" />',
+        preview: { thread: [
+          { author: 'Dana Whitfield', time: 'Mon, Oct 12 · 4:02 PM', excerpt: 'The quote says $184,512 but my sheet says $184,500 for the same roles and hours.' },
+          { author: 'Priya Nair', time: 'Mon, Oct 12 · 11:30 AM', excerpt: 'Could you send a screenshot of the quote and the matching rows of your spreadsheet?' },
+        ] },
+      },
+    ],
+  },
+  {
     group: 'Merge fields',
     intro: 'Anything the sender fills in. Write {{ field_name }} anywhere — text, a component, the frontmatter. It reaches Postmark untouched; the gallery fills it from `preview`.',
     items: [
@@ -245,6 +290,7 @@ export const SAMPLES: { group: string; intro: string; items: Sample[] }[] = [
       {
         name: 'In a component',
         use: 'Inside a component, a field is a string: "{{ field }}". To make it bold, {"{{ field }}"} inside the tag.',
+        props: 'any string prop',
         mdx: '<DataTable rows={[\n  ["Client", "{{ client }}"],\n  ["Due", <b>{"{{ due }}"}</b>],\n]} />\n\n<Spacer size={20} />\n\n<Button href="{{ quote_url }}">Open quote</Button>',
         preview: { client: 'Aurora Pharmaceuticals', due: 'Fri, Oct 16', quote_url: 'https://app.servantium.com' },
       },
@@ -270,7 +316,7 @@ export const SAMPLES: { group: string; intro: string; items: Sample[] }[] = [
       {
         name: 'Company link',
         use: 'Any link to a Servantium address in the body. The address comes from company.json, so moving the app or the trust centre updates every email. Buttons take `to` the same way.',
-        props: 'to: website · app · help · privacy · terms · trust · releaseNotes',
+        props: 'to: website · app · help · privacy · terms · trust · releaseNotes · status',
         mdx: 'Sign in at <CompanyLink to="app" />.\n\n<Button to="trust" variant="secondary" width={250}>View the trust centre</Button>',
       },
     ],

@@ -1,6 +1,6 @@
 /** A body-only card: how the style sheet shows a component sample without a banner or footer. */
 import type { ReactNode } from 'react';
-import { Email } from '../src/components/Layout';
+import { Email } from '../src/components';
 import { color } from '../src/theme';
 
 export const Card = ({ children }: { children: ReactNode }) => (

@@ -16,7 +16,7 @@ export const fonts = {
 } as const;
 
 export const color = {
-  brand: v.colorGreen,            // #00C26D — primary button, white text (design decision)
+  brand: v.colorGreen,            // #00C26D — the primary button's fill (its label is deep forest: white on this green fails AA)
   link: v.colorEmerald,           // #037A47 — body links are this, not brand (brand fails AA as text)
   banner: v.colorDeepForest,      // #023E25 — the header, and its fallback when images are off
   ink: v.colorInk1,               // #1a1a1a
@@ -64,3 +64,7 @@ export const tones: Record<Tone, {
 
 /** A neutral panel for things that aren't a callout — a quoted note, a code sample. */
 export const neutral = { tint: v.colorMistGrey, strong: v.colorInk1 } as const;
+
+/** What a Callout or Chip can be coloured with: a tone, or `neutral` for a panel that isn't news. */
+export type Tint = Tone | 'neutral';
+export const tint = (t: Tint) => (t === 'neutral' ? neutral : tones[t]);

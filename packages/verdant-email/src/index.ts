@@ -7,16 +7,16 @@
  * renders email: it sends a Postmark template by alias with the data. See README.
  */
 export { renderEmail, toFirebaseFragment, useAsset, type AssetOptions } from './render';
-export { Email, Banner, Body, Footer, type BannerProps, type FooterProps } from './components/Layout';
 export {
-  Heading, Text, Eyebrow, Link, Button, DataTable, Callout, Chip, Items, Spacer, Divider, LinkFallback,
-  List, ListItem, CodeBlock, Merge, Updates, Steps, Paragraphs, Thread, type Tint,
-} from './components/Content';
-export { color, fonts, tones, neutral, type Tone } from './theme';
+  Email, Banner, Body, Footer, Heading, Text, Eyebrow, Link, CompanyLink, Button, DataTable, Callout, Chip, Items,
+  Spacer, Divider, LinkFallback, List, ListItem, CodeBlock, Merge, Updates, Steps, Paragraphs, Thread, If, Editable,
+  mdxComponents, type BannerProps, type FooterProps,
+} from './components';
+export { color, fonts, tones, neutral, tint, type Tone, type Tint } from './theme';
 export { type Stream } from './template';
 export {
-  loadMdxEmail, mdxBody, validate, splitFrontmatter, protectMergeFields, fillPreview, mdxComponents,
-  checkContract, compileMdxEmail, isList, examples, If, Editable,
+  loadMdxEmail, mdxBody, validate, splitFrontmatter, protectMergeFields, fillPreview,
+  checkContract, compileMdxEmail, isList, examples,
   FrontmatterError, POSTMARK_UNSUBSCRIBE, type Frontmatter, type Field, type Item, type Values, type MdxEmail,
 } from './mdx';
 export { htmlToText } from './text';

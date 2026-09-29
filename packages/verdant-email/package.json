@@ -4,12 +4,12 @@
   "description": "Verdant for email: components that assemble Outlook- and Gmail-safe HTML email, plus the templates built from them.",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts",
-    "./templates/*": "./src/templates/*.tsx"
+    ".": "./src/index.ts"
   },
   "files": [
     "src",
     "scripts",
+    "docs",
     "README.md"
   ],
   "scripts": {
