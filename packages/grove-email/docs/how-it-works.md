@@ -29,11 +29,11 @@ Three systems each do one job:
   │ GitHub Actions: build, test, check images    │  the rendered gallery is attached to
   │ (masters → HTML, plain text, contract)       │  the run, so reviewers see every email
   └──────────────────────┬───────────────────────┘
-                         │  merge to main, then tag email-vX.Y.Z
+                         │  merge to main, then tag grove-email@X.Y.Z
                          ▼
   ┌──────────────────────────────────────────────┐
   │ GitHub release                               │  the Postmark-ready templates and
-  │ grove-email-email-vX.Y.Z.tar.gz              │  the contract, as downloadable files
+  │ grove-email-X.Y.Z.tar.gz                     │  the contract, as downloadable files
   └──────────────────────┬───────────────────────┘
   ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─│─ ─ ─ ─ ─ ─ ─  engineering's side from here  ─ ─ ─ ─ ─ ─
                          ▼

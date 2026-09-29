@@ -21,7 +21,8 @@ open dist/stylesheet.html    # the style guide, rendered
 | See every template and its fields | [docs/templates.md](./docs/templates.md) (generated) |
 | Look up a component, a frontmatter key, a tone or a rule | [docs/style-guide.md](./docs/style-guide.md) (generated) |
 | Release, add or retire a template; release notes; images | [docs/maintaining.md](./docs/maintaining.md) |
-| Connect Postmark and send from the backend (engineering) | [docs/engineering-handover.md](./docs/engineering-handover.md) |
+| Connect Postmark and send from the backend (engineering) | [HANDOVER.md](./HANDOVER.md), then [docs/engineering-handover.md](./docs/engineering-handover.md) |
+| See what changed in each release | [CHANGELOG.md](./CHANGELOG.md) |
 | Know where the images come from | [../brand/docs/asset-library.md](../brand/docs/asset-library.md) |
 
 ## The emails
@@ -94,5 +95,5 @@ packages/grove-email/
 
 ## Before the first real send
 
-- **Design system:** the asset library live at `assets.servantium.com`; the first `email-v*` release tagged; legal review of the regulatory notice; the Status footer link switched on once a status page exists.
+- **Design system:** the asset library live at `assets.servantium.com`; the first `grove-email@…` release tagged; legal review of the regulatory notice; the Status footer link switched on once a status page exists.
 - **Engineering:** Postmark servers, streams, sender domain and tokens; a workflow that pushes a release into Postmark; the backend sends; test sends in Outlook desktop, Gmail and Apple Mail. [docs/engineering-handover.md](./docs/engineering-handover.md) has the detail.

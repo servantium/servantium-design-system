@@ -113,6 +113,10 @@ Emails pick up a new address at their next release.
 | Bots | The zone's browser check refuses a few scripting clients' default user agents, such as Python's `urllib` (error 1010). Mail-client image proxies, browsers, `curl` and Node are served. A script that fetches files should send its own user agent. |
 | Cost | Within R2's free tier: 10 GB stored, a million writes and ten million reads a month, no egress fees. |
 
+## Versions
+
+The library is versioned with the rest of the brand package: a `brand@X.Y.Z` tag marks a coherent state of the files and `company.json`, and [CHANGELOG.md](../CHANGELOG.md) says what changed. Addresses don't depend on versions: every file keeps its fingerprinted address in every version that includes it.
+
 ## Scripts
 
 | Command (in `packages/brand`) | Does |

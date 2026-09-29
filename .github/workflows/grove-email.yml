@@ -5,9 +5,10 @@
 # templates into Postmark and sending them belongs to engineering, who consume the release bundle.
 # See packages/grove-email/docs/engineering-handover.md.
 #
-#   pull request   build + tests + every brand image is live; the gallery is attached to the run
-#   merge to main  the same
-#   tag email-v*   the same, then a GitHub release with the Postmark-ready bundle and the contract
+#   pull request         build + tests + every brand image is live; the gallery is attached to the run
+#   merge to main        the same
+#   tag grove-email@X.Y.Z  the same, then a GitHub release with the Postmark-ready bundle and the
+#                        contract. The tag's version must match packages/grove-email/package.json.
 #
 # No secrets. Brand images are published to assets.servantium.com from a workstation
 # (`npm run publish` in packages/brand); this workflow only checks they're live.
@@ -19,7 +20,7 @@ on:
     paths: ['packages/grove-email/**', 'packages/brand/**', 'packages/verdant/tokens.css', '.github/workflows/grove-email.yml']
   push:
     branches: [main]
-    tags: ['email-v*']
+    tags: ['grove-email@*']
     paths: ['packages/grove-email/**', 'packages/brand/**', 'packages/verdant/tokens.css', '.github/workflows/grove-email.yml']
   workflow_dispatch:
 
@@ -46,12 +47,24 @@ jobs:
           path: packages/grove-email/dist
 
   release:
-    if: startsWith(github.ref, 'refs/tags/email-v')
+    if: startsWith(github.ref, 'refs/tags/grove-email@')
     needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            packages/grove-email/package.json
+            packages/grove-email/CHANGELOG.md
+          sparse-checkout-cone-mode: false
+      - name: The tag matches the package version
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          VERSION=$(node -p "require('./packages/grove-email/package.json').version")
+          [ "$TAG" = "grove-email@$VERSION" ] || { echo "Tag $TAG doesn't match package version $VERSION"; exit 1; }
       - uses: actions/download-artifact@v4
         with: { name: grove-email, path: dist }
       - name: Publish the release bundle
@@ -59,7 +72,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}
         run: |
-          tar -czf "grove-email-${TAG}.tar.gz" -C dist postmark contract.json servantium_email_contract.py firebase
-          gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --title "Grove Email ${TAG#email-}" \
-            --notes "Postmark-ready templates (postmark/<alias>/content.html, content.txt, meta.json), the field contract (contract.json, servantium_email_contract.py) and the Firebase reset template. Push with: postmark templates push postmark --force --all. See packages/grove-email/docs/engineering-handover.md." \
-            "grove-email-${TAG}.tar.gz" dist/contract.json dist/servantium_email_contract.py
+          VERSION="${TAG#grove-email@}"
+          # This version's section of the changelog, then what's in the bundle.
+          awk -v v="$VERSION" '$0 ~ "^## " v {f=1; next} /^## / && f {exit} f' packages/grove-email/CHANGELOG.md > notes.md
+          printf '\n---\n\n**Bundle:** Postmark-ready templates (`postmark/<alias>/`), the field contract (`contract.json`, `servantium_email_contract.py`) and the Firebase reset template. Push with `postmark templates push postmark --force --all`. See [the engineering handover](https://github.com/%s/blob/%s/packages/grove-email/HANDOVER.md).\n' "$GITHUB_REPOSITORY" "$TAG" >> notes.md
+          tar -czf "grove-email-${VERSION}.tar.gz" -C dist postmark contract.json servantium_email_contract.py firebase
+          gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --title "Grove Email ${VERSION}" --notes-file notes.md \
+            "grove-email-${VERSION}.tar.gz" dist/contract.json dist/servantium_email_contract.py
