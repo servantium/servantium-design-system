@@ -10,7 +10,9 @@
     "src",
     "scripts",
     "docs",
-    "README.md"
+    "README.md",
+    "CHANGELOG.md",
+    "HANDOVER.md"
   ],
   "scripts": {
     "tokens": "node scripts/sync-tokens.mjs",

@@ -16,7 +16,8 @@
     "company.json",
     "scripts",
     "docs",
-    "README.md"
+    "README.md",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "render": "node scripts/render.mjs",

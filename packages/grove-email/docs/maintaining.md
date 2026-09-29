@@ -8,23 +8,27 @@ Every change starts as a pull request in this repo. Nothing is edited in Postmar
 |---|---|
 | Pull request | Build, tests, and a check that every image is live. The gallery is attached to the run. Review the rendered emails there. |
 | Merge to `main` | The same checks, on `main`. |
-| Tag `email-vX.Y.Z` | The same checks, then a GitHub release with the Postmark-ready templates and the contract. Engineering pushes that release into Postmark. |
+| Tag `grove-email@X.Y.Z` | The same checks, then a GitHub release with the Postmark-ready templates and the contract. Engineering pushes that release into Postmark. |
+
+1. Bump `version` in `packages/grove-email/package.json`, and add a section for it at the top of [CHANGELOG.md](../CHANGELOG.md). The release notes are that section.
+2. Merge that to `main`.
+3. Tag the merged commit. The workflow refuses a tag that doesn't match the package version.
 
 ```bash
-git switch main && git pull
-git tag email-v0.2.0
-git push origin email-v0.2.0
+git fetch origin
+git tag -a grove-email@0.2.0 origin/main -m "Grove Email 0.2.0"
+git push origin grove-email@0.2.0
 ```
 
 Choose the version by what the change means for the backend:
 
 | Change | Version |
 |---|---|
-| Copy, layout or styling; no field changes | patch: `email-v0.2.1` |
-| A new template, or a new optional field | minor: `email-v0.3.0` |
-| A removed or renamed template or field, or a field that becomes required | major: `email-v1.0.0`, after engineering has shipped their side |
+| Copy, layout or styling; no field changes | patch: `0.2.1` |
+| A new template, or a new optional field | minor: `0.3.0` |
+| A removed or renamed template or field, or a field that becomes required | major: `1.0.0`, after engineering has shipped their side |
 
-Email tags are separate from the design system's `v*` package tags, and neither triggers the other. Tell engineering when a release is out; the release notes list what's in the bundle.
+Every package in this repo is versioned on its own and tagged `<package>@<version>`: `grove-email@…`, `brand@…`, `grove@…`, `verdant@…`. Only `grove-email@…` tags run the email release. Tell engineering when a release is out; the release notes list what's in the bundle.
 
 **Rolling back:** engineering pushes the previous release's bundle. Postmark keeps no template history of its own; the releases are the history.
 

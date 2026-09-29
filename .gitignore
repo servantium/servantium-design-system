@@ -5,3 +5,6 @@ dist/
 .env
 .env.*
 !.env.example
+
+# Wrangler's local cache (from publishing brand assets)
+.wrangler/

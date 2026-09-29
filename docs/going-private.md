@@ -35,6 +35,7 @@ Consume the design system as versioned packages from the registry it already pub
 ## Steps
 
 1. **Here.**
+   - Point `publish.yml` at the per-package tags the repo now uses (`grove@*`, `verdant@*`). It runs on any tag starting with `v`, which catches `verdant@…` but not `grove@…`, so the last publish was at `verdant@0.5.0` in April 2026.
    - Publish every package a site uses: add `@servantium/brand` to `publish.yml` if the sites start importing it.
    - Give each package a `publishConfig` for `npm.pkg.github.com`.
    - In each package's settings on GitHub, grant the `website` and `servantium-help` repositories read access, so their `GITHUB_TOKEN` can install it.

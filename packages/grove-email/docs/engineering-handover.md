@@ -1,6 +1,6 @@
 # Engineering handover: system email
 
-This is everything engineering needs to connect Servantium's system emails to Postmark and the backend. The design system's side is done: the emails are written, tested and released from this repo. Everything below the line in [how-it-works.md](./how-it-works.md#the-path-of-a-change) is engineering's to build.
+This is everything engineering needs to connect Servantium's system emails to Postmark and the backend. [HANDOVER.md](../HANDOVER.md) is the one-page summary. The design system's side is done: the emails are written, tested and released from this repo. Everything below the line in [how-it-works.md](./how-it-works.md#the-path-of-a-change) is engineering's to build.
 
 | Design system has done | Engineering builds |
 |---|---|
@@ -12,20 +12,20 @@ This is everything engineering needs to connect Servantium's system emails to Po
 
 ## 1. What a release gives you
 
-Each email release is a git tag, `email-vX.Y.Z`, and a GitHub release on [servantium/servantium-design-system](https://github.com/servantium/servantium-design-system/releases). The repo is public, so no credentials are needed to download one.
+Each email release is a git tag, `grove-email@X.Y.Z`, and a GitHub release on [servantium/servantium-design-system](https://github.com/servantium/servantium-design-system/releases). The repo is public, so no credentials are needed to download one.
 
 | File | What it is |
 |---|---|
-| `grove-email-email-vX.Y.Z.tar.gz` | `postmark/<alias>/{content.html, content.txt, meta.json}` for every template, plus `contract.json`, `servantium_email_contract.py` and `firebase/password-reset.html` |
+| `grove-email-X.Y.Z.tar.gz` | `postmark/<alias>/{content.html, content.txt, meta.json}` for every template, plus `contract.json`, `servantium_email_contract.py` and `firebase/password-reset.html` |
 | `contract.json` | Every template's stream, sender, reply-to, subject and fields, with notes and examples |
 | `servantium_email_contract.py` | The same contract as Python `TypedDict`s: one per template, `NotRequired` for optional fields, and a `TEMPLATES` table of alias → stream and type |
 
 ```bash
-gh release download email-v0.1.0 --repo servantium/servantium-design-system
-tar -xzf grove-email-email-v0.1.0.tar.gz
+gh release download grove-email@0.1.0 --repo servantium/servantium-design-system
+tar -xzf grove-email-0.1.0.tar.gz
 ```
 
-The same files come from `npm run build` in `packages/grove-email` (they land in `dist/`), and every workflow run attaches them as the `grove-email` artifact.
+The same files come from `npm run build` in `packages/grove-email` (they land in `dist/`), and every workflow run attaches them as the `grove-email` artifact. What changed in each version is in [CHANGELOG.md](../CHANGELOG.md).
 
 ## 2. Postmark setup
 
@@ -52,7 +52,7 @@ name: Email templates → Postmark
 on:
   workflow_dispatch:
     inputs:
-      tag: { description: 'Email release, e.g. email-v0.1.0', required: true }
+      tag: { description: 'Email release, e.g. grove-email@0.1.0', required: true }
 jobs:
   qa:
     runs-on: ubuntu-latest

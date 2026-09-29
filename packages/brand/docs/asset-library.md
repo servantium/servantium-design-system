@@ -106,12 +106,16 @@ Emails pick up a new address at their next release.
 | Name | `servantium-assets`, in Servantium's Cloudflare account, beside the `servantium.com` zone. Created 2026-09-29; location chosen automatically (eastern North America). |
 | Public access | The custom domain `assets.servantium.com` only (TLS 1.2 or later); the `r2.dev` URL is off |
 | Storage class | Standard. Infrequent Access charges for every read. |
-| Listing | None. Files are served by exact address; `index.html` is the catalogue. |
+| Listing | None. Files are served by exact address; `index.html` is the catalogue. The bare domain, `assets.servantium.com/`, redirects (302) to servantium.com. That's a single redirect rule in the `servantium.com` zone, scoped to this host's root. A missing file returns 404. |
 | Headers | Each file's `Content-Type`. `Cache-Control: public, max-age=31536000, immutable` on files, and `public, max-age=300` on the catalogue. No `Cross-Origin-Resource-Policy: same-site`. |
 | Writes | From a workstation, with Cloudflare credentials that include "Workers R2 Storage: Edit". No Cloudflare credential is stored in GitHub; CI only checks that files are live. |
 | Search engines | Kept out by `/robots.txt` on this domain, which is uploaded by `npm run publish`, and by a `noindex` tag on the catalogue. Link-preview bots (X, LinkedIn, Facebook, Slack) are allowed, so a social card hosted here still renders. Mail clients' image proxies fetch on a reader's behalf and don't read `robots.txt`. It's a file in the bucket, not a zone setting, so the website is untouched. |
 | Bots | The zone's browser check refuses a few scripting clients' default user agents, such as Python's `urllib` (error 1010). Mail-client image proxies, browsers, `curl` and Node are served. A script that fetches files should send its own user agent. |
 | Cost | Within R2's free tier: 10 GB stored, a million writes and ten million reads a month, no egress fees. |
+
+## Versions
+
+The library is versioned with the rest of the brand package: a `brand@X.Y.Z` tag marks a coherent state of the files and `company.json`, and [CHANGELOG.md](../CHANGELOG.md) says what changed. Addresses don't depend on versions: every file keeps its fingerprinted address in every version that includes it.
 
 ## Scripts
 
