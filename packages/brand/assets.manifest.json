@@ -440,6 +440,18 @@
       "bytes": 10951,
       "sha256": "527c78138873017a92f5f907b2c7417816b667220c54a37beda3de036bc503f1"
     },
+    "logo/servantium-logo-white-on-forest.png": {
+      "key": "logo/servantium-logo-white-on-forest.dd228c05e7.png",
+      "type": "image/png",
+      "bytes": 70558,
+      "sha256": "dd228c05e73fa198220cd06f55ea29c3648e23351ec6677f3877ea4c70e361d8"
+    },
+    "logo/servantium-logo-white-on-forest.svg": {
+      "key": "logo/servantium-logo-white-on-forest.c3ba0ef143.svg",
+      "type": "image/svg+xml",
+      "bytes": 11316,
+      "sha256": "c3ba0ef1437ca28308b4d91098ded68b11ba698cc9b1e6815929c52055ca7617"
+    },
     "logo/servantium-logo-white-on-green.png": {
       "key": "logo/servantium-logo-white-on-green.083fb60873.png",
       "type": "image/png",
@@ -535,6 +547,18 @@
       "type": "image/svg+xml",
       "bytes": 8873,
       "sha256": "15aeecc816bb81d45e4a486484d4d6c658b454589239f136aa27c0b97bcf126e"
+    },
+    "logo/servantium-symbol-white-on-forest.png": {
+      "key": "logo/servantium-symbol-white-on-forest.b3b0e27fc8.png",
+      "type": "image/png",
+      "bytes": 52182,
+      "sha256": "b3b0e27fc87271b3458d82cce9021aa3fead7ed0bcdb1487061e9dd8c07f2f93"
+    },
+    "logo/servantium-symbol-white-on-forest.svg": {
+      "key": "logo/servantium-symbol-white-on-forest.7f11a9a488.svg",
+      "type": "image/svg+xml",
+      "bytes": 8951,
+      "sha256": "7f11a9a48811636407dbb43fd149dccbaea751d672017d47100b455153e6f172"
     },
     "logo/servantium-symbol-white-on-green.png": {
       "key": "logo/servantium-symbol-white-on-green.1439e0fd5d.png",

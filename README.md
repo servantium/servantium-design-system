@@ -25,13 +25,14 @@ servantium-design-system/
 ├── .github/workflows/
 │   ├── publish.yml       publishes Verdant and Grove on v* tags
 │   └── grove-email.yml   builds and tests the emails; releases them on email-v* tags
+├── docs/going-private.md what has to change before this repo can be private
 ├── AGENTS.md             orientation for AI coding assistants
 └── README.md
 ```
 
 ## How the sites use it
 
-The website and help center pin a design-system version in a `.design-system-ref` file at their root, clone this repo at that version when they build, and install Verdant and Grove from the clone. Moving a site to a new version is a one-line pull request in that site's repo.
+The website and help center pin a design-system version in a `.design-system-ref` file at their root, clone this repo at that version when they build, and install Verdant and Grove from the clone. Moving a site to a new version is a one-line pull request in that site's repo. That clone is why this repo has to stay public for now; [docs/going-private.md](./docs/going-private.md) is the plan to install from the package registry instead.
 
 To release Verdant and Grove:
 

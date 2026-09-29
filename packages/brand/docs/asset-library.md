@@ -50,11 +50,11 @@ assets.servantium.com/
 
 ## What's in it
 
-As of 2026-09-29: 99 files, about 2.1 MB.
+As of 2026-09-29: 103 files, about 2.2 MB.
 
 | Folder | Files | What | Came from |
 |---|---|---|---|
-| `logo/` | 28 | The logo family as vectors: the wordmark lockup (`servantium-logo`), the symbol with its network (`servantium-symbol`) and the S alone (`servantium-s`), each in colour, white and slate, some on light or green tiles. Every SVG has a 2× PNG. | Figma: the published Verdant library, page 06 · Brand (file `e246WW1Y16jupOZF76zEi0`, node 34:358). Four PNGs predate the vectors and came from servantium.com and the Flutter app. |
+| `logo/` | 32 | The logo family as vectors: the wordmark lockup (`servantium-logo`), the symbol with its network (`servantium-symbol`) and the S alone (`servantium-s`), each in colour, white and slate, some on light, green or forest tiles. Every SVG has a 2× PNG. | Figma: the published Verdant library, page 06 · Brand (file `e246WW1Y16jupOZF76zEi0`, node 34:358). Four PNGs predate the vectors and came from servantium.com and the Flutter app. |
 | `icon/` | 4 | Favicons at 32, 192 and 512 px; Apple touch icon | servantium.com |
 | `icon/glyph/` | 33 | The website's line icons: clock, sheet, people, money, calendar, calculator, playbook, glossary and more | servantium.com `Icon.astro` and `ResourceIcons.astro`, extracted |
 | `og/` | 2 | Default social cards for servantium.com and the help center | Re-rendered from the website's `og-image.svg` (the live PNG has a white band along the bottom); the help center's card |
@@ -69,12 +69,12 @@ As of 2026-09-29: 99 files, about 2.1 MB.
 - **Page content:** product screenshots, videos, blog covers. Each stays with its site.
 - **Unvetted variants.** The Flutter app holds a few raster symbol-on-colour images. The Figma vectors replace them, so they were left out.
 
-## Decisions still open
+## Logo decisions
 
-These variants exist in Figma but aren't published yet, because a published address is permanent:
+Made on 2026-09-29, when the vectors came in from Figma:
 
-- **The wordmark colour.** Figma's published original sets the SERVANTIUM wordmark in near-black (#0D0D0D). The live site, its PNG and Figma's own "on light" variants use slate (#1A4045). `logo/servantium-logo.svg` is the slate version, matching what's live. If near-black is the intent, add it under its own name.
-- **What "deep" means.** Figma's "on deep" tiles use slate (#1A4045), but the component frame around them is Verdant's deep forest (#023E25). Once one is chosen, add the white-on-deep tiles under the colour's name, for example `servantium-logo-white-on-forest.svg`.
+- **The wordmark is slate (#1A4045).** It's what the live site, its PNG and Figma's own "on light" variants use. Figma's published original sets the wordmark in near-black (#0D0D0D); that variant isn't published, and Figma's original should be brought in line.
+- **"Deep" means Verdant's deep forest (#023E25)**, the colour of the email banner and the social cards. The white-on-forest tiles (`servantium-logo-white-on-forest`, `servantium-symbol-white-on-forest`) are Figma's white-on-green tiles with the tile recoloured. Figma's slate "on deep" tiles aren't published.
 - **Brand gradients and the green ramp** are in Figma as colour styles: Servantium Sweep, Logo S, Forest Depth, Night Field and others. They're tokens, so they belong in Verdant rather than here.
 
 ## Known gaps

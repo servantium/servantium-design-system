@@ -23,6 +23,7 @@ Orientation for AI coding assistants working in this repo. People should start w
 | Release emails, retire a template, update release notes | `packages/grove-email/docs/maintaining.md` |
 | Add or change a logo, icon or image | `packages/brand/docs/asset-library.md` |
 | Change the address, a footer link, help@ or social links | `packages/brand/company.json` |
+| Make this repo private, or change how the sites install it | `docs/going-private.md` |
 
 ## Commands
 
