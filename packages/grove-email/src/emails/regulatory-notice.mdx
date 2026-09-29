@@ -1,0 +1,58 @@
+---
+name: Regulatory notice
+sends: "Postmark template `regulatory-notice`, transactional, one message per organization administrator. The change itself arrives as data (`change_summary`, `change_details`), so the template stays generic and nothing about an upcoming change is written into this public repo. Replies go to help@, which is monitored — the body invites objections by reply. Legal review pending."
+subject: "Notice: changes to Servantium's sub-processors, effective {{ effective_date }}"
+preheader: No action is needed. You may object within 30 days under your Data Processing Addendum.
+label: Service notice
+title: Sub-processor update
+stream: transactional
+footer:
+  reason: "A required notice for administrators of {{ organization_name }}."
+fields:
+  admin_first_name: { example: Dana }
+  organization_name: { example: Halcyon Bioanalytical Services }
+  effective_date: { example: "October 24, 2026", note: At least 30 days after sending }
+  reference: { example: SVC-2026-0917, note: Our reference for this notice }
+  change_summary: { example: "We're adding a sub-processor to deliver in-app email notifications, such as task assignments and password resets. It will process your users' names and email addresses only. It will not process project, quote or financial data.", note: "What's changing, in plain words. Written and approved per notice; never stored in this repo." }
+  change_details:
+    note: "The facts of the change as { label, value } rows: sub-processor, purpose, data processed, location."
+    example:
+      - { label: Sub-processor, value: "Postmark (ActiveCampaign, LLC)" }
+      - { label: Purpose, value: Delivering in-app email notifications }
+      - { label: Data processed, value: "Users' names and email addresses" }
+      - { label: Location, value: United States }
+---
+{/* The change comes in as data. Formal on purpose — default tone, no
+    Astro, and a SECONDARY button, because a filled green button on a legal notice reads as a sales
+    pitch. Transactional stream: a required notice can't carry an unsubscribe. */}
+
+Hello {{ admin_first_name }},
+
+We're writing to tell you about a change to the sub-processors Servantium uses to provide the service to **{{ organization_name }}**. Under our Data Processing Addendum we give you at least 30 days' notice before a change like this takes effect.
+
+<DataTable variant="outline" labelWidth={136} rows={[
+  ["Effective date", <b>{"{{ effective_date }}"}</b>],
+  ["Applies to", "{{ organization_name }}"],
+  ["Action required", "None. You may object before the effective date."],
+  ["Notice reference", "{{ reference }}"],
+]} />
+
+## What's changing
+
+{{ change_summary }}
+
+<DataTable labelWidth={136} each="change_details" />
+
+<Spacer size={8} />
+
+## What you need to do
+
+Nothing. If you have a reasonable objection, reply to this email before {{ effective_date }} and we'll work through it with you.
+
+<Spacer size={12} />
+
+<Button to="trust" variant="secondary" width={270}>View the sub-processor list</Button>
+
+<Spacer size={28} />
+
+<Text size="sm" muted margin="0">Servantium Privacy &amp; Security</Text>

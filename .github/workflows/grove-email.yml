@@ -1,0 +1,65 @@
+# Grove Email: build, test and release Servantium's system emails.
+#
+# The emails are packages/grove-email/src/emails/*.mdx. This workflow proves they build and follow
+# the rules, and on a release tag publishes them as a bundle. It stops there, on purpose: pushing
+# templates into Postmark and sending them belongs to engineering, who consume the release bundle.
+# See packages/grove-email/docs/engineering-handover.md.
+#
+#   pull request   build + tests + every brand image is live; the gallery is attached to the run
+#   merge to main  the same
+#   tag email-v*   the same, then a GitHub release with the Postmark-ready bundle and the contract
+#
+# No secrets. Brand images are published to assets.servantium.com from a workstation
+# (`npm run publish` in packages/brand); this workflow only checks they're live.
+
+name: Grove Email
+
+on:
+  pull_request:
+    paths: ['packages/grove-email/**', 'packages/brand/**', 'packages/verdant/tokens.css', '.github/workflows/grove-email.yml']
+  push:
+    branches: [main]
+    tags: ['email-v*']
+    paths: ['packages/grove-email/**', 'packages/brand/**', 'packages/verdant/tokens.css', '.github/workflows/grove-email.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - run: npm ci
+      - name: The asset manifest matches the files
+        run: npm run check --workspace @servantium/brand
+      - run: npm run build --workspace @servantium/grove-email
+      - run: npm test --workspace @servantium/grove-email
+      - name: Every asset is live at assets.servantium.com
+        run: npm run verify --workspace @servantium/brand
+      - uses: actions/upload-artifact@v4
+        with:
+          name: grove-email
+          path: packages/grove-email/dist
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/email-v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: grove-email, path: dist }
+      - name: Publish the release bundle
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          tar -czf "grove-email-${TAG}.tar.gz" -C dist postmark contract.json servantium_email_contract.py firebase
+          gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --title "Grove Email ${TAG#email-}" \
+            --notes "Postmark-ready templates (postmark/<alias>/content.html, content.txt, meta.json), the field contract (contract.json, servantium_email_contract.py) and the Firebase reset template. Push with: postmark templates push postmark --force --all. See packages/grove-email/docs/engineering-handover.md." \
+            "grove-email-${TAG}.tar.gz" dist/contract.json dist/servantium_email_contract.py
