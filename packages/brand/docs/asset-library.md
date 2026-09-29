@@ -95,7 +95,7 @@ Made on 2026-09-29, when the vectors came in from Figma:
 2. Run `npm run manifest`. This writes `assets.manifest.json`, giving the new file its fingerprinted address.
 3. Run `npm run publish`. It uploads every file the bucket doesn't have yet. This is safe from any branch: a new address can't change anything already sent. Use `npm run publish -- --dry-run` to see what would upload. Don't open a new address in a browser before it's published: Cloudflare caches the "not found" for a few minutes. The script's own check avoids this.
 4. Commit and open a pull request. The checks fail if the manifest is stale or a file isn't live.
-5. After the merge, run `npm run publish` again from an up-to-date `main`. That refreshes `manifest.json` and `index.html`; only reviewed work reaches the catalogue.
+5. After the merge, run `npm run publish` again from a clean checkout of GitHub's `main`. That refreshes `manifest.json` and `index.html`, so only reviewed work reaches the catalogue.
 
 Emails pick up a new address at their next release.
 
@@ -119,6 +119,6 @@ Emails pick up a new address at their next release.
 |---|---|
 | `npm run manifest` | Writes `assets.manifest.json` from the files |
 | `npm run check` | Fails if the manifest doesn't match the files (CI runs this) |
-| `npm run publish` | Uploads new files; from a clean, current `main`, also refreshes the catalogue |
+| `npm run publish` | Uploads new files and `robots.txt`; from a clean checkout of GitHub's `main`, also refreshes the catalogue |
 | `npm run verify` | Fails if any file in the manifest isn't live (CI runs this) |
 | `npm run render` | Regenerates the email art, mascot PNGs and social icons from their masters |

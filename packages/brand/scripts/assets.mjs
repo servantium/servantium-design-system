@@ -116,14 +116,13 @@ function put(key, file, type, cacheControl) {
 
 const git = (...args) => execFileSync('git', ['--no-optional-locks', ...args], { cwd: ROOT, encoding: 'utf8' }).trim();
 
-/** The catalogue only moves forward from reviewed work: main, clean, and level with GitHub. */
+/** The catalogue only moves forward from reviewed work: exactly GitHub's main, with no local changes. */
 function onPublishedMain() {
   try {
     execFileSync('git', ['fetch', '--quiet', 'origin', 'main'], { cwd: ROOT });
-    const branch = git('rev-parse', '--abbrev-ref', 'HEAD');
     const dirty = git('status', '--porcelain', '--', '.');
     const level = git('rev-parse', 'HEAD') === git('rev-parse', 'origin/main');
-    return branch === 'main' && !dirty && level;
+    return !dirty && level;
   } catch {
     return false;
   }
@@ -186,7 +185,7 @@ async function publish({ dryRun }) {
   if (!dryRun) put('robots.txt', join(robotsDir, 'robots.txt'), 'text/plain; charset=utf-8', CATALOGUE);
 
   if (!onPublishedMain()) {
-    console.log('Catalogue not refreshed: that happens only from a clean main that matches GitHub.');
+    console.log('Catalogue not refreshed: that happens only from a clean checkout of GitHub\'s main.');
     return;
   }
   const dir = mkdtempSync(join(tmpdir(), 'servantium-assets-'));
