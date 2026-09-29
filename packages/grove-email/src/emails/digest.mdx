@@ -1,0 +1,42 @@
+---
+name: Digest
+sends: "Postmark template `digest`, transactional. A scheduled job sends it to people who chose a daily or weekly summary instead of an email per event. One email, many updates. Needs notification preferences in the app before it ships."
+subject: "{{ summary }}"
+preheader: "{{ highlights }}"
+label: "{{ period }}"
+title: Here's what changed
+stream: transactional
+footer:
+  reason: "Sent because you chose digest emails in {{ organization_name }}."
+  settings: "{{ preferences_url }}"
+fields:
+  first_name: { example: Jules }
+  period: { example: Daily digest, note: "Daily digest or Weekly digest" }
+  date_range: { example: "Tuesday, October 13", note: "The day, or the week (Oct 12–16)" }
+  organization_name: { example: Halcyon Bioanalytical Services }
+  summary: { example: "5 updates in Servantium since yesterday", note: Also the subject }
+  highlights: { example: "2 tasks assigned to you, a quote approved, and 2 more", note: The line after the subject in the inbox }
+  items:
+    note: "The updates, newest first, as { category, time, title, context, url }. Ten at most — the rest go in `more`."
+    example:
+      - { category: Task, time: "9:14 AM", title: "Jules Hart assigned you “Clinical sample manifest reconciliation”", context: "AUR-417 · due Fri, Oct 16", url: "https://app.servantium.com/engagements/eng-aur-417/project_plans?task=ppi-manifest" }
+      - { category: Quote, time: "11:02 AM", title: "Dana Whitfield approved the Phase II quote", context: "AUR-417 · Aurora Pharmaceuticals · $184,500", url: "https://app.servantium.com/engagements/eng-aur-417/quotes/q-3" }
+      - { category: Task, time: "1:40 PM", title: "Sam Okafor commented on “Method validation report”", context: "NVX-102 · “Draft is in the shared folder.”", url: "https://app.servantium.com/engagements/eng-nvx-102/project_plans?task=ppi-mvr" }
+      - { category: Plan, time: "3:25 PM", title: "The plan for NVX-102 was published", context: "NVX-102 · Novexa Therapeutics · 14 tasks", url: "https://app.servantium.com/engagements/eng-nvx-102/project_plans" }
+      - { category: Note, time: "4:51 PM", title: "Priya Nair added a note to AUR-417", context: "“Sample counts confirmed with Aurora.”", url: "https://app.servantium.com/engagements/eng-aur-417/notes" }
+  more: { example: "and 3 more updates", optional: true, note: "When there are more than ten. Leave it out otherwise." }
+  inbox_url: { example: "https://app.servantium.com/notifications" }
+  preferences_url: { example: "https://app.servantium.com/settings/notifications", note: Where they change or stop the digest }
+---
+Hi {{ first_name }}, here's what changed in {{ organization_name }} on {{ date_range }}.
+
+<Updates field="items" />
+
+<If field="more">
+  <Spacer size={12} />
+  <Text size="sm" muted margin="0">{{ . }}</Text>
+</If>
+
+<Spacer size={28} />
+
+<Button href="{{ inbox_url }}" width={220}>Open Servantium</Button>

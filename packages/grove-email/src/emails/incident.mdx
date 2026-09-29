@@ -1,0 +1,41 @@
+---
+name: Incident — service disruption
+sends: "Postmark template `incident`, transactional, to each administrator of an affected organization: when the incident opens and at every status change."
+subject: "Service disruption: {{ incident_title }}"
+preheader: "{{ status }}. Next update by {{ next_update }}."
+label: Service status
+title: Service disruption
+tone: urgent
+stream: transactional
+footer:
+  reason: "Sent to administrators of {{ organization_name }}."
+fields:
+  first_name: Dana
+  organization_name: Halcyon Bioanalytical Services
+  incident_title: { example: Quotes and project plans aren't loading, note: What's broken, in the customer's words }
+  incident_id: { example: INC-042, note: Our reference }
+  status: { example: Investigating, note: "Investigating · Identified · Monitoring" }
+  started_at: "Tue, Oct 13, 2026 · 9:12 AM ET"
+  affected: Quotes and project plans
+  next_update: "10:00 AM ET"
+  update: { note: The latest update, written by whoever runs the incident, example: "Some organizations see an error when opening a quote or a project plan. Sign-in and everything else is working. We've found where requests are failing and are working on a fix." }
+  status_url: { example: "https://status.servantium.com/incidents/INC-042", note: The status page entry }
+---
+<Heading margin="0 0 12px">{{ incident_title }}</Heading>
+
+Hi {{ first_name }}, we're working on a problem that affects **{{ affected }}** in {{ organization_name }}. We'll email you when the status changes, and again when it's fixed.
+
+<DataTable variant="outline" labelWidth={120} rows={[
+  ["Status", <b>{"{{ status }}"}</b>],
+  ["Started", "{{ started_at }}"],
+  ["Next update", "{{ next_update }}"],
+  ["Reference", "{{ incident_id }}"],
+]} />
+
+## Latest update
+
+{{ update }}
+
+<Spacer size={8} />
+
+<Button href="{{ status_url }}" width={230}>Follow live updates</Button>

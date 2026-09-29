@@ -1,0 +1,45 @@
+---
+name: Task message
+sends: "Postmark template `task`, transactional. Sent to the people on a task when something happens to it: it's assigned, someone comments, a date moves, it's completed. One template for every task event — `action` says which."
+subject: "{{ actor_name }} {{ action }}: {{ task_name }}"
+preheader: "Due {{ due }} · {{ engagement }}"
+label: Task
+title: Task update
+stream: transactional
+footer:
+  reason: "Sent because you're on this task in {{ organization_name }}."
+fields:
+  actor_name: { example: Jules Hart, note: Who did it }
+  action: { example: assigned you, note: "Lower-case, reads after the name: assigned you · commented on · changed the due date of · completed" }
+  task_name: { example: Clinical sample manifest reconciliation }
+  due: { example: "Fri, Oct 16, 2026", note: Formatted for the recipient }
+  status: { example: Not started, note: The task's status as the app shows it }
+  engagement: { example: "AUR-417 — Phase II Immunogenicity & PK", note: Engagement code and name }
+  client: { example: Aurora Pharmaceuticals }
+  message: { example: "Please reconcile the Wave 1 manifest against Aurora's forecast before the first PK run. Flag anything outside the 10% tolerance.", optional: true, note: "The note or comment that came with the event. Leave it out and the panel doesn't appear." }
+  task_url: { example: "https://app.servantium.com/engagements/eng-aur-417/project_plans?task=ppi-manifest" }
+  plan_url: { example: "https://app.servantium.com/engagements/eng-aur-417/project_plans", optional: true, note: Leave it out and the plan link doesn't appear }
+  organization_name: { example: Halcyon Bioanalytical Services }
+---
+<Text margin="0 0 20px"><b>{{ actor_name }}</b> {{ action }}:</Text>
+
+<DataTable title="{{ task_name }}" labelWidth={112} rows={[
+  ["Due", <b>{"{{ due }}"}</b>],
+  ["Status", "{{ status }}"],
+  ["Engagement", "{{ engagement }}"],
+  ["Client", "{{ client }}"],
+]} />
+
+<If field="message">
+  <Spacer size={16} />
+  <Callout tone="neutral" title="What they wrote">“{{ . }}”</Callout>
+</If>
+
+<Spacer size={28} />
+
+<Button href="{{ task_url }}" width={180}>Open task</Button>
+
+<If field="plan_url">
+  <Spacer size={18} />
+  <Text size="sm" margin="0"><Link href="{{ . }}">View the full project plan</Link></Text>
+</If>

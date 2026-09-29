@@ -1,0 +1,39 @@
+---
+name: Scheduled maintenance
+sends: "Postmark template `maintenance`, transactional, to every administrator, at least 72 hours before a planned window."
+subject: "Scheduled maintenance on {{ date }}"
+preheader: "Servantium will be unavailable for up to {{ duration }}, starting {{ starts }}."
+label: Service status
+title: Planned maintenance
+tone: attention
+stream: transactional
+footer:
+  reason: "Sent to administrators of {{ organization_name }}."
+fields:
+  first_name: Dana
+  organization_name: Halcyon Bioanalytical Services
+  date: "Saturday, Oct 24"
+  starts: "Sat, Oct 24 · 10:00 PM ET"
+  ends: "Sun, Oct 25 · 12:00 AM ET"
+  duration: 2 hours
+  reason: { example: "upgrade the database that stores quotes and project plans", note: "Completes “We'll take Servantium offline to …”" }
+  affected: "Everything: the web and mobile apps, and API integrations"
+  status_url: "https://status.servantium.com"
+---
+<Heading margin="0 0 12px">Up to {{ duration }} of downtime on {{ date }}</Heading>
+
+Hi {{ first_name }}, we'll take Servantium offline to {{ reason }}.
+
+<DataTable variant="outline" labelWidth={120} rows={[
+  ["Starts", <b>{"{{ starts }}"}</b>],
+  ["Ends by", "{{ ends }}"],
+  ["Affects", "{{ affected }}"],
+]} />
+
+<Spacer size={16} />
+
+Save any open work before the window starts. Anything unsaved when we go offline will be lost.
+
+<Spacer size={8} />
+
+<Button href="{{ status_url }}" variant="secondary" width={210}>View the status page</Button>

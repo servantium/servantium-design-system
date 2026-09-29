@@ -1,0 +1,6 @@
+# Who reviews what. The emails' frontmatter is the data contract the backend sends against, so
+# engineering reviews changes to the emails and to the workflow that releases them.
+*                                   @chris-servantium
+/packages/grove-email/src/emails/   @chris-servantium @max-servantium
+/packages/grove-email/scripts/      @chris-servantium @max-servantium
+/.github/workflows/grove-email.yml  @chris-servantium @max-servantium

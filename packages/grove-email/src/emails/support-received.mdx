@@ -1,0 +1,25 @@
+---
+name: Support — request received
+sends: "Postmark template `support-received`, transactional. The automatic first reply when a request reaches help@. Set Reply-To to the request's own address (e.g. help+1042@servantium.com) so replies join the right conversation."
+subject: "[{{ ticket_id }}] {{ ticket_subject }}"
+preheader: "We've got it, and we'll reply {{ reply_by }}."
+label: Support
+title: We got your request
+stream: transactional
+footer:
+  reason: Sent because you wrote to our support team.
+fields:
+  first_name: { example: Dana }
+  ticket_id: { example: "#1042", note: Our reference }
+  ticket_subject: { example: Quote total doesn't match my spreadsheet, note: The subject as they wrote it }
+  reply_by: { example: within one business day, note: "Our promise, as policy sets it: “within one business day”, “by Tuesday”" }
+---
+{/* Modelled on the best password-reset emails: one idea, said plainly, nothing to decode. */}
+
+Hi {{ first_name }},
+
+Thanks for writing in. Your request, **{{ ticket_subject }}**, is with our support team, and we'll reply {{ reply_by }}.
+
+Your reference is {{ ticket_id }}. To add anything, just reply to this email. Screenshots help.
+
+While you wait, the <CompanyLink to="help">Help Center</CompanyLink> answers the most common questions.

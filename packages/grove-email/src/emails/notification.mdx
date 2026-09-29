@@ -1,0 +1,37 @@
+---
+name: Notification
+sends: "Postmark template `notification`, transactional. The general-purpose notification for everything that isn't a task: approvals, mentions, a quote changing status, a plan being published. One template, many events — the product fills in what happened."
+subject: "{{ headline }}"
+preheader: "{{ summary }}"
+label: "{{ category }}"
+title: An update for you
+stream: transactional
+footer:
+  reason: "{{ reason }}"
+fields:
+  category: { example: Quote, note: "One or two words for the banner label: Quote · Approval · Mention · Plan" }
+  headline: { example: Dana Whitfield approved the Phase II quote, note: "What happened, in one line. Also the subject." }
+  summary: { example: "$184,500 · version 3 · ready to staff", note: The line that shows after the subject in the inbox }
+  context: { example: "AUR-417 · Aurora Pharmaceuticals", note: Where it happened }
+  message: { example: "Version 3 of the quote is approved. The project plan can now be staffed — the roles below are still unassigned.", note: One or two sentences of detail }
+  details:
+    note: "Rows for the summary table, as { label, value }. At least one."
+    example:
+      - { label: Quote, value: "Phase II Immunogenicity & PK · v3" }
+      - { label: Total, value: "$184,500" }
+      - { label: Unassigned roles, value: "Bioanalytical scientist (2), QA reviewer" }
+  action_label: { example: Open the quote, note: "The button label, 24 characters or fewer" }
+  action_url: { example: "https://app.servantium.com/engagements/eng-aur-417/quotes/q-3" }
+  reason: { example: "Sent because you lead AUR-417 in Halcyon Bioanalytical Services.", note: "Why this person got it, one short sentence starting “Sent because…”" }
+---
+<Heading margin="0 0 4px">{{ headline }}</Heading>
+
+<Text size="sm" muted margin="0 0 16px">{{ context }}</Text>
+
+{{ message }}
+
+<DataTable labelWidth={132} each="details" />
+
+<Spacer size={28} />
+
+<Button href="{{ action_url }}" width={240}>{{ action_label }}</Button>

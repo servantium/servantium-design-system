@@ -1,0 +1,29 @@
+{
+  "name": "@servantium/brand",
+  "version": "0.1.0",
+  "description": "Servantium's brand assets (logos, mascot, email art, icons) and company facts, from one source, published to assets.servantium.com with permanent fingerprinted addresses.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./company.json": "./company.json",
+    "./assets.manifest.json": "./assets.manifest.json",
+    "./assets/*": "./assets/*"
+  },
+  "files": [
+    "src",
+    "assets",
+    "assets.manifest.json",
+    "company.json",
+    "scripts",
+    "docs",
+    "README.md"
+  ],
+  "scripts": {
+    "render": "node scripts/render.mjs",
+    "manifest": "node scripts/assets.mjs manifest",
+    "check": "node scripts/assets.mjs check",
+    "publish": "node scripts/assets.mjs publish",
+    "verify": "node scripts/assets.mjs verify"
+  },
+  "license": "UNLICENSED"
+}

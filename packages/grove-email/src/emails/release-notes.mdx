@@ -1,0 +1,73 @@
+---
+name: Release notes
+sends: "Postmark template `release-notes`, broadcast stream. Rewritten each month from the help site’s release notes, then sent to active users in batches of 500. Postmark skips anyone who has unsubscribed."
+subject: "What's new in Servantium — June 2026"
+preheader: "Secure Search, Contact Workspaces, and 83 more improvements."
+label: Release notes
+title: What's new in Servantium
+stream: broadcast
+footer:
+  reason: Sent to Servantium users about product updates.
+fields:
+  first_name: { example: Jules, note: "From the user's profile" }
+---
+{/* DRAFT from 2026-06-08-release.mdx, 2026-06-13-release-3.mdx, 2026-06-13-release.mdx, 2026-06-16-release.mdx, 2026-06-18-release.mdx. Edit freely; the help site stays the record. */}
+
+Hi {{ first_name }},
+
+Here are the highlights from June 2026.
+
+<Items items={[
+  { chip: { tone: 'default', label: 'New' }, title: "Secure Search", body: "Global full-text search now fully respects your organization's Role-Based Access Control (RBAC) and Tag-Based Access Rules (ABAC), ensuring users can only discover records they have permission to view." },
+  { chip: { tone: 'default', label: 'New' }, title: "Contact Workspaces", body: "Contacts now have their own dedicated detail screens. Clicking a contact card opens a full workspace where you can manage custom properties or delete the record." },
+  { chip: { tone: 'default', label: 'New' }, title: "Inline Custom Properties", body: "You can now add and remove custom properties on the fly directly from an object's form (like an Account, Contact, or Organization). When adding a property, you can specify its type and whether it's required, instantly updating the underlying Data Dictionary." },
+  { chip: { tone: 'default', label: 'New' }, title: "Roles & Permissions", body: "Organization administrators can now create custom security roles under Settings. You can assign specific Can Read, Can Write, or No Access permissions to different modules using a visual drag-and-drop interface." },
+]} />
+
+Plus 83 more improvements and fixes, all in the full release notes.
+
+<Button href="https://help.servantium.com/release-notes/" width={260}>Read the full release notes</Button>
+
+{/* Other 2026-06 features you could swap in:
+  - Record Ownership
+  - Automated Search Security Sync
+  - Search Security Re-indexing
+  - Custom Property Deletion
+  - Tag Entry Improvements
+  - ABAC Category Sync
+  - ABAC Rule Cleanup
+  - Graceful Error Handling
+  - Synchronized Version Viewer
+  - URL-Encoded Paths
+  - Responsive Version Viewer
+  - Global ABAC Configuration
+  - Bypass ABAC
+  - User Management
+  - Real-Time Security Sync
+  - Clearable Selections
+  - Tab Navigation
+  - Cleaner Search Categories
+  - Resource Plan Status Indicators
+  - Tag Exclusion Filters
+  - Saved Exclusions in Views
+  - Quote Documents Tab
+  - View Quote Navigation
+  - Quote Indicators
+  - Inline Quote Item Properties
+  - Custom Lifecycles
+  - Dynamic Lifecycle Defaults
+  - Multi-Collection Lifecycles
+  - Automated Initial Status
+  - Strict Status Enforcement
+  - Status Transitions
+  - Search-Powered Engagements
+  - Secure Dashboard Metrics
+  - Mapping Field Autocomplete
+  - Tag Category Restrictions
+  - Resource Plan Status Indicators
+  - Actuals Reconciliation
+  - Integration Cascade Syncs
+  - Actual Hours Synchronization
+  - Smart Dataload Dependencies
+  - Resource Plan Status Indicators
+*/}

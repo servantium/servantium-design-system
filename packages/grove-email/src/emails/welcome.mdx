@@ -1,0 +1,38 @@
+---
+name: Welcome — joining an organization
+sends: "Postmark template `welcome`, transactional. Sent when someone adds a person to an existing organization. It is also the invitation: the new account has no password until they set one."
+subject: "{{ inviter_name }} added you to {{ organization_name }} on Servantium"
+preheader: "Set your password to get started. Your link expires in {{ expires_in }}."
+label: Welcome
+title: Welcome to Servantium
+stream: transactional
+footer:
+  reason: "Sent because {{ inviter_name }} added you to {{ organization_name }}."
+fields:
+  first_name: { example: Jules, note: The new user's first name }
+  inviter_name: { example: Dana Whitfield, note: The person who added them }
+  organization_name: { example: Halcyon Bioanalytical Services }
+  email: { example: jules.hart@halcyon.example, note: The address they'll sign in with }
+  set_password_url: { example: "https://app.servantium.com/__/auth/action?mode=resetPassword&oobCode=Xk2pQ9vLmT7wR4sN8yBc", note: "Firebase Admin SDK generatePasswordResetLink(email)" }
+  expires_in: { example: 72 hours, note: How long that link lives }
+---
+Hi {{ first_name }},
+
+{{ inviter_name }} added you to **{{ organization_name }}** on Servantium. Set a password to finish setting up your account.
+
+<Spacer size={8} />
+
+<Button href="{{ set_password_url }}" width={220}>Set your password</Button>
+
+<Spacer size={16} />
+
+<Text size="sm" muted>This link expires in {{ expires_in }} and works once. After that, sign in at <CompanyLink to="app" /> with {{ email }}. Not expecting this? Ignore it — nothing happens until a password is set.</Text>
+
+## What you'll find
+
+<Items items={[
+  { title: "Engagements", body: "Your organization's client work: quotes, documents and plans, together." },
+  { title: "Project Management", body: "The plans and tasks your team delivers against." },
+]} />
+
+<LinkFallback href="{{ set_password_url }}" />

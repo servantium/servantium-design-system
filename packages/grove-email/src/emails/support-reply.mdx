@@ -1,0 +1,49 @@
+---
+name: Support — reply in a conversation
+sends: "Postmark template `support-reply`, transactional. Every message from our team on a request: answers, questions back, and the resolution. Keep the same subject, set In-Reply-To and References to the previous message's Message-ID, and set Reply-To to the request's own address, so the whole conversation stays in one thread in their inbox and in ours."
+subject: "[{{ ticket_id }}] {{ ticket_subject }}"
+preheader: "{{ preview }}"
+label: Support
+title: A reply from our team
+stream: transactional
+footer:
+  reason: "Sent because you asked us for help ({{ ticket_id }})."
+fields:
+  agent_name: { example: Priya Nair, note: Who on our team wrote this reply }
+  preview: { example: "Thanks for the screenshots — we've found the cause.", note: The reply's first sentence }
+  reply:
+    note: "The new message, one item per paragraph, as { text }. Plain text: split on blank lines."
+    example:
+      - { text: "Hi Dana," }
+      - { text: "Thanks for the screenshots — we've found the cause. Totals were rounding each line before adding them up, which is why yours came out $12 higher than your spreadsheet." }
+      - { text: "We've fixed it for your organization, and the Aurora quote now shows $184,500. Could you check it matches on your side?" }
+  status_note: { example: "We'll keep this open until you confirm.", optional: true, note: "Where things stand, when it helps: “We've marked this resolved. Reply if you need anything else — it reopens automatically.”" }
+  thread:
+    note: "Earlier messages, newest first, as { author, time, excerpt }. Excerpt: the message as one paragraph, 300 characters at most."
+    example:
+      - { author: Dana Whitfield, time: "Mon, Oct 12 · 4:02 PM", excerpt: "Here are the screenshots. The quote says $184,512 but my sheet says $184,500 for the same roles and hours." }
+      - { author: Priya Nair, time: "Mon, Oct 12 · 11:30 AM", excerpt: "Thanks, Dana. Could you send a screenshot of the quote and the matching rows of your spreadsheet?" }
+      - { author: Dana Whitfield, time: "Mon, Oct 12 · 9:14 AM", excerpt: "The total on the Aurora Phase II quote doesn't match my spreadsheet. Which one is right?" }
+  ticket_id: { example: "#1042" }
+  ticket_subject: { example: Quote total doesn't match my spreadsheet }
+---
+{/* A support reply should read like a person wrote it, because one did: the message first, their
+    name under it, and the earlier conversation below for context — newest first. No boxes. */}
+
+<Paragraphs field="reply" />
+
+<Text margin="4px 0 0" bold>{{ agent_name }}</Text>
+<Text size="sm" muted margin="0">Servantium support</Text>
+
+<If field="status_note">
+  <Spacer size={20} />
+  <Text size="sm" margin="0"><b>{{ . }}</b></Text>
+</If>
+
+<Spacer size={28} />
+
+<Thread field="thread" title="Earlier in this conversation" />
+
+<Spacer size={20} />
+
+<Text size="sm" muted margin="0">Reply to this email to keep the conversation going. Reference {{ ticket_id }}.</Text>

@@ -1,0 +1,43 @@
+---
+name: Incident — resolved
+sends: "Postmark template `incident-resolved`, transactional, to everyone who received `incident` for the same incident."
+subject: "Resolved: {{ incident_title }}"
+preheader: "Fixed at {{ resolved_at }}. Everything is working normally."
+label: Service status
+title: Issue resolved
+stream: transactional
+footer:
+  reason: Sent because we emailed you about this incident.
+fields:
+  first_name: Dana
+  incident_title: Quotes and project plans weren't loading
+  incident_id: INC-042
+  started_at: "Tue, Oct 13 · 9:12 AM ET"
+  resolved_at: "Tue, Oct 13 · 10:41 AM ET"
+  duration: 1 hour 29 minutes
+  affected: Quotes and project plans
+  summary: "A configuration change slowed one of our databases, and requests for quotes and project plans timed out. We rolled the change back and added a check so the same change can't ship again."
+  report_url: "https://status.servantium.com/incidents/INC-042"
+---
+{/* Good news about an outage: default tone, and no mascot even when mascots return. */}
+
+<Heading margin="0 0 12px">{{ incident_title }}</Heading>
+
+Hi {{ first_name }}, the problem affecting **{{ affected }}** is fixed, and everything is working normally.
+
+<DataTable labelWidth={120} rows={[
+  ["Started", "{{ started_at }}"],
+  ["Resolved", <b>{"{{ resolved_at }}"}</b>],
+  ["Duration", "{{ duration }}"],
+  ["Reference", "{{ incident_id }}"],
+]} />
+
+## What happened
+
+{{ summary }}
+
+We're sorry for the disruption.
+
+<Spacer size={8} />
+
+<Button href="{{ report_url }}" variant="secondary" width={230}>Read the incident timeline</Button>
