@@ -7,7 +7,7 @@ The one place Servantium's identity lives. If a logo, Astro, the email header ar
 | Path | What | Source of truth |
 |---|---|---|
 | `company.json` | Legal name, postal address, public URLs, email addresses, LinkedIn, footer link order | This file. Every live URL was checked to return 200 when added; `status` is planned and its footer link stays hidden (`live: false`). |
-| `assets/logo/` | Wordmark (colour and white) and symbol (colour and white), PNG | servantium.com and the Flutter app. No vector master exists yet. |
+| `assets/logo/` | The logo family: wordmark, symbol and the S alone, in colour, white and slate, as SVG masters with 2× PNGs | Figma's published Verdant library (page 06 · Brand); four older PNGs from servantium.com and the Flutter app |
 | `assets/icon/` | Favicons, touch icon, and `glyph/`: 33 line icons from the website | servantium.com |
 | `assets/og/` | Default social cards for the website and help center | servantium.com, help.servantium.com |
 | `assets/astro/` | **Astro the Astronaut**, 12 poses: SVG masters, PNGs **generated** | The website's `Astronaut.astro` |

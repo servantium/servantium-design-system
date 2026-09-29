@@ -50,11 +50,11 @@ assets.servantium.com/
 
 ## What's in it
 
-As of 2026-09-29: 75 files, about 1.5 MB.
+As of 2026-09-29: 99 files, about 2.1 MB.
 
 | Folder | Files | What | Came from |
 |---|---|---|---|
-| `logo/` | 4 | Colour and white wordmark (723×170); colour symbol (482×482); white symbol (1080×912) | servantium.com; the white symbol from the Flutter app |
+| `logo/` | 28 | The logo family as vectors: the wordmark lockup (`servantium-logo`), the symbol with its network (`servantium-symbol`) and the S alone (`servantium-s`), each in colour, white and slate, some on light or green tiles. Every SVG has a 2× PNG. | Figma: the published Verdant library, page 06 · Brand (file `e246WW1Y16jupOZF76zEi0`, node 34:358). Four PNGs predate the vectors and came from servantium.com and the Flutter app. |
 | `icon/` | 4 | Favicons at 32, 192 and 512 px; Apple touch icon | servantium.com |
 | `icon/glyph/` | 33 | The website's line icons: clock, sheet, people, money, calendar, calculator, playbook, glossary and more | servantium.com `Icon.astro` and `ResourceIcons.astro`, extracted |
 | `og/` | 2 | Default social cards for servantium.com and the help center | Re-rendered from the website's `og-image.svg` (the live PNG has a white band along the bottom); the help center's card |
@@ -67,13 +67,20 @@ As of 2026-09-29: 75 files, about 1.5 MB.
 - **Other companies' logos.** Customer, integration and partner logos come from [Brandfetch](https://docs.brandfetch.com/logo-api/guidelines), hotlinked with our client ID: `https://cdn.brandfetch.io/<domain>?c=<client id>`. Brandfetch's terms require hotlinking and forbid caching, so these are never copied here. The website reads the client ID from its `BRAND_FETCH` build variable.
 - **Customer data**, uploads and generated documents. They belong to the app.
 - **Page content:** product screenshots, videos, blog covers. Each stays with its site.
-- **Unvetted variants.** The Flutter app holds a few symbol-on-colour images (on green, on forest, a white wordmark on green). They're unreferenced and not square, and each is easy to recreate from the symbol. They were left out because every address here is permanent.
+- **Unvetted variants.** The Flutter app holds a few raster symbol-on-colour images. The Figma vectors replace them, so they were left out.
+
+## Decisions still open
+
+These variants exist in Figma but aren't published yet, because a published address is permanent:
+
+- **The wordmark colour.** Figma's published original sets the SERVANTIUM wordmark in near-black (#0D0D0D). The live site, its PNG and Figma's own "on light" variants use slate (#1A4045). `logo/servantium-logo.svg` is the slate version, matching what's live. If near-black is the intent, add it under its own name.
+- **What "deep" means.** Figma's "on deep" tiles use slate (#1A4045), but the component frame around them is Verdant's deep forest (#023E25). Once one is chosen, add the white-on-deep tiles under the colour's name, for example `servantium-logo-white-on-forest.svg`.
+- **Brand gradients and the green ramp** are in Figma as colour styles: Servantium Sweep, Logo S, Forest Depth, Night Field and others. They're tokens, so they belong in Verdant rather than here.
 
 ## Known gaps
 
-- **There's no vector logo.** The wordmark and symbol exist only as PNGs, everywhere we looked. Commission SVG masters. When they arrive, add them as `logo/servantium-logo.svg`, `logo/servantium-symbol.svg` and so on.
-- **The app has no Servantium app icon.** The Flutter app's icons are Flutter's stock placeholders. That's engineering's repo; `logo/servantium-symbol.png` is the source to make them from.
-- **Figma:** see the status note at the end of this page.
+- **The app has no Servantium app icon.** The Flutter app's icons are Flutter's stock placeholders. That's engineering's repo. `logo/servantium-s.svg` is the natural source.
+- **Figma has no mascot, app icons, social templates or illustrations.** The mascot exists only in code, so the website's `Astronaut.astro` stays its source.
 
 ## Using it
 

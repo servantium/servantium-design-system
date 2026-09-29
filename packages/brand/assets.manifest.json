@@ -404,11 +404,65 @@
       "bytes": 251,
       "sha256": "b720944aece4401c42a44ed8a699213211cb03a71070d4333bca3eab6989a70b"
     },
+    "logo/servantium-logo-on-light.png": {
+      "key": "logo/servantium-logo-on-light.17bff75545.png",
+      "type": "image/png",
+      "bytes": 71970,
+      "sha256": "17bff755453045392b98bea63e02a21df9c8b170ca6188883ba92a5905aefb13"
+    },
+    "logo/servantium-logo-on-light.svg": {
+      "key": "logo/servantium-logo-on-light.b415722cd8.svg",
+      "type": "image/svg+xml",
+      "bytes": 11611,
+      "sha256": "b415722cd83d6604bdee64f695936359a392955e72ff6e098ad5f678eb8ea01b"
+    },
+    "logo/servantium-logo-slate-on-light.png": {
+      "key": "logo/servantium-logo-slate-on-light.4fa2915bb5.png",
+      "type": "image/png",
+      "bytes": 70043,
+      "sha256": "4fa2915bb5dcbde29eff43b8c46fef4587bf5ece9077c6ea083b1673069eaa15"
+    },
+    "logo/servantium-logo-slate-on-light.svg": {
+      "key": "logo/servantium-logo-slate-on-light.6929a8fe7a.svg",
+      "type": "image/svg+xml",
+      "bytes": 11371,
+      "sha256": "6929a8fe7a8b045276f4f1f37c2db4633d0fc3f50d4a1f6ec1856fe73e717e3c"
+    },
+    "logo/servantium-logo-slate.png": {
+      "key": "logo/servantium-logo-slate.dd619452e1.png",
+      "type": "image/png",
+      "bytes": 77354,
+      "sha256": "dd619452e18e683b1dc02df7a37bd4a2620c65bc1f69274cc13c8a5d65b426a4"
+    },
+    "logo/servantium-logo-slate.svg": {
+      "key": "logo/servantium-logo-slate.527c781388.svg",
+      "type": "image/svg+xml",
+      "bytes": 10951,
+      "sha256": "527c78138873017a92f5f907b2c7417816b667220c54a37beda3de036bc503f1"
+    },
+    "logo/servantium-logo-white-on-green.png": {
+      "key": "logo/servantium-logo-white-on-green.083fb60873.png",
+      "type": "image/png",
+      "bytes": 68289,
+      "sha256": "083fb60873a73c51ae296d50a85dd7fb4c38dd9e2b6b2a384c99323e3a50a4b6"
+    },
+    "logo/servantium-logo-white-on-green.svg": {
+      "key": "logo/servantium-logo-white-on-green.c0ede099e9.svg",
+      "type": "image/svg+xml",
+      "bytes": 11316,
+      "sha256": "c0ede099e99405f22b943c32b7c5ebca49b74c8c14f880c1c5c1679d38c78031"
+    },
     "logo/servantium-logo-white.png": {
       "key": "logo/servantium-logo-white.73c2cede0a.png",
       "type": "image/png",
       "bytes": 28848,
       "sha256": "73c2cede0a066537d16f34f3720f05971c8ea189835b6970897bbc9689678ccf"
+    },
+    "logo/servantium-logo-white.svg": {
+      "key": "logo/servantium-logo-white.b6210672e1.svg",
+      "type": "image/svg+xml",
+      "bytes": 10920,
+      "sha256": "b6210672e102986f996830cb86a840829df3a4cb232149cc48b34261b1670bbf"
     },
     "logo/servantium-logo.png": {
       "key": "logo/servantium-logo.42254224d5.png",
@@ -416,17 +470,107 @@
       "bytes": 86764,
       "sha256": "42254224d516b237d330ecde4fe8263b455df1e7232ce106c82db747936ccc45"
     },
+    "logo/servantium-logo.svg": {
+      "key": "logo/servantium-logo.46310bbd53.svg",
+      "type": "image/svg+xml",
+      "bytes": 8783,
+      "sha256": "46310bbd5393a4b072a7d1ff7a56c266827f7a16a080285fa055c9930357423a"
+    },
+    "logo/servantium-s-white.png": {
+      "key": "logo/servantium-s-white.f85488ab7e.png",
+      "type": "image/png",
+      "bytes": 8207,
+      "sha256": "f85488ab7e87a65a61fb7bf685ab46ed77cb2a3db3d116c919b483a762a149b9"
+    },
+    "logo/servantium-s-white.svg": {
+      "key": "logo/servantium-s-white.606f9b9214.svg",
+      "type": "image/svg+xml",
+      "bytes": 1388,
+      "sha256": "606f9b9214571cd7a5643544c4a16cb6f7fee8a20a27f0e9a44b95738d069104"
+    },
+    "logo/servantium-s.png": {
+      "key": "logo/servantium-s.07eb82f74a.png",
+      "type": "image/png",
+      "bytes": 13553,
+      "sha256": "07eb82f74ae105bf8e9179fc9b7d4994f83cb2b81126ce104574435286d90fab"
+    },
+    "logo/servantium-s.svg": {
+      "key": "logo/servantium-s.a058de79c9.svg",
+      "type": "image/svg+xml",
+      "bytes": 1643,
+      "sha256": "a058de79c9f6255bf8f99921d874e82fc8baea4dee6e31e51d82800bd5a68f84"
+    },
+    "logo/servantium-symbol-on-light.png": {
+      "key": "logo/servantium-symbol-on-light.ac7466cc2c.png",
+      "type": "image/png",
+      "bytes": 51918,
+      "sha256": "ac7466cc2c1cbef962e00055be608c5b3ffc27f8819667d1877c1909876fae63"
+    },
+    "logo/servantium-symbol-on-light.svg": {
+      "key": "logo/servantium-symbol-on-light.d606b8b913.svg",
+      "type": "image/svg+xml",
+      "bytes": 9240,
+      "sha256": "d606b8b9130c9d583e361d35adbf7f0bf0a350cfe785c677c9c768fe2b2c2605"
+    },
+    "logo/servantium-symbol-slate-on-light.png": {
+      "key": "logo/servantium-symbol-slate-on-light.1461ee46cd.png",
+      "type": "image/png",
+      "bytes": 50709,
+      "sha256": "1461ee46cd2a168b025b5c3a7e071678a0690f59cbb2bd1bd6b008be16c239a0"
+    },
+    "logo/servantium-symbol-slate-on-light.svg": {
+      "key": "logo/servantium-symbol-slate-on-light.7027b62e62.svg",
+      "type": "image/svg+xml",
+      "bytes": 9000,
+      "sha256": "7027b62e62bff3758f0d021deb5011382c94bb048cb04bf15047a70c08ab37eb"
+    },
+    "logo/servantium-symbol-slate.png": {
+      "key": "logo/servantium-symbol-slate.af6dc74855.png",
+      "type": "image/png",
+      "bytes": 56443,
+      "sha256": "af6dc7485585e819f1ef43ca2d6a9b091a589f07e3ac48f256be298ee2c3427b"
+    },
+    "logo/servantium-symbol-slate.svg": {
+      "key": "logo/servantium-symbol-slate.15aeecc816.svg",
+      "type": "image/svg+xml",
+      "bytes": 8873,
+      "sha256": "15aeecc816bb81d45e4a486484d4d6c658b454589239f136aa27c0b97bcf126e"
+    },
+    "logo/servantium-symbol-white-on-green.png": {
+      "key": "logo/servantium-symbol-white-on-green.1439e0fd5d.png",
+      "type": "image/png",
+      "bytes": 50075,
+      "sha256": "1439e0fd5dcc171e7e24397202c3f5c33aa8a8f0ebcaa6fd827d07cc46eb7592"
+    },
+    "logo/servantium-symbol-white-on-green.svg": {
+      "key": "logo/servantium-symbol-white-on-green.22e6be2bc1.svg",
+      "type": "image/svg+xml",
+      "bytes": 8951,
+      "sha256": "22e6be2bc19213ce6ee3d62942cbfa297fda341d811e63f4a05e3df7b456321b"
+    },
     "logo/servantium-symbol-white.png": {
       "key": "logo/servantium-symbol-white.35bae14a89.png",
       "type": "image/png",
       "bytes": 328176,
       "sha256": "35bae14a89a7c71ddf193f8954113d499b80e12af8d6e24c96aff58a16c27bff"
     },
+    "logo/servantium-symbol-white.svg": {
+      "key": "logo/servantium-symbol-white.d08a9eb321.svg",
+      "type": "image/svg+xml",
+      "bytes": 8851,
+      "sha256": "d08a9eb3217fbe40ca83b5284facfa29a18ac173e4955d4ca7d36f97080fb175"
+    },
     "logo/servantium-symbol.png": {
       "key": "logo/servantium-symbol.473f414a68.png",
       "type": "image/png",
       "bytes": 104130,
       "sha256": "473f414a68be5c260ee0ac7563b0df1ce723b0f43033cf2c8c36ea83a162ad87"
+    },
+    "logo/servantium-symbol.svg": {
+      "key": "logo/servantium-symbol.b2b575e735.svg",
+      "type": "image/svg+xml",
+      "bytes": 9138,
+      "sha256": "b2b575e735ca46cc62c548d7b8e82ff391e89723e9ae8af19d2bbaa4dc56d68f"
     },
     "og/default.png": {
       "key": "og/default.29dee1ddd6.png",

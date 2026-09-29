@@ -12,6 +12,7 @@
  *
  * WHAT IT MAKES
  *   assets/astro/astro-<pose>.png      240×240 — Astro at 2× for a 120px slot
+ *   assets/logo/<name>.png             2× PNGs from the vector logo masters (except four sourced PNGs)
  *   assets/email/header-<size>.svg     the header art master, deterministic (seeded)
  *   assets/email/header-<size>.jpg     the same, rasterised at 2× for email. JPEG, not PNG: this
  *                                      art is all gradient, which PNG stores ~6× larger, and every
@@ -136,6 +137,22 @@ for (const file of readdirSync(ASTRO).filter((f) => f.endsWith('.svg'))) {
   await page.screenshot({ path: join(ASTRO, file.replace('.svg', '.png')), omitBackground: true, clip: { x: 0, y: 0, width: 240, height: 240 } });
 }
 
+// Logos: a PNG at 2× from every vector master (Figma's published Verdant library), for places
+// that can't take SVG. Four PNGs predate the vectors and came from the website and the app; they
+// stay as they are, because the emails already point at them.
+const LOGO = join(ROOT, 'assets/logo');
+const SOURCED_PNG = new Set(['servantium-logo.png', 'servantium-logo-white.png', 'servantium-symbol.png', 'servantium-symbol-white.png']);
+for (const file of readdirSync(LOGO).filter((f) => f.endsWith('.svg'))) {
+  const png = file.replace('.svg', '.png');
+  if (SOURCED_PNG.has(png)) continue;
+  const svg = readFileSync(join(LOGO, file), 'utf8');
+  const [, w, h] = /viewBox="0 0 ([\d.]+) ([\d.]+)"/.exec(svg);
+  const [pw, ph] = [Math.round(w * 2), Math.round(h * 2)];
+  await page.setViewportSize({ width: pw, height: ph });
+  await page.setContent(`<html><body style="margin:0;background:transparent">${svg.replace(/<svg([^>]*?) width="[^"]*" height="[^"]*"/, `<svg$1 width="${pw}" height="${ph}"`)}</body></html>`);
+  await page.screenshot({ path: join(LOGO, png), omitBackground: true, clip: { x: 0, y: 0, width: pw, height: ph } });
+}
+
 // ── Social: LinkedIn, as a forest circle with the white “in” mark ─────────────────────────────
 // The “in” letters are the same path the website footer uses (grove SiteFooter), minus its square;
 // the circle is Verdant deep forest, so it sits with the rest of the email in any client.
@@ -149,4 +166,4 @@ await page.setContent(`<html><body style="margin:0;background:transparent">${lin
 await page.screenshot({ path: join(SOCIAL, 'linkedin.png'), omitBackground: true, clip: { x: 0, y: 0, width: 48, height: 48 } });
 
 await browser.close();
-console.log('rendered: header-{hero,standard}.{svg,jpg}, footer-bar.{svg,jpg}, astro-*.png, social/linkedin.{svg,png}');
+console.log('rendered: header-{hero,standard}.{svg,jpg}, footer-bar.{svg,jpg}, astro-*.png, logo/*.png from the vector masters, social/linkedin.{svg,png}');
