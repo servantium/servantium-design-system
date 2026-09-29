@@ -34,6 +34,7 @@ export const BUCKET = 'servantium-assets';
 const HASH_LENGTH = 10;
 
 const IMMUTABLE = 'public, max-age=31536000, immutable';
+const USER_AGENT = 'servantium-assets (+https://github.com/servantium/servantium-design-system)';
 
 /**
  * Keep search engines out: these are brand files for email and embeds, not pages. Mail clients'
@@ -99,15 +100,17 @@ const serialise = (m) => `${JSON.stringify(m, null, 2)}\n`;
  * before its file exists would cache a "not found" for it. Verifying doesn't: it wants the answer
  * a recipient would get.
  */
-async function isLive(key, { bypassCache = false } = {}) {
+async function status(key, { bypassCache = false } = {}) {
   try {
     const url = `${ORIGIN}/${key}${bypassCache ? `?publish-check=${Date.now()}` : ''}`;
-    const res = await fetch(url, { method: 'HEAD' });
-    return res.status === 200;
-  } catch {
-    return false; // the domain isn't reachable yet: treat as missing
+    const res = await fetch(url, { method: 'HEAD', headers: { 'user-agent': USER_AGENT } });
+    return res.status;
+  } catch (e) {
+    return `unreachable (${e.cause?.code ?? e.message})`; // the domain isn't reachable yet: treat as missing
   }
 }
+
+const isLive = async (key, opts) => (await status(key, opts)) === 200;
 
 function put(key, file, type, cacheControl) {
   execFileSync('npx', ['--yes', 'wrangler', 'r2', 'object', 'put', `${BUCKET}/${key}`, '--file', file, '--remote',
@@ -203,10 +206,21 @@ async function publish({ dryRun }) {
   }
 }
 
+/**
+ * A file counts as missing only if it still isn't there after a few tries. From CI's data-centre
+ * addresses, Cloudflare now and then refuses or drops a request, so one bad answer isn't proof.
+ */
 async function verify() {
   const m = JSON.parse(existsManifest());
   const missing = [];
-  for (const a of Object.values(m.assets)) if (!(await isLive(a.key))) missing.push(a.key);
+  for (const a of Object.values(m.assets)) {
+    let s = await status(a.key);
+    for (let attempt = 1; s !== 200 && attempt <= 3; attempt++) {
+      await new Promise((r) => setTimeout(r, 2000 * attempt));
+      s = await status(a.key);
+    }
+    if (s !== 200) missing.push(`${a.key} (${s})`);
+  }
   if (missing.length) {
     console.error(`${missing.length} asset(s) aren't live at ${ORIGIN} — run \`npm run publish\` in packages/brand:\n  ${missing.join('\n  ')}`);
     process.exit(1);
