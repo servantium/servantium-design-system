@@ -45,7 +45,7 @@ export type Built = {
   model: Values;
 };
 
-const ORDER = ['welcome', 'welcome-workspace', 'password-reset', 'task', 'notification', 'digest', 'support-ticket', 'incident', 'incident-resolved', 'maintenance', 'release-notes', 'regulatory-notice'];
+const ORDER = ['welcome', 'welcome-organization', 'password-reset', 'task', 'notification', 'digest', 'support-received', 'support-reply', 'incident', 'incident-resolved', 'maintenance', 'release-notes', 'regulatory-notice'];
 const rank = (id: string) => {
   const i = ORDER.indexOf(id);
   return i === -1 ? ORDER.length : i;

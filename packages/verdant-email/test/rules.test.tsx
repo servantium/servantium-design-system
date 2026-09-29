@@ -49,6 +49,15 @@ test('three tones, and nothing else', () => {
   assert.deepEqual(Object.keys(tones), ['default', 'attention', 'urgent']);
 });
 
+// ── The banner is one line ──────────────────────────────────────────────────────────────────────
+test('banner titles are one fixed line: no subtitle, no fields, 24 characters at most', async () => {
+  const base = 'subject: s\npreheader: p\nlabel: l\nstream: transactional\nfooter:\n  reason: r';
+  await assert.rejects(loadMdxEmail(`---\n${base}\ntitle: Welcome\nsubtitle: Dana added you\n---\nx`), /subtitle/);
+  await assert.rejects(loadMdxEmail(`---\n${base}\ntitle: "{{ name }} assigned you"\n---\nx`), /can't contain fields/);
+  await assert.rejects(loadMdxEmail(`---\n${base}\ntitle: This headline is far too long to fit\n---\nx`), /24 on one line/);
+  for (const e of emails) assert.doesNotMatch(e.sent.html, /<h1[^>]*>[^<]*\{\{/, `${e.id}: the banner title has a field in it`);
+});
+
 // ── Astro ───────────────────────────────────────────────────────────────────────────────────────
 test('Astro never appears on an attention or urgent email', () => {
   for (const e of emails) {

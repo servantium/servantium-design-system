@@ -1,11 +1,10 @@
 ---
 name: Incident — resolved
-sends: "Postmark template `incident-resolved`, transactional, to everyone who received `incident` for the same incident id."
+sends: "Postmark template `incident-resolved`, transactional, to everyone who received `incident` for the same incident."
 subject: "Resolved: {{ incident_title }}"
 preheader: "Fixed at {{ resolved_at }}. Everything is working normally."
-label: Resolved
-title: "Resolved: {{ incident_title }}"
-subtitle: "{{ incident_id }}"
+label: Service status
+title: Issue resolved
 stream: transactional
 footer:
   reason: "You're receiving this because we emailed you about this incident. Service alerts can't be unsubscribed from."
@@ -20,17 +19,17 @@ fields:
   summary: "A configuration change slowed one of our databases, and requests for quotes and project plans timed out. We rolled the change back and added a check so the same change can't ship again."
   report_url: "https://status.servantium.com/incidents/INC-042"
 ---
-{/* Default tone, and still NO Astro: this is good news about an outage, and a smiling mascot on
-    it reads as not taking the outage seriously. The schema allows Astro here; the style sheet says no. */}
+{/* Good news about an outage: default tone, and no mascot even when mascots return. */}
 
-Hi {{ first_name }},
+<Heading margin="0 0 12px">{{ incident_title }}</Heading>
 
-The problem affecting **{{ affected }}** is fixed, and everything is working normally.
+Hi {{ first_name }}, the problem affecting **{{ affected }}** is fixed, and everything is working normally.
 
 <DataTable labelWidth={120} rows={[
   ["Started", "{{ started_at }}"],
   ["Resolved", <b>{"{{ resolved_at }}"}</b>],
   ["Duration", "{{ duration }}"],
+  ["Reference", "{{ incident_id }}"],
 ]} />
 
 ## What happened

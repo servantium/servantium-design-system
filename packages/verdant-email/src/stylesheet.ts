@@ -12,9 +12,8 @@ import type { Tone } from './theme';
 export const FRONTMATTER: { field: string; required: boolean; values: string; note: string }[] = [
   { field: 'subject', required: true, values: 'text, may use {{ fields }}', note: 'The inbox line. Say what happened, not "Update from Servantium".' },
   { field: 'preheader', required: true, values: 'text', note: 'The grey line after the subject. Add something the subject doesn\'t say.' },
-  { field: 'label', required: true, values: 'text', note: 'Top-right of the banner: what kind of email this is. "Release notes", "Task", "Resolved".' },
-  { field: 'title', required: true, values: 'text', note: 'The banner headline. Every email has one, so the body starts with content.' },
-  { field: 'subtitle', required: false, values: 'text', note: 'One line under the headline.' },
+  { field: 'label', required: true, values: 'text, 16 characters at most', note: 'Top-right of the banner: what kind of email this is. "Release notes", "Task", "Service status".' },
+  { field: 'title', required: true, values: 'text, 24 characters at most, no fields', note: 'The banner’s one line — the same on every send, so it never wraps. The event’s details go in the body.' },
   { field: 'tone', required: false, values: 'default · attention · urgent', note: 'Defaults to default. See Tones.' },
   { field: 'astro', required: false, values: 'waving · captain · detective · professor · cowboy', note: 'The mascot. Off for now: no email uses it. The banner keeps room for one, and the build still refuses it on attention or urgent mail.' },
   { field: 'stream', required: true, values: 'transactional · broadcast', note: 'Which Postmark stream sends it. Broadcast gets an unsubscribe link; transactional never does.' },
@@ -29,7 +28,6 @@ subject: "What's new in Servantium — June 2026"
 preheader: "Secure Search, Contact Workspaces, and 83 more improvements."
 label: Release notes
 title: What's new in Servantium
-subtitle: June 2026
 astro: professor
 stream: broadcast
 footer:
@@ -195,6 +193,13 @@ export const SAMPLES: { group: string; intro: string; items: Sample[] }[] = [
         use: 'A run of titled things — release highlights, onboarding steps, incident updates.',
         props: 'items: { title, body, chip?, meta? }[]',
         mdx: '<Items items={[\n  { chip: { tone: "default", label: "New" }, title: "Secure Search", body: "Search only shows records you\'re allowed to see." },\n  { chip: { tone: "attention", label: "Changed" }, meta: "Settings → Users", title: "User Management", body: "Click a person to assign roles and tags." },\n]} />',
+      },
+      {
+        name: 'Steps',
+        use: 'A short numbered sequence — “your first steps”. Each number sits on the line of its title.',
+        avoid: 'Lists of things that aren’t a sequence — use Items.',
+        props: 'steps: { title, body }[]',
+        mdx: '<Steps steps={[\n  { title: "Invite your team", body: "Add people under Settings → Users." },\n  { title: "Add your clients", body: "The accounts you do work for, under Clients." },\n]} />',
       },
       {
         name: 'Chip',

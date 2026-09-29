@@ -39,12 +39,10 @@ export function Email({ children }: { children: ReactNode }) {
 
 // ── Banner ─────────────────────────────────────────────────────────────────────────────────────
 type BannerBase = {
-  /** What kind of email this is, top-right: "Welcome", "Task", "Service alert". */
+  /** What kind of email this is, top-right: "Welcome", "Task", "Service status". 16 characters at most. */
   label: string;
-  /** The headline. Every email has one. */
+  /** The headline: one line, 24 characters at most, the same on every send. Details go in the body. */
   title: string;
-  /** One line under the headline. Optional. */
-  subtitle?: string;
 };
 
 /** Astro only type-checks alongside the default tone — see the header. */
@@ -53,7 +51,7 @@ export type BannerProps =
   | (BannerBase & { tone: Exclude<Tone, 'default'>; astro?: never });
 
 export function Banner(props: BannerProps) {
-  const { label, title, subtitle } = props;
+  const { label, title } = props;
   const tone: Tone = props.tone ?? 'default';
   const astro = props.astro;
   if (astro && tone !== 'default') {
@@ -71,46 +69,42 @@ export function Banner(props: BannerProps) {
             style={{ display: 'block', width: '132px', height: '31px', border: '0', outline: 'none',
               fontFamily: fonts.body, fontSize: '20px', fontWeight: 700, color: color.onBanner }} />
         </td>
-        {/* Not nowrap: a long label ("Scheduled maintenance") must wrap on a phone rather than push
-            the banner wider than the screen. */}
+        {/* Labels are 16 characters at most, so they sit on one line beside the logo, even on a phone. */}
         <td className="ve-label" valign="middle" align="right" style={{ paddingLeft: '12px', fontFamily: fonts.body, fontSize: '11px',
-          lineHeight: '16px', fontWeight: 700, letterSpacing: '1.6px', textTransform: 'uppercase', color: t.onBanner }}>
+          lineHeight: '16px', fontWeight: 700, letterSpacing: '1.6px', textTransform: 'uppercase', color: t.onBanner, whiteSpace: 'nowrap' }}>
           <span style={{ color: t.accent, fontSize: '10px' }}>&#9679;</span>&nbsp;&nbsp;{label}
         </td>
       </tr></tbody>
     </table>
   );
 
+  // ONE LINE, ALWAYS: 28px on desktop, 22px on a phone, and never more than 24 characters (the build
+  // refuses longer), so it fits a 600px email and a 375px phone in the web font or its Georgia fallback.
   const heading = (
-    <h1 className={astro ? 've-hero-title' : 've-title'} style={{ margin: '26px 0 0', fontFamily: fonts.display,
-      fontSize: astro ? '34px' : '30px', lineHeight: astro ? '42px' : '38px', fontWeight: 600, color: color.onBanner }}>
+    <h1 className="ve-title" style={{ margin: '24px 0 0', fontFamily: fonts.display, fontSize: '28px', lineHeight: '34px',
+      fontWeight: 600, color: color.onBanner, whiteSpace: 'nowrap' }}>
       {title}
     </h1>
-  );
-  const sub = subtitle && (
-    <p style={{ margin: '10px 0 0', fontFamily: fonts.body, fontSize: '16px', lineHeight: '24px', color: color.onBannerMuted }}>
-      {subtitle}
-    </p>
   );
 
   return (
     <>
       <tr>
         <td className="ve-px" bgcolor={color.banner} {...(art ? { background: bg } : {})}
-          style={{ padding: '28px 40px 32px', backgroundColor: color.banner, borderRadius: '14px 14px 0 0',
+          style={{ padding: '28px 40px 30px', backgroundColor: color.banner, borderRadius: '14px 14px 0 0',
             ...(art ? { backgroundImage: `url(${bg})`, backgroundPosition: 'right top', backgroundSize: 'cover', backgroundRepeat: 'no-repeat' } : {}) }}>
           {topRow}
           {astro ? (
             <table role="presentation" width="100%" cellPadding={0} cellSpacing={0} border={0}>
               <tbody><tr>
-                <td valign="bottom">{heading}{sub}</td>
+                <td valign="bottom">{heading}</td>
                 <td className="ve-astro-cell" width={132} valign="bottom" align="right" style={{ paddingTop: '18px' }}>
                   <img className="ve-astro" src={url(`astro/astro-${astro}.png`)} width={120} height={120} alt=""
                     style={{ display: 'block', width: '120px', height: '120px', border: '0' }} />
                 </td>
               </tr></tbody>
             </table>
-          ) : (<>{heading}{sub}</>)}
+          ) : heading}
         </td>
       </tr>
       {/* THE TONE RULE — the only place the tone runs full width. A table row, so it survives
@@ -123,14 +117,27 @@ export function Banner(props: BannerProps) {
 }
 
 // ── Body ───────────────────────────────────────────────────────────────────────────────────────
+/**
+ * The white card, closed by THE BOOKEND: a thin strip of the banner's night sky along the bottom,
+ * so every email opens and closes on the same brand art. With images off it's a plain forest bar.
+ */
 export function Body({ children }: { children: ReactNode }) {
+  const { url, art } = useAsset();
+  const bar = url('email/footer-bar.jpg');
   return (
-    <tr>
-      <td className="ve-px" bgcolor={color.surface} style={{ padding: '36px 40px 40px', backgroundColor: color.surface,
-        border: `1px solid ${color.rule}`, borderTop: '0', borderRadius: '0 0 14px 14px' }}>
-        {children}
-      </td>
-    </tr>
+    <>
+      <tr>
+        <td className="ve-px" bgcolor={color.surface} style={{ padding: '36px 40px 40px', backgroundColor: color.surface,
+          border: `1px solid ${color.rule}`, borderTop: '0', borderBottom: '0' }}>
+          {children}
+        </td>
+      </tr>
+      <tr>
+        <td height={12} bgcolor={color.banner} {...(art ? { background: bar } : {})}
+          style={{ height: '12px', lineHeight: '12px', fontSize: '0', backgroundColor: color.banner, borderRadius: '0 0 14px 14px',
+            ...(art ? { backgroundImage: `url(${bar})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' } : {}) }}>&nbsp;</td>
+      </tr>
+    </>
   );
 }
 

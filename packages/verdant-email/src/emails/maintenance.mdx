@@ -1,31 +1,28 @@
 ---
 name: Scheduled maintenance
-sends: "Postmark template `maintenance`, transactional, to every admin, at least 72 hours before a planned window."
+sends: "Postmark template `maintenance`, transactional, to every administrator, at least 72 hours before a planned window."
 subject: "Scheduled maintenance on {{ date }}"
 preheader: "Servantium will be unavailable for up to {{ duration }}, starting {{ starts }}."
-label: Scheduled maintenance
-title: "Planned maintenance on {{ date }}"
-subtitle: "Up to {{ duration }} of downtime"
+label: Service status
+title: Planned maintenance
 tone: attention
 stream: transactional
 footer:
-  reason: "You're receiving this because you're an administrator of {{ workspace_name }}. Service notices can't be unsubscribed from."
+  reason: "You're receiving this because you're an administrator of {{ organization_name }}. Service notices can't be unsubscribed from."
 fields:
   first_name: Dana
-  workspace_name: Halcyon Bioanalytical Services
+  organization_name: Halcyon Bioanalytical Services
   date: "Saturday, Oct 24"
   starts: "Sat, Oct 24 · 10:00 PM ET"
   ends: "Sun, Oct 25 · 12:00 AM ET"
   duration: 2 hours
-  reason: "upgrade the database that stores quotes and project plans"
+  reason: { example: "upgrade the database that stores quotes and project plans", note: "Completes “We'll take Servantium offline to …”" }
   affected: "Everything: the web and mobile apps, and API integrations"
   status_url: "https://status.servantium.com"
 ---
-{/* EVERY VALUE IN `preview` IS ILLUSTRATIVE. */}
+<Heading margin="0 0 12px">Up to {{ duration }} of downtime on {{ date }}</Heading>
 
-Hi {{ first_name }},
-
-We'll take Servantium offline to {{ reason }}.
+Hi {{ first_name }}, we'll take Servantium offline to {{ reason }}.
 
 <DataTable variant="outline" labelWidth={120} rows={[
   ["Starts", <b>{"{{ starts }}"}</b>],
@@ -35,10 +32,8 @@ We'll take Servantium offline to {{ reason }}.
 
 <Spacer size={16} />
 
-<Callout tone="attention" title="Before the window starts">
-  Save any open quotes or plans. Anything unsaved when we go offline will be lost.
-</Callout>
+Save any open work before the window starts. Anything unsaved when we go offline will be lost.
 
-<Spacer size={28} />
+<Spacer size={8} />
 
 <Button href="{{ status_url }}" variant="secondary" width={210}>View the status page</Button>

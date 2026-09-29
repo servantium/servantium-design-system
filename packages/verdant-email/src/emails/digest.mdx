@@ -5,16 +5,15 @@ subject: "{{ summary }}"
 preheader: "{{ highlights }}"
 label: "{{ period }}"
 title: Here's what changed
-subtitle: "{{ date_range }} · {{ workspace_name }}"
 stream: transactional
 footer:
-  reason: "You're receiving this summary because you chose digest emails in {{ workspace_name }}."
+  reason: "You're receiving this summary because you chose digest emails in {{ organization_name }}."
   settings: "{{ preferences_url }}"
 fields:
   first_name: { example: Jules }
   period: { example: Daily digest, note: "Daily digest or Weekly digest" }
   date_range: { example: "Tuesday, October 13", note: "The day, or the week (Oct 12–16)" }
-  workspace_name: { example: Halcyon Bioanalytical Services }
+  organization_name: { example: Halcyon Bioanalytical Services }
   summary: { example: "5 updates in Servantium since yesterday", note: Also the subject }
   highlights: { example: "2 tasks assigned to you, a quote approved, and 2 more", note: The line after the subject in the inbox }
   items:
@@ -29,7 +28,7 @@ fields:
   inbox_url: { example: "https://app.servantium.com/notifications" }
   preferences_url: { example: "https://app.servantium.com/settings/notifications", note: Where they change or stop the digest }
 ---
-Hi {{ first_name }}, here's everything that needs you, in one place.
+Hi {{ first_name }}, here's what changed in {{ organization_name }} on {{ date_range }}.
 
 <Updates field="items" />
 

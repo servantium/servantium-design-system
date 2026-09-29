@@ -10,7 +10,7 @@ export { renderEmail, toFirebaseFragment, useAsset, type AssetOptions } from './
 export { Email, Banner, Body, Footer, type BannerProps, type FooterProps } from './components/Layout';
 export {
   Heading, Text, Eyebrow, Link, Button, DataTable, Callout, Chip, Items, Spacer, Divider, LinkFallback,
-  List, ListItem, CodeBlock, Merge, Updates, type Tint,
+  List, ListItem, CodeBlock, Merge, Updates, Steps, Paragraphs, Thread, type Tint,
 } from './components/Content';
 export { color, fonts, tones, neutral, type Tone } from './theme';
 export { type Stream } from './template';

@@ -51,14 +51,14 @@ const T = {
   emerald: '#037A47', green: '#00C26D', fresh: '#36D993', jade: '#6FE7B0',
 };
 
-function sky({ w, h, seed, count, orbit }) {
+function sky({ w, h, seed, count, orbit, from = 0.34 }) {
   const rand = mulberry32(seed);
   const dots = [];
   for (let i = 0; i < count; i++) {
     // Density rises to the right: x is drawn from a curve that piles up near the far edge.
-    const x = w * (0.34 + 0.66 * Math.pow(rand(), 0.55));
+    const x = w * (from + (1 - from) * Math.pow(rand(), 0.55));
     const y = h * rand();
-    const near = (x / w - 0.34) / 0.66; // 0 at the calm edge, 1 at the far right
+    const near = from ? (x / w - from) / (1 - from) : 0.6; // 0 at the calm edge, 1 at the far right
     const r = (1.2 + rand() * 2.6) * (w / 1200);
     const fill = rand() < 0.18 ? '#FFFFFF' : rand() < 0.55 ? T.jade : T.fresh;
     const o = (0.14 + rand() * 0.55) * (0.35 + 0.65 * near);
@@ -113,6 +113,8 @@ function sky({ w, h, seed, count, orbit }) {
 const HEADERS = {
   hero: { w: 1200, h: 480, seed: 417, count: 110, orbit: true },
   standard: { w: 1200, h: 360, seed: 1488, count: 90, orbit: false },
+  // The bookend: a thin strip of the same sky that closes the bottom of every email.
+  bar: { w: 1200, h: 24, seed: 2026, count: 60, orbit: false, from: 0 },
 };
 
 const browser = await chromium.launch();
@@ -120,10 +122,10 @@ const page = await browser.newPage({ deviceScaleFactor: 1 });
 
 for (const [name, spec] of Object.entries(HEADERS)) {
   const svg = sky(spec);
-  writeFileSync(join(EMAIL, `header-${name}.svg`), svg);
+  writeFileSync(join(EMAIL, name === 'bar' ? 'footer-bar.svg' : `header-${name}.svg`), svg);
   await page.setViewportSize({ width: spec.w, height: spec.h });
   await page.setContent(`<html><body style="margin:0">${svg}</body></html>`);
-  await page.screenshot({ path: join(EMAIL, `header-${name}.jpg`), type: 'jpeg', quality: 84, clip: { x: 0, y: 0, width: spec.w, height: spec.h } });
+  await page.screenshot({ path: join(EMAIL, name === 'bar' ? 'footer-bar.jpg' : `header-${name}.jpg`), type: 'jpeg', quality: 84, clip: { x: 0, y: 0, width: spec.w, height: spec.h } });
 }
 
 // Astro: every pose, 240px square, transparent.

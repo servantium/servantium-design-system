@@ -54,8 +54,7 @@ const HEAD_STYLE = `
     .ve-container{width:100% !important;}
     .ve-px{padding-left:24px !important;padding-right:24px !important;}
     .ve-stack{display:block !important;width:100% !important;}
-    .ve-hero-title{font-size:28px !important;line-height:34px !important;}
-    .ve-title{font-size:24px !important;line-height:30px !important;}
+    .ve-title{font-size:22px !important;line-height:28px !important;}
     .ve-astro{width:84px !important;height:84px !important;}
     .ve-astro-cell{width:96px !important;}
     .ve-hide-sm{display:none !important;}

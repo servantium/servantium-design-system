@@ -295,3 +295,78 @@ export function Updates({ field }: { field: string }) {
     </table>
   );
 }
+
+// ── Steps ──────────────────────────────────────────────────────────────────────────────────────
+/**
+ * A numbered sequence: each number sits on the same line as its step's title, with the step's
+ * sentence underneath, aligned to the title. For "your first three steps", not for lists of things.
+ */
+export function Steps({ steps }: { steps: { title: string; body: string }[] }) {
+  return (
+    <table role="presentation" width="100%" cellPadding={0} cellSpacing={0} border={0}>
+      <tbody>
+        {steps.map((st, i) => (
+          <tr key={i}>
+            <td width={40} valign="top" style={{ padding: i ? '16px 0 0' : '0' }}>
+              <table role="presentation" cellPadding={0} cellSpacing={0} border={0}>
+                <tbody><tr>
+                  <td width={26} height={26} align="center" valign="middle" bgcolor={color.banner}
+                    style={{ width: '26px', height: '26px', borderRadius: '13px', backgroundColor: color.banner, fontFamily: fonts.body,
+                      fontSize: '13px', lineHeight: '26px', fontWeight: 700, color: color.onBanner }}>{i + 1}</td>
+                </tr></tbody>
+              </table>
+            </td>
+            <td valign="top" style={{ padding: i ? '16px 0 0' : '0' }}>
+              <p style={{ margin: '1px 0 2px', fontFamily: fonts.body, fontSize: '16px', lineHeight: '24px', fontWeight: 700, color: color.ink }}>{st.title}</p>
+              <p style={{ margin: 0, fontFamily: fonts.body, fontSize: '15px', lineHeight: '23px', color: color.ink }}>{st.body}</p>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+// ── Paragraphs ─────────────────────────────────────────────────────────────────────────────────
+/**
+ * Free text the SENDER supplies, one list item ({ text }) per paragraph. Paragraphs, not line
+ * breaks, because Outlook ignores CSS that would keep newlines — a paragraph renders everywhere.
+ */
+export function Paragraphs({ field }: { field: string }) {
+  return (
+    <>
+      {`{{#each ${field}}}`}
+      <p style={{ margin: '0 0 16px', fontFamily: fonts.body, fontSize: '16px', lineHeight: '26px', color: color.ink }}>{'{{ text }}'}</p>
+      {'{{/each}}'}
+    </>
+  );
+}
+
+// ── Thread ─────────────────────────────────────────────────────────────────────────────────────
+/**
+ * The earlier messages in a conversation, newest first: who, when, and the message as one short
+ * paragraph. Quieter than the new message above it, and separated by hairlines — never a bar
+ * down the side, which is how most mail clients draw quoted text and exactly what we don't do.
+ */
+export function Thread({ field, title = 'Earlier in this conversation' }: { field: string; title?: string }) {
+  return (
+    <table role="presentation" width="100%" cellPadding={0} cellSpacing={0} border={0}>
+      <tbody>
+        <tr><td style={{ paddingBottom: '4px', borderBottom: `1px solid ${color.rule}` }}>
+          <p style={{ margin: '0 0 6px', fontFamily: fonts.body, fontSize: '12px', lineHeight: '16px', fontWeight: 700,
+            letterSpacing: '1px', textTransform: 'uppercase', color: color.inkMuted }}>{title}</p>
+        </td></tr>
+        {`{{#each ${field}}}`}
+        <tr>
+          <td style={{ padding: '12px 0', borderBottom: `1px solid ${color.rule}` }}>
+            <p style={{ margin: '0 0 2px', fontFamily: fonts.body, fontSize: '13px', lineHeight: '18px', color: color.inkMuted }}>
+              <b style={{ color: color.ink }}>{'{{ author }}'}</b>&nbsp;&nbsp;·&nbsp;&nbsp;{'{{ time }}'}
+            </p>
+            <p style={{ margin: 0, fontFamily: fonts.body, fontSize: '14px', lineHeight: '21px', color: color.inkMuted }}>{'{{ excerpt }}'}</p>
+          </td>
+        </tr>
+        {'{{/each}}'}
+      </tbody>
+    </table>
+  );
+}

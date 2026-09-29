@@ -4,13 +4,11 @@ sends: "Postmark template `notification`, transactional. The general-purpose not
 subject: "{{ headline }}"
 preheader: "{{ summary }}"
 label: "{{ category }}"
-title: "{{ headline }}"
-subtitle: "{{ context }}"
+title: An update for you
 stream: transactional
 footer:
   reason: "{{ reason }}"
 fields:
-  first_name: { example: Jules }
   category: { example: Quote, note: "One or two words for the banner label: Quote · Approval · Mention · Plan" }
   headline: { example: Dana Whitfield approved the Phase II quote, note: "What happened, in one line. Also the subject." }
   summary: { example: "$184,500 · version 3 · ready to staff", note: The line that shows after the subject in the inbox }
@@ -26,7 +24,9 @@ fields:
   action_url: { example: "https://app.servantium.com/engagements/eng-aur-417/quotes/q-3" }
   reason: { example: "You're receiving this because you're the delivery lead on AUR-417 in Halcyon Bioanalytical Services.", note: Why this person got it — required on every notification }
 ---
-Hi {{ first_name }},
+<Heading margin="0 0 4px">{{ headline }}</Heading>
+
+<Text size="sm" muted margin="0 0 16px">{{ context }}</Text>
 
 {{ message }}
 

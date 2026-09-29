@@ -1,40 +1,35 @@
 ---
 name: Incident — service disruption
-sends: "Postmark template `incident`, transactional, to each admin of an affected workspace, for SEV1–SEV2: on open and on every status change. Set ReplyTo to a monitored inbox — the body invites replies."
+sends: "Postmark template `incident`, transactional, to each administrator of an affected organization: when the incident opens and at every status change."
 subject: "Service disruption: {{ incident_title }}"
 preheader: "{{ status }}. Next update by {{ next_update }}."
-label: Service disruption
-title: "{{ incident_title }}"
-subtitle: "{{ status }} · {{ incident_id }}"
+label: Service status
+title: Service disruption
 tone: urgent
 stream: transactional
 footer:
-  reason: "You're receiving this because you're an administrator of {{ workspace_name }}, and this incident affects it. Service alerts can't be unsubscribed from."
+  reason: "You're receiving this because you're an administrator of {{ organization_name }}, and this incident affects it. Service alerts can't be unsubscribed from."
 fields:
   first_name: Dana
-  workspace_name: Halcyon Bioanalytical Services
-  incident_title: Quotes and project plans aren't loading
-  incident_id: { example: INC-042, note: "The portal's incident id" }
-  status: { example: Investigating, note: "Investigating, Identified or Monitoring" }
+  organization_name: Halcyon Bioanalytical Services
+  incident_title: { example: Quotes and project plans aren't loading, note: What's broken, in the customer's words }
+  incident_id: { example: INC-042, note: Our reference }
+  status: { example: Investigating, note: "Investigating · Identified · Monitoring" }
   started_at: "Tue, Oct 13, 2026 · 9:12 AM ET"
   affected: Quotes and project plans
   next_update: "10:00 AM ET"
-  update: { note: "The latest update, written by whoever runs the incident", example: "Some workspaces see an error when opening a quote or a project plan. Sign-in, CRM and tasks are working. We've found where requests are failing and are working on a fix." }
-  status_url: { example: "https://status.servantium.com/incidents/INC-042", note: The status page entry (status page not set up yet) }
+  update: { note: The latest update, written by whoever runs the incident, example: "Some organizations see an error when opening a quote or a project plan. Sign-in and everything else is working. We've found where requests are failing and are working on a fix." }
+  status_url: { example: "https://status.servantium.com/incidents/INC-042", note: The status page entry }
 ---
-{/* EVERY VALUE IN `preview` IS ILLUSTRATIVE, and the status page it links to is proposed. The model
-    is what an incident record needs to carry for this email: id, title, status and start time, plus
-    the affected area, the latest update and when the next one is due. */}
+<Heading margin="0 0 12px">{{ incident_title }}</Heading>
 
-Hi {{ first_name }},
-
-We're working on a problem that affects **{{ affected }}** in {{ workspace_name }}. We'll email you when the status changes, and again when it's fixed.
+Hi {{ first_name }}, we're working on a problem that affects **{{ affected }}** in {{ organization_name }}. We'll email you when the status changes, and again when it's fixed.
 
 <DataTable variant="outline" labelWidth={120} rows={[
   ["Status", <b>{"{{ status }}"}</b>],
   ["Started", "{{ started_at }}"],
-  ["Affects", "{{ affected }}"],
   ["Next update", "{{ next_update }}"],
+  ["Reference", "{{ incident_id }}"],
 ]} />
 
 ## Latest update
@@ -44,7 +39,3 @@ We're working on a problem that affects **{{ affected }}** in {{ workspace_name 
 <Spacer size={8} />
 
 <Button href="{{ status_url }}" width={230}>Follow live updates</Button>
-
-<Spacer size={24} />
-
-<Text size="sm" muted margin="0">Seeing something this doesn't describe? Reply to this email and it comes straight to the team working on it.</Text>

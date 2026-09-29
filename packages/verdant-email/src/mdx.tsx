@@ -6,7 +6,6 @@
  *   preheader: Search that respects your access rules, and contact workspaces.
  *   label: Release notes
  *   title: What's new in Servantium
- *   subtitle: June 2026
  *   astro: professor
  *   stream: broadcast
  *   footer:
@@ -38,7 +37,7 @@ import { ASTRO_POSES, company, type AstroPose } from '@servantium/brand';
 import { Banner, Body, Email, Footer } from './components/Layout';
 import {
   Button, Callout, Chip, CodeBlock, DataTable, Divider, Eyebrow, Heading, Items, Link, LinkFallback,
-  List, ListItem, Spacer, Text, Updates,
+  List, ListItem, Paragraphs, Spacer, Steps, Text, Thread, Updates,
 } from './components/Content';
 import { renderEmail, type AssetOptions } from './render';
 import { tones, type Tone } from './theme';
@@ -54,7 +53,6 @@ export type Frontmatter = {
   preheader: string;
   label: string;
   title: string;
-  subtitle?: string;
   tone: Tone;
   astro?: AstroPose;
   stream: Stream;
@@ -82,6 +80,13 @@ export function validate(raw: unknown, where = 'email'): Frontmatter {
   const problems: string[] = [];
   const need = (k: string) => { if (typeof fm[k] !== 'string' || !(fm[k] as string).trim()) problems.push(`\`${k}\` is required`); };
   ['subject', 'preheader', 'label', 'title', 'stream'].forEach(need);
+
+  if (fm.subtitle !== undefined) problems.push('`subtitle` is gone: the banner carries one line. Put the detail in the body.');
+  if (typeof fm.title === 'string') {
+    if (fm.title.includes('{{')) problems.push('`title` can\'t contain fields: the banner line is the same on every send, so it always fits on one line');
+    if (fm.title.length > 24) problems.push(`\`title\` is ${fm.title.length} characters; the banner fits 24 on one line`);
+  }
+  if (typeof fm.label === 'string' && !fm.label.includes('{{') && fm.label.length > 16) problems.push(`\`label\` is ${fm.label.length} characters; 16 at most`);
 
   const tone = (fm.tone ?? 'default') as Tone;
   if (!TONES.includes(tone)) problems.push(`\`tone\` must be one of ${TONES.join(', ')} — got "${fm.tone}"`);
@@ -120,7 +125,6 @@ export function validate(raw: unknown, where = 'email'): Frontmatter {
     preheader: fm.preheader as string,
     label: fm.label as string,
     title: fm.title as string,
-    subtitle: fm.subtitle as string | undefined,
     tone,
     astro: fm.astro as AstroPose | undefined,
     stream: fm.stream as Stream,
@@ -303,7 +307,7 @@ const markdown = {
 export const mdxComponents = {
   ...markdown,
   Button: MdxButton, Callout, Chip, DataTable, Divider, Eyebrow, Items, LinkFallback, Spacer, Text, Heading, Link, CodeBlock,
-  CompanyLink, If, Editable, Updates,
+  CompanyLink, If, Editable, Updates, Steps, Paragraphs, Thread,
 };
 
 // ── Load ────────────────────────────────────────────────────────────────────────────────────────
@@ -342,8 +346,8 @@ export async function loadMdxEmail(source: string, where = 'email', opts: LoadOp
 
   const unsubscribe = fm.stream === 'broadcast' ? (opts.unsubscribeHref ?? POSTMARK_UNSUBSCRIBE) : undefined;
   const banner = fm.tone === 'default'
-    ? <Banner label={fm.label} title={fm.title} subtitle={fm.subtitle} astro={fm.astro} />
-    : <Banner tone={fm.tone} label={fm.label} title={fm.title} subtitle={fm.subtitle} />;
+    ? <Banner label={fm.label} title={fm.title} astro={fm.astro} />
+    : <Banner tone={fm.tone} label={fm.label} title={fm.title} />;
 
   return {
     frontmatter: fm,
