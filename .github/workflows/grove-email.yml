@@ -74,7 +74,8 @@ jobs:
         run: |
           VERSION="${TAG#grove-email@}"
           # This version's section of the changelog, then what's in the bundle.
-          awk -v v="$VERSION" '$0 ~ "^## " v {f=1; next} /^## / && f {exit} f' packages/grove-email/CHANGELOG.md > notes.md
+          awk -v v="$VERSION" '$0 ~ "^## " v {f=1; next} /^## / && f {exit} f' packages/grove-email/CHANGELOG.md \
+            | sed "s#](\./#](https://github.com/${GITHUB_REPOSITORY}/blob/${TAG}/packages/grove-email/#g" > notes.md
           printf '\n---\n\n**Bundle:** Postmark-ready templates (`postmark/<alias>/`), the field contract (`contract.json`, `servantium_email_contract.py`) and the Firebase reset template. Push with `postmark templates push postmark --force --all`. See [the engineering handover](https://github.com/%s/blob/%s/packages/grove-email/HANDOVER.md).\n' "$GITHUB_REPOSITORY" "$TAG" >> notes.md
           tar -czf "grove-email-${VERSION}.tar.gz" -C dist postmark contract.json servantium_email_contract.py firebase
           gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --title "Grove Email ${VERSION}" --notes-file notes.md \
