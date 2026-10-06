@@ -1,0 +1,35 @@
+Service notice
+
+Sub-processor update
+
+Hello {{ admin_first_name }},
+
+We're writing to tell you about a change to the sub-processors Servantium uses to provide the service to {{ organization_name }}. Under our Data Processing Addendum we give you at least 30 days' notice before a change like this takes effect.
+
+Effective date: {{ effective_date }}
+Applies to: {{ organization_name }}
+Action required: None. You may object before the effective date.
+Notice reference: {{ reference }}
+
+What's changing
+
+{{ change_summary }}
+
+{{#each change_details}}{{ label }}
+{{ value }}
+{{/each}}
+
+What you need to do
+
+Nothing. If you have a reasonable objection, reply to this email before {{ effective_date }} and we'll work through it with you.
+
+View the sub-processor list (https://trust.servantium.com)
+
+Servantium Privacy & Security
+
+Help Center (https://help.servantium.com) | Trust Center (https://trust.servantium.com) | Privacy (https://servantium.com/privacy/) | Terms (https://servantium.com/terms/)
+
+A required notice for administrators of {{ organization_name }}. Questions? help@servantium.com
+
+Servantium Inc. · 1111B S Governors Ave STE 48074, Dover, DE 19904
+Servantium on LinkedIn (https://www.linkedin.com/company/servantium)

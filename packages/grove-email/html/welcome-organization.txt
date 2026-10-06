@@ -1,0 +1,41 @@
+Welcome
+
+Welcome to Servantium
+
+Hi {{ first_name }},
+
+{{ organization_name }} is set up on Servantium, and you're its administrator. Set a password to get started.
+
+Set your password ({{ set_password_url }})
+
+This link expires in {{ expires_in }} and works once. After that, sign in at app.servantium.com (https://app.servantium.com) with {{ email }}. Not expecting this? Reply and tell us.
+
+Your first steps
+
+1
+
+Invite your team
+
+Add people under Settings → Users. Each gets their own welcome email.
+
+2
+
+Add your clients
+
+The accounts you do work for, under Clients.
+
+3
+
+Start an engagement
+
+Where a client's quotes, documents and plans come together.
+
+Button not working? Paste this link into your browser:
+{{ set_password_url }}
+
+Help Center (https://help.servantium.com) | Trust Center (https://trust.servantium.com) | Privacy (https://servantium.com/privacy/) | Terms (https://servantium.com/terms/)
+
+Sent because {{ organization_name }} was set up with you as its administrator. Questions? help@servantium.com
+
+Servantium Inc. · 1111B S Governors Ave STE 48074, Dover, DE 19904
+Servantium on LinkedIn (https://www.linkedin.com/company/servantium)

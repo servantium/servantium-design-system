@@ -1,0 +1,623 @@
+{
+  "welcome": {
+    "name": "Welcome — joining an organization",
+    "stream": "transactional",
+    "messageStream": "outbound",
+    "from": "Servantium <notifications@servantium.com>",
+    "replyTo": "help@servantium.com",
+    "subject": "{{ inviter_name }} added you to {{ organization_name }} on Servantium",
+    "sends": "Postmark template `welcome`, transactional. Sent when someone adds a person to an existing organization. It is also the invitation: the new account has no password until they set one.",
+    "fields": {
+      "first_name": {
+        "example": "Jules",
+        "note": "The new user's first name",
+        "optional": false
+      },
+      "inviter_name": {
+        "example": "Dana Whitfield",
+        "note": "The person who added them",
+        "optional": false
+      },
+      "organization_name": {
+        "example": "Halcyon Bioanalytical Services",
+        "optional": false
+      },
+      "email": {
+        "example": "jules.hart@halcyon.example",
+        "note": "The address they'll sign in with",
+        "optional": false
+      },
+      "set_password_url": {
+        "example": "https://app.servantium.com/__/auth/action?mode=resetPassword&oobCode=Xk2pQ9vLmT7wR4sN8yBc",
+        "note": "Firebase Admin SDK generatePasswordResetLink(email)",
+        "optional": false
+      },
+      "expires_in": {
+        "example": "72 hours",
+        "note": "How long that link lives",
+        "optional": false
+      }
+    }
+  },
+  "welcome-organization": {
+    "name": "Welcome — new organization",
+    "stream": "transactional",
+    "messageStream": "outbound",
+    "from": "Servantium <notifications@servantium.com>",
+    "replyTo": "help@servantium.com",
+    "subject": "Your Servantium organization is ready",
+    "sends": "Postmark template `welcome-organization`, transactional. Sent to the first administrator when a new organization is created. Like `welcome`, it carries the set-password link.",
+    "fields": {
+      "first_name": {
+        "example": "Dana",
+        "note": "The administrator's first name",
+        "optional": false
+      },
+      "organization_name": {
+        "example": "Halcyon Bioanalytical Services",
+        "optional": false
+      },
+      "email": {
+        "example": "dana.whitfield@halcyon.example",
+        "note": "The address they'll sign in with",
+        "optional": false
+      },
+      "set_password_url": {
+        "example": "https://app.servantium.com/__/auth/action?mode=resetPassword&oobCode=Wq8nT2vLkP5zR9sH3yXe",
+        "note": "Firebase Admin SDK generatePasswordResetLink(email)",
+        "optional": false
+      },
+      "expires_in": {
+        "example": "72 hours",
+        "note": "How long that link lives",
+        "optional": false
+      }
+    }
+  },
+  "password-reset": {
+    "name": "Password reset",
+    "stream": "transactional",
+    "messageStream": "outbound",
+    "from": "Servantium <notifications@servantium.com>",
+    "replyTo": "help@servantium.com",
+    "subject": "Reset your Servantium password",
+    "sends": "Postmark template `password-reset`, transactional, from a backend function that generates the link. Until that exists, Firebase sends it: paste firebase/password-reset.html into Authentication → Templates.",
+    "fields": {
+      "email": {
+        "example": "jules.hart@halcyon.example",
+        "note": "The account's address. Firebase fills %EMAIL% in its own copy.",
+        "optional": false
+      },
+      "reset_url": {
+        "example": "https://app.servantium.com/__/auth/action?mode=resetPassword&oobCode=Rt5nW2qZc8LmK3vP9xYh",
+        "note": "Firebase Admin SDK generatePasswordResetLink(email). Firebase fills %LINK% in its own copy.",
+        "optional": false
+      }
+    }
+  },
+  "task": {
+    "name": "Task message",
+    "stream": "transactional",
+    "messageStream": "outbound",
+    "from": "Servantium <notifications@servantium.com>",
+    "replyTo": "help@servantium.com",
+    "subject": "{{ actor_name }} {{ action }}: {{ task_name }}",
+    "sends": "Postmark template `task`, transactional. Sent to the people on a task when something happens to it: it's assigned, someone comments, a date moves, it's completed. One template for every task event — `action` says which.",
+    "fields": {
+      "actor_name": {
+        "example": "Jules Hart",
+        "note": "Who did it",
+        "optional": false
+      },
+      "action": {
+        "example": "assigned you",
+        "note": "Lower-case, reads after the name: assigned you · commented on · changed the due date of · completed",
+        "optional": false
+      },
+      "task_name": {
+        "example": "Clinical sample manifest reconciliation",
+        "optional": false
+      },
+      "due": {
+        "example": "Fri, Oct 16, 2026",
+        "note": "Formatted for the recipient",
+        "optional": false
+      },
+      "status": {
+        "example": "Not started",
+        "note": "The task's status as the app shows it",
+        "optional": false
+      },
+      "engagement": {
+        "example": "AUR-417 — Phase II Immunogenicity & PK",
+        "note": "Engagement code and name",
+        "optional": false
+      },
+      "client": {
+        "example": "Aurora Pharmaceuticals",
+        "optional": false
+      },
+      "message": {
+        "example": "Please reconcile the Wave 1 manifest against Aurora's forecast before the first PK run. Flag anything outside the 10% tolerance.",
+        "note": "The note or comment that came with the event. Leave it out and the panel doesn't appear.",
+        "optional": true
+      },
+      "task_url": {
+        "example": "https://app.servantium.com/engagements/eng-aur-417/project_plans?task=ppi-manifest",
+        "optional": false
+      },
+      "plan_url": {
+        "example": "https://app.servantium.com/engagements/eng-aur-417/project_plans",
+        "note": "Leave it out and the plan link doesn't appear",
+        "optional": true
+      },
+      "organization_name": {
+        "example": "Halcyon Bioanalytical Services",
+        "optional": false
+      }
+    }
+  },
+  "notification": {
+    "name": "Notification",
+    "stream": "transactional",
+    "messageStream": "outbound",
+    "from": "Servantium <notifications@servantium.com>",
+    "replyTo": "help@servantium.com",
+    "subject": "{{ headline }}",
+    "sends": "Postmark template `notification`, transactional. The general-purpose notification for everything that isn't a task: approvals, mentions, a quote changing status, a plan being published. One template, many events — the product fills in what happened.",
+    "fields": {
+      "category": {
+        "example": "Quote",
+        "note": "One or two words for the banner label: Quote · Approval · Mention · Plan",
+        "optional": false
+      },
+      "headline": {
+        "example": "Dana Whitfield approved the Phase II quote",
+        "note": "What happened, in one line. Also the subject.",
+        "optional": false
+      },
+      "summary": {
+        "example": "$184,500 · version 3 · ready to staff",
+        "note": "The line that shows after the subject in the inbox",
+        "optional": false
+      },
+      "context": {
+        "example": "AUR-417 · Aurora Pharmaceuticals",
+        "note": "Where it happened",
+        "optional": false
+      },
+      "message": {
+        "example": "Version 3 of the quote is approved. The project plan can now be staffed — the roles below are still unassigned.",
+        "note": "One or two sentences of detail",
+        "optional": false
+      },
+      "details": {
+        "example": [
+          {
+            "label": "Quote",
+            "value": "Phase II Immunogenicity & PK · v3"
+          },
+          {
+            "label": "Total",
+            "value": "$184,500"
+          },
+          {
+            "label": "Unassigned roles",
+            "value": "Bioanalytical scientist (2), QA reviewer"
+          }
+        ],
+        "note": "Rows for the summary table, as { label, value }. At least one.",
+        "optional": false
+      },
+      "action_label": {
+        "example": "Open the quote",
+        "note": "The button label, 24 characters or fewer",
+        "optional": false
+      },
+      "action_url": {
+        "example": "https://app.servantium.com/engagements/eng-aur-417/quotes/q-3",
+        "optional": false
+      },
+      "reason": {
+        "example": "Sent because you lead AUR-417 in Halcyon Bioanalytical Services.",
+        "note": "Why this person got it, one short sentence starting “Sent because…”",
+        "optional": false
+      }
+    }
+  },
+  "digest": {
+    "name": "Digest",
+    "stream": "transactional",
+    "messageStream": "outbound",
+    "from": "Servantium <notifications@servantium.com>",
+    "replyTo": "help@servantium.com",
+    "subject": "{{ summary }}",
+    "sends": "Postmark template `digest`, transactional. A scheduled job sends it to people who chose a daily or weekly summary instead of an email per event. One email, many updates. Needs notification preferences in the app before it ships.",
+    "fields": {
+      "first_name": {
+        "example": "Jules",
+        "optional": false
+      },
+      "period": {
+        "example": "Daily digest",
+        "note": "Daily digest or Weekly digest",
+        "optional": false
+      },
+      "date_range": {
+        "example": "Tuesday, October 13",
+        "note": "The day, or the week (Oct 12–16)",
+        "optional": false
+      },
+      "organization_name": {
+        "example": "Halcyon Bioanalytical Services",
+        "optional": false
+      },
+      "summary": {
+        "example": "5 updates in Servantium since yesterday",
+        "note": "Also the subject",
+        "optional": false
+      },
+      "highlights": {
+        "example": "2 tasks assigned to you, a quote approved, and 2 more",
+        "note": "The line after the subject in the inbox",
+        "optional": false
+      },
+      "items": {
+        "example": [
+          {
+            "category": "Task",
+            "time": "9:14 AM",
+            "title": "Jules Hart assigned you “Clinical sample manifest reconciliation”",
+            "context": "AUR-417 · due Fri, Oct 16",
+            "url": "https://app.servantium.com/engagements/eng-aur-417/project_plans?task=ppi-manifest"
+          },
+          {
+            "category": "Quote",
+            "time": "11:02 AM",
+            "title": "Dana Whitfield approved the Phase II quote",
+            "context": "AUR-417 · Aurora Pharmaceuticals · $184,500",
+            "url": "https://app.servantium.com/engagements/eng-aur-417/quotes/q-3"
+          },
+          {
+            "category": "Task",
+            "time": "1:40 PM",
+            "title": "Sam Okafor commented on “Method validation report”",
+            "context": "NVX-102 · “Draft is in the shared folder.”",
+            "url": "https://app.servantium.com/engagements/eng-nvx-102/project_plans?task=ppi-mvr"
+          },
+          {
+            "category": "Plan",
+            "time": "3:25 PM",
+            "title": "The plan for NVX-102 was published",
+            "context": "NVX-102 · Novexa Therapeutics · 14 tasks",
+            "url": "https://app.servantium.com/engagements/eng-nvx-102/project_plans"
+          },
+          {
+            "category": "Note",
+            "time": "4:51 PM",
+            "title": "Priya Nair added a note to AUR-417",
+            "context": "“Sample counts confirmed with Aurora.”",
+            "url": "https://app.servantium.com/engagements/eng-aur-417/notes"
+          }
+        ],
+        "note": "The updates, newest first, as { category, time, title, context, url }. Ten at most — the rest go in `more`.",
+        "optional": false
+      },
+      "more": {
+        "example": "and 3 more updates",
+        "note": "When there are more than ten. Leave it out otherwise.",
+        "optional": true
+      },
+      "inbox_url": {
+        "example": "https://app.servantium.com/notifications",
+        "optional": false
+      },
+      "preferences_url": {
+        "example": "https://app.servantium.com/settings/notifications",
+        "note": "Where they change or stop the digest",
+        "optional": false
+      }
+    }
+  },
+  "support-received": {
+    "name": "Support — request received",
+    "stream": "transactional",
+    "messageStream": "outbound",
+    "from": "Servantium <notifications@servantium.com>",
+    "replyTo": "help@servantium.com",
+    "subject": "[{{ ticket_id }}] {{ ticket_subject }}",
+    "sends": "Postmark template `support-received`, transactional. The automatic first reply when a request reaches help@. Set Reply-To to the request's own address (e.g. help+1042@servantium.com) so replies join the right conversation.",
+    "fields": {
+      "first_name": {
+        "example": "Dana",
+        "optional": false
+      },
+      "ticket_id": {
+        "example": "#1042",
+        "note": "Our reference",
+        "optional": false
+      },
+      "ticket_subject": {
+        "example": "Quote total doesn't match my spreadsheet",
+        "note": "The subject as they wrote it",
+        "optional": false
+      },
+      "reply_by": {
+        "example": "within one business day",
+        "note": "Our promise, as policy sets it: “within one business day”, “by Tuesday”",
+        "optional": false
+      }
+    }
+  },
+  "support-reply": {
+    "name": "Support — reply in a conversation",
+    "stream": "transactional",
+    "messageStream": "outbound",
+    "from": "Servantium <notifications@servantium.com>",
+    "replyTo": "help@servantium.com",
+    "subject": "[{{ ticket_id }}] {{ ticket_subject }}",
+    "sends": "Postmark template `support-reply`, transactional. Every message from our team on a request: answers, questions back, and the resolution. Keep the same subject, set In-Reply-To and References to the previous message's Message-ID, and set Reply-To to the request's own address, so the whole conversation stays in one thread in their inbox and in ours.",
+    "fields": {
+      "agent_name": {
+        "example": "Priya Nair",
+        "note": "Who on our team wrote this reply",
+        "optional": false
+      },
+      "preview": {
+        "example": "Thanks for the screenshots — we've found the cause.",
+        "note": "The reply's first sentence",
+        "optional": false
+      },
+      "reply": {
+        "example": [
+          {
+            "text": "Hi Dana,"
+          },
+          {
+            "text": "Thanks for the screenshots — we've found the cause. Totals were rounding each line before adding them up, which is why yours came out $12 higher than your spreadsheet."
+          },
+          {
+            "text": "We've fixed it for your organization, and the Aurora quote now shows $184,500. Could you check it matches on your side?"
+          }
+        ],
+        "note": "The new message, one item per paragraph, as { text }. Plain text: split on blank lines.",
+        "optional": false
+      },
+      "status_note": {
+        "example": "We'll keep this open until you confirm.",
+        "note": "Where things stand, when it helps: “We've marked this resolved. Reply if you need anything else — it reopens automatically.”",
+        "optional": true
+      },
+      "thread": {
+        "example": [
+          {
+            "author": "Dana Whitfield",
+            "time": "Mon, Oct 12 · 4:02 PM",
+            "excerpt": "Here are the screenshots. The quote says $184,512 but my sheet says $184,500 for the same roles and hours."
+          },
+          {
+            "author": "Priya Nair",
+            "time": "Mon, Oct 12 · 11:30 AM",
+            "excerpt": "Thanks, Dana. Could you send a screenshot of the quote and the matching rows of your spreadsheet?"
+          },
+          {
+            "author": "Dana Whitfield",
+            "time": "Mon, Oct 12 · 9:14 AM",
+            "excerpt": "The total on the Aurora Phase II quote doesn't match my spreadsheet. Which one is right?"
+          }
+        ],
+        "note": "Earlier messages, newest first, as { author, time, excerpt }. Excerpt: the message as one paragraph, 300 characters at most.",
+        "optional": false
+      },
+      "ticket_id": {
+        "example": "#1042",
+        "optional": false
+      },
+      "ticket_subject": {
+        "example": "Quote total doesn't match my spreadsheet",
+        "optional": false
+      }
+    }
+  },
+  "incident": {
+    "name": "Incident — service disruption",
+    "stream": "transactional",
+    "messageStream": "outbound",
+    "from": "Servantium <notifications@servantium.com>",
+    "replyTo": "help@servantium.com",
+    "subject": "Service disruption: {{ incident_title }}",
+    "sends": "Postmark template `incident`, transactional, to each administrator of an affected organization: when the incident opens and at every status change.",
+    "fields": {
+      "first_name": {
+        "example": "Dana"
+      },
+      "organization_name": {
+        "example": "Halcyon Bioanalytical Services"
+      },
+      "incident_title": {
+        "example": "Quotes and project plans aren't loading",
+        "note": "What's broken",
+        "optional": false
+      },
+      "incident_id": {
+        "example": "INC-042",
+        "note": "Our reference",
+        "optional": false
+      },
+      "status": {
+        "example": "Investigating",
+        "note": "Investigating · Identified · Monitoring",
+        "optional": false
+      },
+      "started_at": {
+        "example": "Tue, Oct 13, 2026 · 9:12 AM ET"
+      },
+      "affected": {
+        "example": "Quotes and project plans"
+      },
+      "next_update": {
+        "example": "10:00 AM ET"
+      },
+      "update": {
+        "example": "Some organizations see an error when opening a quote or a project plan. Sign-in and everything else is working. We've found where requests are failing and are working on a fix.",
+        "note": "The latest update",
+        "optional": false
+      },
+      "status_url": {
+        "example": "https://status.servantium.com/incidents/INC-042",
+        "note": "The status page entry",
+        "optional": false
+      }
+    }
+  },
+  "incident-resolved": {
+    "name": "Incident — resolved",
+    "stream": "transactional",
+    "messageStream": "outbound",
+    "from": "Servantium <notifications@servantium.com>",
+    "replyTo": "help@servantium.com",
+    "subject": "Resolved: {{ incident_title }}",
+    "sends": "Postmark template `incident-resolved`, transactional, to everyone who received `incident` for the same incident.",
+    "fields": {
+      "first_name": {
+        "example": "Dana"
+      },
+      "incident_title": {
+        "example": "Quotes and project plans weren't loading"
+      },
+      "incident_id": {
+        "example": "INC-042"
+      },
+      "started_at": {
+        "example": "Tue, Oct 13 · 9:12 AM ET"
+      },
+      "resolved_at": {
+        "example": "Tue, Oct 13 · 10:41 AM ET"
+      },
+      "duration": {
+        "example": "1 hour 29 minutes"
+      },
+      "affected": {
+        "example": "Quotes and project plans"
+      },
+      "summary": {
+        "example": "A configuration change slowed one of our databases, and requests for quotes and project plans timed out. We rolled the change back and added a check so the same change can't ship again."
+      },
+      "report_url": {
+        "example": "https://status.servantium.com/incidents/INC-042"
+      }
+    }
+  },
+  "maintenance": {
+    "name": "Scheduled maintenance",
+    "stream": "transactional",
+    "messageStream": "outbound",
+    "from": "Servantium <notifications@servantium.com>",
+    "replyTo": "help@servantium.com",
+    "subject": "Scheduled maintenance on {{ date }}",
+    "sends": "Postmark template `maintenance`, transactional, to every administrator, at least 72 hours before a planned window.",
+    "fields": {
+      "first_name": {
+        "example": "Dana"
+      },
+      "organization_name": {
+        "example": "Halcyon Bioanalytical Services"
+      },
+      "date": {
+        "example": "Saturday, Oct 24"
+      },
+      "starts": {
+        "example": "Sat, Oct 24 · 10:00 PM ET"
+      },
+      "ends": {
+        "example": "Sun, Oct 25 · 12:00 AM ET"
+      },
+      "duration": {
+        "example": "2 hours"
+      },
+      "reason": {
+        "example": "upgrade the database that stores quotes and project plans",
+        "note": "Completes “We'll take Servantium offline to …”",
+        "optional": false
+      },
+      "affected": {
+        "example": "Everything: the web and mobile apps, and API integrations"
+      },
+      "status_url": {
+        "example": "https://status.servantium.com"
+      }
+    }
+  },
+  "release-notes": {
+    "name": "Release notes",
+    "stream": "broadcast",
+    "messageStream": "broadcast",
+    "from": "Servantium <notifications@servantium.com>",
+    "replyTo": "help@servantium.com",
+    "subject": "What's new in Servantium — June 2026",
+    "sends": "Postmark template `release-notes`, broadcast stream. Rewritten each month from the help site’s release notes, then sent to active users in batches of 500. Postmark skips anyone who has unsubscribed.",
+    "fields": {
+      "first_name": {
+        "example": "Jules",
+        "note": "From the user's profile",
+        "optional": false
+      }
+    }
+  },
+  "regulatory-notice": {
+    "name": "Regulatory notice",
+    "stream": "transactional",
+    "messageStream": "outbound",
+    "from": "Servantium <notifications@servantium.com>",
+    "replyTo": "help@servantium.com",
+    "subject": "Notice: changes to Servantium's sub-processors, effective {{ effective_date }}",
+    "sends": "Postmark template `regulatory-notice`, transactional, one message per organization administrator. The change itself arrives as data (`change_summary`, `change_details`), so the template stays generic and nothing about an upcoming change is written into this public repo. Replies go to help@, which is monitored — the body invites objections by reply. Legal review pending.",
+    "fields": {
+      "admin_first_name": {
+        "example": "Dana",
+        "optional": false
+      },
+      "organization_name": {
+        "example": "Halcyon Bioanalytical Services",
+        "optional": false
+      },
+      "effective_date": {
+        "example": "October 24, 2026",
+        "note": "At least 30 days after sending",
+        "optional": false
+      },
+      "reference": {
+        "example": "SVC-2026-0917",
+        "note": "Our reference for this notice",
+        "optional": false
+      },
+      "change_summary": {
+        "example": "We're adding a sub-processor to deliver in-app email notifications, such as task assignments and password resets. It will process your users' names and email addresses only. It will not process project, quote or financial data.",
+        "note": "What's changing, in plain words. Written and approved per notice; never stored in this repo.",
+        "optional": false
+      },
+      "change_details": {
+        "example": [
+          {
+            "label": "Sub-processor",
+            "value": "Postmark (ActiveCampaign, LLC)"
+          },
+          {
+            "label": "Purpose",
+            "value": "Delivering in-app email notifications"
+          },
+          {
+            "label": "Data processed",
+            "value": "Users' names and email addresses"
+          },
+          {
+            "label": "Location",
+            "value": "United States"
+          }
+        ],
+        "note": "The facts of the change as { label, value } rows: sub-processor, purpose, data processed, location.",
+        "optional": false
+      }
+    }
+  }
+}

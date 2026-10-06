@@ -1,0 +1,32 @@
+Support
+
+A reply from our team
+
+{{#each reply}}{{ text }}
+
+{{/each}}
+{{ agent_name }}
+
+Servantium support
+
+{{#status_note}}
+{{ . }}
+
+{{/status_note}}
+
+Earlier in this conversation
+
+{{#each thread}}{{ author }} · {{ time }}
+
+{{ excerpt }}
+
+{{/each}}
+
+Reply to this email to keep the conversation going. Reference {{ ticket_id }}.
+
+Help Center (https://help.servantium.com) | Trust Center (https://trust.servantium.com) | Privacy (https://servantium.com/privacy/) | Terms (https://servantium.com/terms/)
+
+Sent because you asked us for help ({{ ticket_id }}). Questions? help@servantium.com
+
+Servantium Inc. · 1111B S Governors Ave STE 48074, Dover, DE 19904
+Servantium on LinkedIn (https://www.linkedin.com/company/servantium)

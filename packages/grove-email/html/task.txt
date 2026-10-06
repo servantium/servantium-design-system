@@ -1,0 +1,33 @@
+Task
+
+Task update
+
+{{ actor_name }} {{ action }}:
+
+{{ task_name }}
+
+Due: {{ due }}
+Status: {{ status }}
+Engagement: {{ engagement }}
+Client: {{ client }}
+
+{{#message}}
+What they wrote
+
+“{{ . }}”
+
+{{/message}}
+
+Open task ({{ task_url }})
+
+{{#plan_url}}
+View the full project plan ({{ . }})
+
+{{/plan_url}}
+
+Help Center (https://help.servantium.com) | Trust Center (https://trust.servantium.com) | Privacy (https://servantium.com/privacy/) | Terms (https://servantium.com/terms/)
+
+Sent because you're on this task in {{ organization_name }}. Questions? help@servantium.com
+
+Servantium Inc. · 1111B S Governors Ave STE 48074, Dover, DE 19904
+Servantium on LinkedIn (https://www.linkedin.com/company/servantium)

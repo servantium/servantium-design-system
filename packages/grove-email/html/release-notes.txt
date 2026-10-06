@@ -1,0 +1,42 @@
+Release notes
+
+What's new in Servantium
+
+Hi {{ first_name }},
+
+Here are the highlights from June 2026.
+
+New
+
+Secure Search
+
+Global full-text search now fully respects your organization's Role-Based Access Control (RBAC) and Tag-Based Access Rules (ABAC), ensuring users can only discover records they have permission to view.
+
+New
+
+Contact Workspaces
+
+Contacts now have their own dedicated detail screens. Clicking a contact card opens a full workspace where you can manage custom properties or delete the record.
+
+New
+
+Inline Custom Properties
+
+You can now add and remove custom properties on the fly directly from an object's form (like an Account, Contact, or Organization). When adding a property, you can specify its type and whether it's required, instantly updating the underlying Data Dictionary.
+
+New
+
+Roles & Permissions
+
+Organization administrators can now create custom security roles under Settings. You can assign specific Can Read, Can Write, or No Access permissions to different modules using a visual drag-and-drop interface.
+
+Plus 83 more improvements and fixes, all in the full release notes.
+
+Read the full release notes (https://help.servantium.com/release-notes/)
+
+Help Center (https://help.servantium.com) | Trust Center (https://trust.servantium.com) | Privacy (https://servantium.com/privacy/) | Terms (https://servantium.com/terms/)
+
+Sent to Servantium users about product updates. Questions? help@servantium.com · Unsubscribe ({{{ pm:unsubscribe }}})
+
+Servantium Inc. · 1111B S Governors Ave STE 48074, Dover, DE 19904
+Servantium on LinkedIn (https://www.linkedin.com/company/servantium)

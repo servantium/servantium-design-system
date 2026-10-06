@@ -13,8 +13,11 @@
  *                             the contract engineering wires against
  *   firebase/password-reset.html   paste into Firebase → Authentication → Templates, until reset moves to Postmark
  *   assets/                   logo, Astro and header art, copied from @servantium/brand
+ *
+ * html/  (committed, beside src/)   <id>.html + <id>.txt + contract.json — the same templates as
+ *                             dist/postmark, flat, so engineering can open them on GitHub
  */
-import { cpSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -70,6 +73,16 @@ for (const e of emails) {
   rows.push(`  ${e.id.padEnd(24)} ${e.tone.padEnd(9)} ${e.stream.padEnd(13)} ${kb(e.preview.html)}`);
 }
 writeFileSync(join(DIST, 'contract.json'), `${JSON.stringify(contract, null, 2)}\n`);
+
+// The same templates, committed flat in html/ for anyone browsing GitHub. README.md there is hand-written.
+const HTML = join(HERE, '../html');
+mkdirSync(HTML, { recursive: true });
+for (const f of readdirSync(HTML)) if (/\.(html|txt|json)$/.test(f)) rmSync(join(HTML, f));
+for (const e of emails) {
+  writeFileSync(join(HTML, `${e.id}.html`), e.sent.html);
+  writeFileSync(join(HTML, `${e.id}.txt`), htmlToText(e.sent.html));
+}
+writeFileSync(join(HTML, 'contract.json'), `${JSON.stringify(contract, null, 2)}\n`);
 
 // The generated docs, committed, for anyone reading on GitHub.
 writeFileSync(join(HERE, '../docs/style-guide.md'), styleGuideMarkdown());

@@ -1,0 +1,31 @@
+Welcome
+
+Welcome to Servantium
+
+Hi {{ first_name }},
+
+{{ inviter_name }} added you to {{ organization_name }} on Servantium. Set a password to finish setting up your account.
+
+Set your password ({{ set_password_url }})
+
+This link expires in {{ expires_in }} and works once. After that, sign in at app.servantium.com (https://app.servantium.com) with {{ email }}. Not expecting this? Ignore it — nothing happens until a password is set.
+
+What you'll find
+
+Engagements
+
+Your organization's client work: quotes, documents and plans, together.
+
+Project Management
+
+The plans and tasks your team delivers against.
+
+Button not working? Paste this link into your browser:
+{{ set_password_url }}
+
+Help Center (https://help.servantium.com) | Trust Center (https://trust.servantium.com) | Privacy (https://servantium.com/privacy/) | Terms (https://servantium.com/terms/)
+
+Sent because {{ inviter_name }} added you to {{ organization_name }}. Questions? help@servantium.com
+
+Servantium Inc. · 1111B S Governors Ave STE 48074, Dover, DE 19904
+Servantium on LinkedIn (https://www.linkedin.com/company/servantium)
