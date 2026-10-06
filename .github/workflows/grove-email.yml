@@ -38,6 +38,10 @@ jobs:
       - name: The asset manifest matches the files
         run: npm run check --workspace @servantium/brand
       - run: npm run build --workspace @servantium/grove-email
+      - name: The committed html/ and docs/ match the masters
+        run: |
+          changed=$(git status --porcelain -- packages/grove-email/html packages/grove-email/docs)
+          if [ -n "$changed" ]; then echo "$changed"; echo "::error::Run npm run build in packages/grove-email and commit html/ and docs/"; exit 1; fi
       - run: npm test --workspace @servantium/grove-email
       - name: Every asset is live at assets.servantium.com
         run: npm run verify --workspace @servantium/brand

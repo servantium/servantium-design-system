@@ -1,0 +1,27 @@
+Service status
+
+Issue resolved
+
+{{ incident_title }}
+
+Hi {{ first_name }}, the problem affecting {{ affected }} is fixed, and everything is working normally.
+
+Started: {{ started_at }}
+Resolved: {{ resolved_at }}
+Duration: {{ duration }}
+Reference: {{ incident_id }}
+
+What happened
+
+{{ summary }}
+
+We're sorry for the disruption.
+
+Read the incident timeline ({{ report_url }})
+
+Help Center (https://help.servantium.com) | Trust Center (https://trust.servantium.com) | Privacy (https://servantium.com/privacy/) | Terms (https://servantium.com/terms/)
+
+Sent because we emailed you about this incident. Questions? help@servantium.com
+
+Servantium Inc. · 1111B S Governors Ave STE 48074, Dover, DE 19904
+Servantium on LinkedIn (https://www.linkedin.com/company/servantium)

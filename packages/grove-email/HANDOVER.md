@@ -5,6 +5,7 @@
 | | |
 |---|---|
 | **What** | 13 system emails, written and tested in this repo, released as Postmark-ready templates with a typed data contract |
+| **The HTML** | [`html/`](./html/): every template as `<alias>.html` + `.txt`, plus `contract.json`. Always matches `main`. |
 | **Latest release** | [Releases tagged `grove-email@…`](https://github.com/servantium/servantium-design-system/releases) · [changelog](./CHANGELOG.md) |
 | **Design system owns** | The emails, the components and rules, the images at `assets.servantium.com`, and the releases |
 | **Engineering owns** | Postmark, pushing a release into it, and sending from the backend |

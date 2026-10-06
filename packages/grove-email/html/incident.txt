@@ -1,0 +1,25 @@
+Service status
+
+Service disruption
+
+{{ incident_title }}
+
+Hi {{ first_name }}, we're working on a problem that affects {{ affected }} in {{ organization_name }}. We'll email you when the status changes, and again when it's fixed.
+
+Status: {{ status }}
+Started: {{ started_at }}
+Next update: {{ next_update }}
+Reference: {{ incident_id }}
+
+Latest update
+
+{{ update }}
+
+Follow live updates ({{ status_url }})
+
+Help Center (https://help.servantium.com) | Trust Center (https://trust.servantium.com) | Privacy (https://servantium.com/privacy/) | Terms (https://servantium.com/terms/)
+
+Sent to administrators of {{ organization_name }}. Questions? help@servantium.com
+
+Servantium Inc. · 1111B S Governors Ave STE 48074, Dover, DE 19904
+Servantium on LinkedIn (https://www.linkedin.com/company/servantium)

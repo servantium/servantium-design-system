@@ -1,0 +1,18 @@
+Support
+
+We got your request
+
+Hi {{ first_name }},
+
+Thanks for writing in. Your request, {{ ticket_subject }}, is with our support team, and we'll reply {{ reply_by }}.
+
+Your reference is {{ ticket_id }}. To add anything, just reply to this email. Screenshots help.
+
+While you wait, the Help Center (https://help.servantium.com) answers the most common questions.
+
+Help Center (https://help.servantium.com) | Trust Center (https://trust.servantium.com) | Privacy (https://servantium.com/privacy/) | Terms (https://servantium.com/terms/)
+
+Sent because you wrote to our support team. Questions? help@servantium.com
+
+Servantium Inc. · 1111B S Governors Ave STE 48074, Dover, DE 19904
+Servantium on LinkedIn (https://www.linkedin.com/company/servantium)

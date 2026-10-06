@@ -1,0 +1,22 @@
+Service status
+
+Planned maintenance
+
+Up to {{ duration }} of downtime on {{ date }}
+
+Hi {{ first_name }}, we'll take Servantium offline to {{ reason }}.
+
+Starts: {{ starts }}
+Ends by: {{ ends }}
+Affects: {{ affected }}
+
+Save any open work before the window starts. Anything unsaved when we go offline will be lost.
+
+View the status page ({{ status_url }})
+
+Help Center (https://help.servantium.com) | Trust Center (https://trust.servantium.com) | Privacy (https://servantium.com/privacy/) | Terms (https://servantium.com/terms/)
+
+Sent to administrators of {{ organization_name }}. Questions? help@servantium.com
+
+Servantium Inc. · 1111B S Governors Ave STE 48074, Dover, DE 19904
+Servantium on LinkedIn (https://www.linkedin.com/company/servantium)

@@ -1,0 +1,27 @@
+{{ period }}
+
+Here's what changed
+
+Hi {{ first_name }}, here's what changed in {{ organization_name }} on {{ date_range }}.
+
+{{#each items}}{{ category }} {{ time }}
+
+{{ title }} ({{ url }})
+
+{{ context }}
+
+{{/each}}
+
+{{#more}}
+{{ . }}
+
+{{/more}}
+
+Open Servantium ({{ inbox_url }})
+
+Notification settings ({{ preferences_url }}) | Help Center (https://help.servantium.com) | Trust Center (https://trust.servantium.com) | Privacy (https://servantium.com/privacy/) | Terms (https://servantium.com/terms/)
+
+Sent because you chose digest emails in {{ organization_name }}. Questions? help@servantium.com
+
+Servantium Inc. · 1111B S Governors Ave STE 48074, Dover, DE 19904
+Servantium on LinkedIn (https://www.linkedin.com/company/servantium)

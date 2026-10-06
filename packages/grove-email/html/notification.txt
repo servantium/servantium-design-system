@@ -1,0 +1,21 @@
+{{ category }}
+
+An update for you
+
+{{ headline }}
+
+{{ context }}
+
+{{ message }}
+
+{{#each details}}{{ label }}: {{ value }}
+{{/each}}
+
+{{ action_label }} ({{ action_url }})
+
+Help Center (https://help.servantium.com) | Trust Center (https://trust.servantium.com) | Privacy (https://servantium.com/privacy/) | Terms (https://servantium.com/terms/)
+
+{{ reason }} Questions? help@servantium.com
+
+Servantium Inc. · 1111B S Governors Ave STE 48074, Dover, DE 19904
+Servantium on LinkedIn (https://www.linkedin.com/company/servantium)
