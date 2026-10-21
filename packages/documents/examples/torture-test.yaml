@@ -1,0 +1,216 @@
+# Torture test: every slide type and every component in one deck.
+#
+# Stage 1, step 1 publishes this to Customers/_Sandbox. A person opens it in Google
+# Slides, changes something, leaves a comment and saves. `sv pull` brings it back and
+# we diff what survived: layouts, placeholders, fonts, icons, the chart, the diagram.
+deck: Torture Test
+client: _Sandbox
+slides:
+  - cover:
+      eyebrow: Servantium · Round-trip test
+      title: Every layout, every component, one deck.
+      subtitle: Open it in Google Slides, make three edits, and save.
+      meta: Test deck · not for customers
+
+  - bullets:
+      eyebrow: How to test
+      title: Three edits tell us what survives the round trip.
+      lede: Each one exercises a different part of the file.
+      points:
+        - Change the title on slide 4. Tests title placeholders.
+        - Add a comment on slide 7. Tests where comments land.
+        - Move a card on slide 5. Tests shapes and groups.
+      notes: |
+        This slide uses the Title and Content layout: a real body placeholder, not drawn text.
+
+  - section:
+      number: '01'
+      title: Components in twos, threes and fours
+      lede: Nothing here carries more than four items.
+
+  - content:
+      eyebrow: Cards
+      title: Three cards, each proving one part of the title.
+      lede: The workhorse. Icon, title, and at most two short lines.
+      body:
+        - cards:
+            - {icon: target, title: Action titles, lines: [State the conclusion, Not the topic]}
+            - {icon: layers, title: One message, lines: [The body proves the title]}
+            - {icon: fact_check, title: Sourced numbers, lines: [Every figure has a source]}
+        - takeaway: {lead: "Three is the default.", text: "Two for a contrast, four for a full set."}
+      notes: Cards. Edit this slide's title in Slides to test title placeholders.
+
+  - content:
+      eyebrow: Chevrons
+      title: One team, a different question at every stage.
+      body:
+        - chevrons:
+            - {stage: At sale, question: "Who is best for this?", text: Skills matched to the scope.}
+            - {stage: At kickoff, question: "Who has the time?", text: The plan checked against capacity.}
+            - {stage: In flight, question: "Who else could help?", text: Alternatives across practices.}
+            - {stage: In change, question: "What breaks if they move?", text: Re-plans without starting over.}
+        - takeaway: {lead: "One set of data, four lenses."}
+      notes: Chevron stages with a card under each. Move one card in Slides to test shapes.
+
+  - content:
+      eyebrow: Milestones
+      title: Workshops delivered, testing complete.
+      lede: Filled dots are done; hollow dots are still ahead.
+      body:
+        - milestones:
+            - {icon: file-pen, when: Sep 3, title: Workshops, text: Templates reviewed., done: true}
+            - {icon: clipboard-check, when: Sep 21, title: Testing, text: UAT closed out., done: true}
+            - {icon: event_available, when: This week, title: Soft launch, text: Internal team only.}
+            - {icon: support_agent, when: Three weeks, title: Support, text: Office hours twice a week.}
+        - takeaway: {lead: "Recommendation: go live Monday."}
+      notes: The milestone track from a client status deck, now a reusable component.
+
+  - content:
+      eyebrow: Panels
+      title: One proposal and one open question.
+      body:
+        - panels:
+            - {icon: support_agent, title: Office hours, tag: Proposed, tone: green, lines: [Twice a week for three weeks, Canceled when nothing is open]}
+            - {icon: co_present, title: Wider walkthrough, tag: Question, tone: amber, lines: ["Needed for the soft launch?", "Or with the announcement?"]}
+        - callout: {label: "Comment here:", text: "leave a comment on this slide in Google Slides.", icon: forum}
+      notes: Two panels. Add a comment on this slide to test where comments land.
+
+  - content:
+      eyebrow: Chain
+      title: One thread, from discovery note to status report.
+      body:
+        - chain:
+            - {icon: edit_note, title: Discovery, text: Captured once and kept.}
+            - {icon: request_quote, title: Quote, text: Derived from the notes.}
+            - {icon: account_tree, title: Project plan, text: Derived from the quote.}
+            - {icon: summarize, title: Status report, text: Written from actuals.}
+        - takeaway: {lead: "Nothing gets retyped."}
+      notes: Arrow chain. Each artifact inherits from the one before it.
+
+  - content:
+      eyebrow: Logos
+      title: Real logo files, fitted so wide and square marks read level.
+      body:
+        - logos:
+            - {logo: ../../brand/assets/logo/servantium-logo-slate.png, title: Partner one, text: A wide mark.}
+            - {logo: ../../brand/assets/logo/servantium-symbol.png, title: Partner two, text: A square mark.}
+            - {logo: servantium, title: The layer on top, text: The dark house card.}
+      notes: Logo row. Tests images inside a converted deck.
+
+  - content:
+      eyebrow: Numbers
+      title: Three figures, each with its basis underneath.
+      body:
+        - stats:
+            - {value: '3 of 8', label: Weeks remaining on the plan, note: Project plan}
+            - {value: '4', label: Workshops delivered, note: Engagement record}
+            - {value: '2', label: Open decisions, note: This meeting}
+        - band: {heading: What the numbers mean, lead: "On schedule.", text: "The remaining weeks are support, not build."}
+      source: test data for the round-trip deck.
+      notes: Stat row plus a band.
+
+  - content:
+      eyebrow: Chart
+      title: A native chart that stays editable in PowerPoint.
+      body:
+        - chart:
+            type: column
+            categories: [Q1, Q2, Q3, Q4]
+            series: [{name: Hours, values: [120, 180, 150, 210]}]
+      source: test data for the round-trip deck.
+      notes: Native chart. The question is whether Google keeps it editable or flattens it to a picture.
+
+  - content:
+      eyebrow: Timeline
+      title: Three horizons, each one earning the next.
+      body:
+        - timeline:
+            - {icon: event_available, when: Now, focus: Staffing and revenue, moves: Quick wins on data we already hold.}
+            - {icon: account_tree, when: Next, focus: End to end content, moves: Discovery through status report.}
+            - {icon: forum, when: Later, focus: Slack and Claude, moves: Answers in the channel people use.}
+      notes: Timeline cards.
+
+  - content:
+      eyebrow: Steps and tiles
+      title: A four-step process, with what it touches underneath.
+      body:
+        - steps:
+            - {lead: Storyboard, text: "Titles only, agreed first."}
+            - {lead: Spec, text: Claude writes it; the engine checks it.}
+            - {lead: Render, text: PDF and a contact sheet.}
+            - {lead: Publish, text: Into the customer folder.}
+        - tiles:
+            - {icon: description, label: Decks}
+            - {icon: edit_note, label: Documents}
+            - {icon: calculate, label: Workbooks}
+      notes: Two components stacked. The renderer measures both and checks for overflow.
+
+  - content:
+      eyebrow: Table
+      title: A table with a header row and zebra stripes.
+      body:
+        - table:
+            head: [Option, What it means, Trade-off]
+            rows:
+              - [A. Recommended, The option we are proposing., What it costs.]
+              - [B. Alternative, The credible alternative., Why it is second.]
+              - [C. Do nothing, What happens if nothing changes., The cost of waiting.]
+            widths: [2.2, 5.5, 4.4]
+        - takeaway: {lead: "Tables are for comparison, not for text."}
+      notes: Table component.
+
+  - content:
+      eyebrow: Diagram
+      title: Diagrams are Mermaid source, rendered in brand type.
+      body:
+        - diagram:
+            height: 3.2
+            mermaid: |
+              flowchart LR
+                A["Storyboard"] --> B["Spec"] --> C["Check"] --> D["Render"] --> E["Publish"]
+                C -. "errors" .-> B
+      notes: A Mermaid diagram, rendered to an image. Edit the source, not the picture.
+
+  - columns:
+      eyebrow: Two content
+      title: Two ideas side by side, each with its own list.
+      left: [Left column holds one idea., Keep both columns the same length.]
+      right: [Right column holds its counterpart., Use Comparison for before and after.]
+      notes: Two Content layout, real body placeholders.
+
+  - comparison:
+      eyebrow: Comparison
+      title: Before and after, with the change stated in the title.
+      left: {heading: Today, points: [Scope lives in a document., The plan is rebuilt by hand.]}
+      right: {heading: With Servantium, points: [Scope is a record., The plan is derived from the quote.]}
+      notes: Comparison layout.
+
+  - numbers:
+      eyebrow: Big numbers
+      title: The Big Numbers layout, three values with labels.
+      stats:
+        - {value: '12', label: Core layouts proven first}
+        - {value: '28', label: Layouts in the full library}
+        - {value: '50', label: Example slides planned}
+      source: the Content Kit plan.
+      notes: Big Numbers layout, placeholders only.
+
+  - quote:
+      text: A sentence the customer actually said, used with permission.
+      attribution: Name, Role, Company
+
+  - picture:
+      eyebrow: Picture and text
+      title: Real images, not stock, with the point in the title.
+      points: [What to notice in the picture., Why it matters.]
+      image: ../../brand/assets/og/default.png
+      source: Servantium brand asset.
+      notes: Picture placeholder filled with a real image.
+
+  - closing:
+      title: What we learn from this round trip.
+      asks:
+        - Which layouts survive a save in Google Slides.
+        - Where comments on a PowerPoint file end up.
+        - Whether the chart stays a chart.
+      cta: Save it and tell Claude

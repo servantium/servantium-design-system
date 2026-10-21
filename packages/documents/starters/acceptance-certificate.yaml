@@ -1,0 +1,43 @@
+# Acceptance certificate: the customer's written acceptance of a deliverable or milestone against its criteria, which triggers the milestone invoice.
+#
+# One certificate per milestone. Each row is a criterion from the SOW with its evidence and
+# result (Accepted, Accepted with conditions or Rejected, shown as status chips). The statement
+# says exactly what is and is not accepted, so the next milestone is not signed by accident.
+document: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+footer: "<Certificate number>  ·  {{CLIENT}}  ·  Confidential"
+# prepared_for: {name: {{CLIENT}}, logo: client-logo.png}
+cover: {layout: none}
+body:
+  - form:
+      type: acceptance_certificate
+      title: <Milestone> Acceptance
+      number: <Certificate number>
+      fields:
+        - [Certificate date, <Date>]
+        - [Project, <Project ID>]
+        - [Statement of work, <SOW number>]
+        - [Milestone, <ID and name>]
+        - [Customer PO, <PO number>]
+        - [Invoice triggered, <Share and amount>]
+      parties:
+        - {label: Customer, name: "<{{CLIENT}} legal name>", lines: [<Address line 1>, <Address line 2>]}
+        - {label: Supplier}
+      sections:
+        - title: What is accepted
+          text: <The deliverable or milestone, the scope it covers and the date it is accepted from.>
+      items:
+        widths: [1.9, 3.5, 1.1]
+        size: 9
+        rows:
+          - [<Deliverable 1>, "<Criterion from the SOW, and the evidence that it is met.>", Accepted]
+          - [<Deliverable 2>, "<Criterion from the SOW, and the evidence that it is met.>", Accepted]
+          - [<Deliverable 3>, "<Criterion, evidence, and any condition with its due date.>", Accepted with conditions]
+          - [Open defects, <None above the agreed severity.>, Accepted]
+      statement: "**{{CLIENT}} accepts <the milestone>.** This certificate is the written acceptance under deliverable <ID> of the SOW. It does not accept <the next milestone>, which is signed separately."
+      approvals_intro: Customer accepts through the person accountable in the RACI. Provider countersigns.
+      approval_fields: [Signature, Name, Title, Date]
+      approvals:
+        - {company: "<{{CLIENT}} legal name>", name: '', title: ''}
+        - {company: '', name: '', title: ''}

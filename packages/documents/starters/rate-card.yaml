@@ -1,0 +1,66 @@
+# Rate card: bill and cost rates by role and level with markup, plus fixed-fee service packages built from standard hours, the basis for every estimate and change order.
+#
+# Internal: cost rates and margins never leave the company. Blue cells are inputs; markup, package
+# prices and margins are formulas. Version it by year and say which version an estimate used.
+workbook: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+prepared_for: Internal
+sheets:
+  - name: Summary
+    kind: summary
+    eyebrow: "<Year> rate card  ·  Internal"
+    title: <Rates by role and level, and the packages built from them>
+    subtitle: Cost rates are fully loaded. Bill rates price estimates, change orders and out-of-scope work.
+    metrics:
+      - {label: Roles, value: "=COUNTA([Rates!role])", format: int, note: Role and level rows}
+      - {label: Average markup, value: "=AVERAGE([Rates!markup])", format: percent, decimals: 0, note: Bill over cost}
+      - {label: Packages, value: "=COUNTA([Packages!name])", format: int, note: Fixed-fee modules}
+      - {label: Effective from, value: 2027-01-01, format: date, note: <Version>}
+    contents: true
+
+  - name: Rates
+    kind: table
+    title: Rate card by role and level
+    columns:
+      - {key: code, header: Code, width: 9}
+      - {key: role, header: Role, width: 30}
+      - {key: level, header: Level, width: 12}
+      - {key: cost, header: Cost rate, format: currency, decimals: 0, input: true, width: 12}
+      - {key: bill, header: Bill rate, format: currency, decimals: 0, input: true, width: 12}
+      - {key: markup, header: Bill over cost, format: percent, decimals: 0, formula: "=IFERROR([@bill]/[@cost]-1,0)", width: 13}
+    groups:
+      - name: <Delivery leadership>
+        rows:
+          - {code: <EL>, role: <Engagement lead>, level: Senior, cost: 120, bill: 250}
+          - {code: <PM>, role: <Project manager>, level: Standard, cost: 90, bill: 190}
+      - name: <Consulting>
+        rows:
+          - {code: <SA>, role: <Solution architect>, level: Senior, cost: 100, bill: 225}
+          - {code: <C2>, role: <Consultant>, level: II, cost: 80, bill: 175}
+          - {code: <C1>, role: <Consultant>, level: I, cost: 65, bill: 150}
+      - name: <Technical>
+        rows:
+          - {code: <IE>, role: <Integration engineer>, level: Standard, cost: 90, bill: 200}
+          - {code: <TR>, role: <Trainer>, level: Standard, cost: 60, bill: 150}
+    total_row: false
+
+  - name: Packages
+    kind: table
+    title: Fixed-fee packages
+    subtitle: Standard hours by package, priced at the bill rate. A package maps to one SOW line and one plan bar.
+    landscape: true
+    columns:
+      - {key: sku, header: SKU, width: 12}
+      - {key: name, header: Package, width: 34, wrap: true}
+      - {key: hours, header: Std hours, format: int, input: true, width: 10}
+      - {key: rate, header: Blended bill rate, format: currency, decimals: 0, input: true, width: 14}
+      - {key: price, header: List price, format: currency, decimals: 0, formula: "=[@hours]*[@rate]", width: 13}
+      - {key: cost_rate, header: Blended cost rate, format: currency, decimals: 0, input: true, width: 14}
+      - {key: margin, header: Margin, format: percent, decimals: 1, formula: "=IFERROR(1-[@hours]*[@cost_rate]/[@price],0)", width: 10}
+    rows:
+      - {sku: <PKG-01>, name: <Discovery and design>, hours: 80, rate: 210, cost_rate: 95}
+      - {sku: <PKG-02>, name: <Standard implementation>, hours: 300, rate: 185, cost_rate: 85}
+      - {sku: <PKG-03>, name: <Integration per system>, hours: 60, rate: 200, cost_rate: 90}
+      - {sku: <PKG-04>, name: <Training per role>, hours: 16, rate: 150, cost_rate: 60}
+    total_row: false

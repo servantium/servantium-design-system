@@ -1,0 +1,38 @@
+# Invoice: a customer invoice for a milestone, subscription period or expenses, quoting the PO, SOW and order form it bills against.
+#
+# One form per invoice (add a pagebreak and another form for a batch). Fields carry every
+# reference accounts payable matches against: PO, SOW, order form, milestone, service period.
+# Remit-to details are placeholders: never put real bank details in a spec in a repo.
+document: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+page_numbers: x_of_y
+footer: "Invoice <number>  ·  {{CLIENT}}"
+cover: {layout: none, title: "{{NAME}}"}
+body:
+  - form:
+      type: invoice
+      number: <INV-0000>
+      status: Issued
+      fields:
+        - [Invoice date, <Date>]
+        - [Due date, <Date>]
+        - [Payment terms, Net 30]
+        - [Customer PO, <PO number>]
+        - [Statement of work, <SOW number>]
+        - [Milestone or period, <M2 or service dates>]
+      parties:
+        - {label: Bill to, name: "<{{CLIENT}} legal name>", lines: [Accounts Payable, <Address line 1>, <Address line 2>]}
+        - {label: Remit to, name: <Our legal name by ACH>, lines: ["<Bank name, account ending 0000>", <Remittance email>]}
+      items:
+        head: [Item, Description, Qty, Rate, Amount]
+        widths: [1.5, 2.6, 0.6, 0.9, 0.9]
+        money: [3, 4]
+        rows:
+          - [<Milestone 2 of 5>, "<Deliverable accepted (20% of fixed fee)>", 1, 20000]
+          - [Expenses, <On-site travel at cost; receipts attached>, 1, 1250.00]
+      totals:
+        tax: {label: Sales tax, rate: 0}
+      terms:
+        - Payment is due within thirty (30) days of the invoice date, under the Agreement.
+        - Please quote the invoice number and PO number on your remittance.

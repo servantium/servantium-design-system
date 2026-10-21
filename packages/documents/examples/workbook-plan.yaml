@@ -1,0 +1,40 @@
+# A fictional delivery plan: four phases, twenty tasks, milestones and dependencies.
+# Start dates and durations (blue) drive everything: change one and the bars, the
+# dependent tasks and the phase dates all move.
+workbook: Delivery Plan
+client: Acme Logistics
+date: 2026-10-20
+sheets:
+  - name: Plan
+    kind: gantt
+    title: Delivery plan
+    subtitle: Twelve weeks, four phases. Bars follow the dates; phase rows roll up their tasks.
+    scale: week
+    today: true
+    tasks:
+      - {id: discover, name: Discover}
+      - {id: kickoff, name: Kickoff, parent: discover, start: 2026-11-02, milestone: true}
+      - {id: interviews, name: Process interviews, parent: discover, start: 2026-11-03, duration_days: 6, owner: Analyst, percent: 1}
+      - {id: current, name: Current-state review, parent: discover, start: 2026-11-04, duration_days: 5, owner: Architect, percent: 0.6}
+      - {id: target, name: Target design sign-off, parent: discover, depends_on: [interviews, current], duration_days: 3, owner: Lead}
+
+      - {id: configure, name: Configure}
+      - {id: model, name: Data model and integrations, parent: configure, depends_on: [target], duration_days: 8, owner: Architect}
+      - {id: config, name: Core configuration, parent: configure, depends_on: [target], duration_days: 15, owner: Consultant}
+      - {id: connectors, name: Source-system connectors, parent: configure, depends_on: [model], duration_days: 12, owner: Engineer}
+      - {id: workflows, name: Workflows and rules, parent: configure, depends_on: [config], duration_days: 6, owner: Consultant}
+      - {id: build_done, name: Build complete, parent: configure, depends_on: [connectors, workflows], milestone: true}
+
+      - {id: migrate, name: Migrate and test}
+      - {id: mig_trial, name: Trial migration, parent: migrate, depends_on: [build_done], duration_days: 5, owner: Engineer}
+      - {id: sit, name: System and integration testing, parent: migrate, depends_on: [build_done], duration_days: 8, owner: Consultant}
+      - {id: uat, name: User acceptance testing, parent: migrate, depends_on: [sit], duration_days: 6, owner: Analyst}
+      - {id: mig_final, name: Final migration rehearsal, parent: migrate, depends_on: [mig_trial, uat], duration_days: 2, owner: Engineer}
+      - {id: go_decision, name: Go / no-go decision, parent: migrate, depends_on: [mig_final], milestone: true}
+
+      - {id: launch, name: Launch and hypercare}
+      - {id: training, name: Training and job aids, parent: launch, depends_on: [uat], duration_days: 4, owner: Analyst}
+      - {id: cutover, name: Cutover weekend, parent: launch, depends_on: [go_decision], duration_days: 1, owner: Engineer}
+      - {id: golive, name: Go-live, parent: launch, depends_on: [cutover], milestone: true}
+      - {id: hypercare, name: Hypercare, parent: launch, depends_on: [cutover], duration_days: 10, owner: Lead}
+      - {id: handover, name: Handover to support, parent: launch, depends_on: [hypercare], milestone: true}

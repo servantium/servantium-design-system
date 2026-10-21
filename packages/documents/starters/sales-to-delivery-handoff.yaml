@@ -1,0 +1,102 @@
+# Sales-to-delivery handoff brief: what was sold, why they bought, what was promised and conceded, who is who, and what delivery must protect in the first 30 days.
+#
+# Written by the account executive and solutions lead before the internal handoff meeting. What
+# was sold is the requirement: delivery questions go back to sales with the source attached.
+# The "one thing" callout is the date or promise every other line serves.
+document: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+page_numbers: x_of_y
+footer: "{{CLIENT}}  ·  Handoff brief  ·  Internal"
+cover:
+  layout: plain
+  title: "{{CLIENT}} handoff brief"
+  subtitle: What we sold, why they bought, what we promised, and what delivery must protect in the first 30 days.
+  byline: "Opportunity <ID>  ·  <Date>  ·  <Account executive> and <Solutions lead>"
+body:
+  - callout: {label: "The one thing:", text: "<The date or promise every other line in this brief serves.>"}
+
+  - h2: The deal
+  - table:
+      head: [Item, Detail]
+      widths: [1.8, 5.2]
+      rows:
+        - [Signed, <Date; documents signed>]
+        - [Contract value, "<Year 1 and total, recurring and one-time>"]
+        - [Term, <Start and end>]
+        - [Services, <Fixed fee or T&M; hours; milestones>]
+        - [Go-live promised, <Date and why it matters to them>]
+        - [Documents, "<MSA, order form, SOW, quote: where each lives>"]
+
+  - h2: Why they bought
+  - table:
+      head: [MEDDPICC, What we learned]
+      widths: [1.6, 5.4]
+      rows:
+        - [Metrics, <The measure they bought against>]
+        - [Economic buyer, <Name and what they care about>]
+        - [Decision criteria, <What they had to see>]
+        - [Decision process, <How the decision was made>]
+        - [Paper process, <Whose paper; what was redlined>]
+        - [Identify pain, <The pain in their words>]
+        - [Champion, <Name and how they were tested>]
+        - [Competition, <Who we beat and why>]
+
+  - h2: What we sold
+  - table:
+      head: [Line, Item, Year 1]
+      widths: [0.8, 4.6, 1.6]
+      money: [2]
+      rows:
+        - [S-01, <Recurring item>, 45000]
+        - [S-02, <Recurring item>, 15000]
+        - [P-01, <Services phase or package>, 100000]
+      foot:
+        - [Total, '', 160000]
+  - caption: Hours by role behind the services fee are on the estimate workbook.
+
+  - h2: What we gave to win it
+  - table:
+      head: [Concession, Value, Approved by]
+      widths: [4.4, 1.2, 1.4]
+      money: [1]
+      rows:
+        - [<Discount or term concession>, 5000, <Name>]
+        - [<Something waived or added free>, 2500, <Name>]
+
+  - h2: Promises outside the paper
+  - bullets:
+      - <Anything said in a meeting or email that delivery must honor, with the source.>
+      - <Anything we said we would not do.>
+
+  - h2: People
+  - table:
+      head: [Name, Title, Role on this project, What to know]
+      widths: [1.4, 1.7, 1.7, 2.2]
+      size: 9.5
+      rows:
+        - [<Name>, <Title>, Executive sponsor, <What they care about>]
+        - [<Name>, <Title>, Business owner, <What they care about>]
+        - [<Name>, <Title>, <Approver>, <What they care about>]
+        - [<Name>, <Title>, <Technical owner>, <What they care about>]
+
+  - h2: Risks sales saw
+  - table:
+      head: [Risk, Why it matters, Suggested owner]
+      widths: [2.6, 3.0, 1.4]
+      rows:
+        - [<Risk>, <What it would do to the date or margin>, <Role>]
+        - [<Risk>, <What it would do to the date or margin>, <Role>]
+
+  - h2: Handoff checklist
+  - table:
+      head: [Item, Owner, Status]
+      widths: [4.6, 1.4, 1.0]
+      rag: [2]
+      center: [2]
+      rows:
+        - [Signed documents filed in the project folder, <Name>, Done]
+        - [Project manager named and introduced to the sponsor, <Name>, On track]
+        - [Estimate and hours handed to delivery, <Name>, On track]
+        - [RAID log opened with the risks above, <Name>, At risk]
+        - [Kickoff date agreed with the customer, <Name>, On track]

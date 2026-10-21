@@ -1,0 +1,159 @@
+# Steering committee deck: monthly status for the sponsor, built around the one decision the committee must make.
+#
+# STORYBOARD (45 minutes; one decision today)
+#  1 cover      Steering committee                               meta: the meeting date
+#  2 table      Agenda                                           timed, who leads each part
+#  3 panels     What set the status color                        two panels + overall takeaway
+#  4 zoom       The issue, magnified                             the step where it happened
+#  5 compare    Cause and fix                                    before vs after the fix
+#  6 gantt      The plan we ask you to approve                   weeks with gates + decision callout
+#  7 numbers    The change order in three numbers                value, hours, scope
+#  8 chart      Hours against plan                               plan vs actual columns
+#  9 table      Risks that need an owner from you                RAID excerpt with status pills
+# 10 closing    The answers that keep go-live                    named asks
+#
+# Rules: status colors follow the status report rules (worst area sets Overall). State a setback
+# once, plainly: what happened, what we fixed, since when it has been stable. A chart needs its
+# comparison (plan against actual) and a legend. Every figure binds to the delivery record.
+deck: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+# prepared_for: {name: {{CLIENT}}, logo: client-logo.png}
+slides:
+  - cover:
+      eyebrow: "{{CLIENT}}  ·  Steering committee"
+      title: Steering committee
+      subtitle: <Month, status color, and the decision we need.>
+      meta: <Meeting date, e.g. Friday, October 2>
+      notes: |
+        Chair opens: one decision today, and what it protects.
+
+  - content:
+      eyebrow: 45 minutes
+      title: Agenda
+      body:
+        - table:
+            head: [Time, Topic, Who leads]
+            widths: [1.6, 6.4, 4.0]
+            rows:
+              - ["0 to 5", Status, <Project manager>]
+              - ["5 to 15", <The issue this month>, <Project manager>]
+              - ["15 to 25", The plan and decision, <Chair>]
+              - ["25 to 35", Money and hours, <Chair>]
+              - ["35 to 45", Risks and asks, <Project manager>]
+      notes: |
+        Status first, then the issue, then the decision. Money after the plan.
+
+  - content:
+      eyebrow: Status
+      title: <One issue turned the project Amber>
+      body:
+        - panels:
+            - {icon: warning, title: <Area at risk>, tag: Amber, tone: amber, lines: [<What changed>, <What it threatens>]}
+            - {icon: check_circle, title: <Areas on plan>, tag: Green, tone: green, lines: [<Scope and budget>, <People and quality>]}
+        - takeaway: {lead: "<Overall color.>", text: "<With the decision, go-live holds.>"}
+      notes: |
+        Worst area sets Overall. Name the one fact behind the color.
+
+  - content:
+      eyebrow: <Where it happened>
+      title: <What the issue was, in numbers>
+      body:
+        - zoom:
+            steps: [<Step 1>, <Step 2>, <Step 3>, <Step 4>, <Step 5>]
+            active: 3
+            title: <What happened at this step>
+            rows:
+              - {key: "0", title: <First finding>, text: <Count or measure>}
+              - {key: "0", title: <Second finding>, text: <Count or measure>}
+              - {key: "0", title: <Third finding>, text: <Count or measure>}
+      notes: |
+        No blame. What happened, when, and how it was caught.
+
+  - content:
+      eyebrow: Cause and fix
+      title: <The cause is fixed and retested>
+      body:
+        - compare:
+            before:
+              label: <Before the fix>
+              icon: close
+              lines: [<What was wrong>, <Why>]
+            after:
+              label: <After the fix>
+              icon: check_circle
+              lines: [<What changed>, <How it was tested>]
+        - takeaway: {lead: "<Retest date.>", text: "<What gets run again.>"}
+      notes: |
+        Say the date it has been stable since.
+
+  - content:
+      eyebrow: Plan
+      title: <One step moves and go-live holds>
+      body:
+        - gantt:
+            periods: [<Wk 1>, <Wk 2>, <Wk 3>, <Wk 4>, <Wk 5>, <Wk 6>, <Wk 7>, <Wk 8>]
+            rows:
+              - {name: <Retest>, bars: [{from: 1, to: 1, label: <Retest>, tone: amber}]}
+              - {name: <Next phase>, bars: [{from: 2, to: 4, label: <Moved one week>}]}
+              - {name: <Prepared alongside>, bars: [{from: 3, to: 6, label: <In parallel>, tone: mint}]}
+              - {name: <Launch>, bars: [{from: 7, to: 8, label: <Go-live>, tone: forest}]}
+            gates:
+              - {after: 4, label: <Milestone>}
+              - {after: 8, label: <Go-live>}
+        - callout: {label: "Decision:", text: "<What we ask the committee to approve.>"}
+      notes: |
+        This is the slide the decision is made on. Say what happens if the answer is no.
+
+  - numbers:
+      eyebrow: Change control
+      title: <The change order adds one scope item>
+      stats:
+        - {value: "$00,000", label: <Value of the change>}
+        - {value: "000", label: Hours at contract rates}
+        - {value: "0", label: <Scope items or scripts added>}
+      notes: |
+        Signed or pending; how it bills; effect on contract value.
+
+  - content:
+      eyebrow: Hours
+      title: <Hours run slightly over plan>
+      body:
+        - chart:
+            type: column
+            categories: [<Month 1>, <Month 2>, <Month 3>]
+            series:
+              - {name: Plan, values: [200, 300, 330]}
+              - {name: Actual, values: [190, 290, 360]}
+            unit: hours
+            height: 3.4
+        - takeaway: {lead: "<Fixed fee.>", text: "<Hours over plan are our cost.>"}
+      notes: |
+        Sample values: replace from timesheets at the cut-off. Say which roles are over and why.
+
+  - content:
+      eyebrow: RAID
+      title: <These risks need an owner from your side>
+      body:
+        - table:
+            head: [ID, Item, Ask, Owner, Status]
+            widths: [0.8, 4.2, 3.6, 1.8, 1.6]
+            pills:
+              - {column: 5, tones: {Open: amber, Holding: slate, Closed: mint}}
+            rows:
+              - [R1, <What could happen>, <What we need>, <Name>, Open]
+              - [R2, <What could happen>, <What we need>, <Name>, Holding]
+              - [I1, <What has happened>, <What we need>, <Name>, Open]
+      notes: |
+        Same IDs as the RAID log. Each row asks for one thing from one person.
+
+  - closing:
+      title: <Four answers keep go-live on date>
+      asks:
+        - <The decision, today>
+        - <A named reviewer, by date>
+        - <A dependency from their side, by date>
+        - <Next steering date>
+      cta: <Approve the decision>
+      notes: |
+        Read the asks, get a yes or a date for each, and end.

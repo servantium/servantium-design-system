@@ -1,0 +1,42 @@
+# Avelle Biosciences: FICTIONAL demo company (a lab-services CRO). Not a real business.
+# Brand kit notes and usage rules: BRAND.md in this folder.
+id: avelle
+name: Avelle Biosciences
+legal_name: Avelle Biosciences, Inc.
+short: Avelle
+website: avelle.example
+address:
+  - 1150 First Avenue, Suite 400
+  - King of Prussia, PA 19406
+voice: client
+colors:
+  primary:        '#B4502C'   # Assay Copper: actions, highlights, the meniscus in the mark
+  primary_strong: '#933D1F'   # links, eyebrows (copper deepened for text)
+  primary_soft:   '#E8B9A5'   # light copper fills
+  dark:           '#2B1832'   # Aubergine: dark grounds, headline ink
+  darker:         '#1B0E21'   # deepest ground
+  tint:           '#F5EBE5'   # warm porcelain panel fill
+  tint_soft:      '#FBF6F2'   # palest fill
+  ink:            '#1F1A22'
+  ink_soft:       '#3D3541'
+  muted:          '#6D6470'
+  line:           '#E2DAD6'
+  surface:        '#F5F1EE'
+  on_dark:        '#F8F1EC'
+  on_dark_muted:  '#C7B6C4'
+  accent_1:       '#2E7A7E'   # assay teal
+  accent_2:       '#C99428'   # ochre
+  accent_3:       '#8E6CB0'   # lilac
+  accent_4:       '#7A9466'   # sage
+  danger:         '#B42318'
+  warning:        '#B7791F'
+  info:           '#2F6797'
+fonts:
+  display: {family: Brygada 1918, file: 'Brygada1918[wght].ttf', panose: '00000000000000000000', pitch: '18'}
+  body:    {family: Hanken Grotesk, file: 'HankenGrotesk[wght].ttf', panose: '00000000000000000000', pitch: '34'}
+logos:
+  on_light: logo.png
+  on_dark: logo-white.png
+  mark_on_dark: symbol-white.png
+  mark_on_light: symbol.png
+footer: Avelle Biosciences  ·  Confidential

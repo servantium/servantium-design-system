@@ -1,0 +1,126 @@
+# Opportunity record: the CRM deal as one workbook (summary, deal properties, MEDDPICC, contacts and buying roles, line items, stage history).
+#
+# Use it to hand a deal over, to review it at a deal desk, or as the field list an engagement must
+# hold. Blue cells are inputs. Values here are placeholders: export them from the CRM or bind them
+# with data: and "{{ x.y }}". Line item amounts are live formulas.
+workbook: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+prepared_for: Internal
+prepared_by: <Owner, CRM export>
+sheets:
+  - name: Deal
+    kind: summary
+    eyebrow: "CRM deal  ·  <Opportunity ID>  ·  Exported <date>"
+    title: "{{CLIENT}}: <what the deal is, in a phrase>"
+    subtitle: <New logo or expansion; stage today; close date or go-live.>
+    metrics:
+      - {label: Amount (year 1), value: "=[Line items!#amount]", format: currency, decimals: 0, note: From the line items}
+      - {label: Recurring, value: 60000, format: currency, decimals: 0, note: <Annual recurring value>}
+      - {label: Services, value: 100000, format: currency, decimals: 0, note: <Fixed fee or estimate>}
+      - {label: Close date, value: 2027-03-31, format: date, note: <Target or actual>}
+    table:
+      columns:
+        - {key: k, header: Property, width: 26}
+        - {key: v, header: Value, width: 60, wrap: true}
+      rows:
+        - {k: Deal stage, v: "<Discovery, Scoping, Proposal, Negotiation or Closed>"}
+        - {k: Deal owner, v: <Name (title)>}
+        - {k: Solutions lead, v: <Name>}
+        - {k: Lead source, v: "<Referral, inbound, event or outbound>"}
+        - {k: Next step, v: <What happens next and the date>}
+    notes:
+      - <What the deal amount includes and excludes.>
+      - <Where the services estimate lives if the CRM cannot hold it.>
+    contents: true
+
+  - name: Deal properties
+    kind: table
+    title: Deal properties
+    subtitle: Every property on the deal, the value today and who keeps it.
+    landscape: true
+    columns:
+      - {key: group, header: Group, width: 14}
+      - {key: label, header: Property, width: 24}
+      - {key: value, header: Value, width: 50, wrap: true, input: true}
+      - {key: owner, header: Kept by, width: 16}
+    rows:
+      - {group: Deal, label: Deal name, value: <Name>, owner: AE}
+      - {group: Deal, label: Opportunity ID, value: <ID>, owner: RevOps}
+      - {group: Deal, label: Deal type, value: <New business or expansion>, owner: AE}
+      - {group: Deal, label: Create date, value: <Date>, owner: System}
+      - {group: Money, label: Amount, value: <Year 1 value>, owner: AE}
+      - {group: Money, label: Contract term, value: <Years>, owner: Deal desk}
+      - {group: Money, label: Payment terms, value: <Net 30; billing schedule>, owner: Deal desk}
+      - {group: Paper, label: Order form or SOW, value: <Document numbers>, owner: Deal desk}
+      - {group: Paper, label: Customer PO, value: <PO number>, owner: Finance}
+      - {group: Paper, label: Security review, value: <Status and date>, owner: Security}
+      - {group: Delivery, label: Go-live target, value: <Date>, owner: Delivery}
+      - {group: Delivery, label: Project manager, value: <Name>, owner: Delivery}
+
+  - name: MEDDPICC
+    kind: table
+    title: MEDDPICC
+    subtitle: What the rep recorded, where it was confirmed, and how strong it is.
+    landscape: true
+    columns:
+      - {key: letter, header: Ltr, width: 6}
+      - {key: field, header: Field, width: 18}
+      - {key: value, header: What we know, width: 60, wrap: true, input: true}
+      - {key: confirmed, header: Confirmed at, width: 26, wrap: true}
+      - {key: strength, header: Strength, width: 12, input: true}
+    rows:
+      - {letter: M, field: Metrics, value: <The measure they buy against>, confirmed: <Meeting and date>, strength: <Strong>}
+      - {letter: E, field: Economic buyer, value: <Name; signing threshold>, confirmed: <Meeting and date>, strength: <Medium>}
+      - {letter: D, field: Decision criteria, value: <What they must see>, confirmed: <Meeting and date>, strength: <Medium>}
+      - {letter: D, field: Decision process, value: <Steps and approvers>, confirmed: <Meeting and date>, strength: <Weak>}
+      - {letter: P, field: Paper process, value: <Whose paper; procurement steps>, confirmed: <Meeting and date>, strength: <Weak>}
+      - {letter: I, field: Identify pain, value: <The pain in their words>, confirmed: <Meeting and date>, strength: <Strong>}
+      - {letter: C, field: Champion, value: <Name and how tested>, confirmed: <Meeting and date>, strength: <Medium>}
+      - {letter: C, field: Competition, value: <Alternatives they weigh>, confirmed: <Meeting and date>, strength: <Medium>}
+
+  - name: Contacts
+    kind: table
+    title: Contacts and buying roles
+    landscape: true
+    columns:
+      - {key: org, header: Company, width: 22}
+      - {key: name, header: Name, width: 22}
+      - {key: title, header: Title, width: 34, wrap: true}
+      - {key: role, header: Buying role, width: 34, wrap: true}
+    rows:
+      - {org: "{{CLIENT}}", name: <Name>, title: <Title>, role: Economic buyer}
+      - {org: "{{CLIENT}}", name: <Name>, title: <Title>, role: Champion}
+      - {org: "{{CLIENT}}", name: <Name>, title: <Title>, role: Technical evaluator}
+      - {org: "{{CLIENT}}", name: <Name>, title: <Title>, role: Procurement}
+
+  - name: Line items
+    kind: table
+    title: Line items on the quote
+    landscape: true
+    columns:
+      - {key: sku, header: SKU, width: 15}
+      - {key: item, header: Line item, width: 50, wrap: true}
+      - {key: qty, header: Qty, format: int, width: 7, input: true}
+      - {key: unit, header: Unit price, format: currency, decimals: 2, width: 14, input: true}
+      - {key: amount, header: Amount, format: currency, decimals: 2, formula: "=[@qty]*[@unit]", total: sum, width: 15}
+    rows:
+      - {sku: <SKU-001>, item: <Recurring item>, qty: 1, unit: 45000}
+      - {sku: <SKU-002>, item: <Recurring add-on>, qty: 3, unit: 5000}
+      - {sku: <SVC-001>, item: <Professional services; fixed fee per SOW>, qty: 1, unit: 100000}
+
+  - name: Stage history
+    kind: table
+    title: Stage history
+    subtitle: When the deal entered each stage and what moved it.
+    landscape: true
+    columns:
+      - {key: stage, header: Stage, width: 18}
+      - {key: entered, header: Entered, format: date, width: 14, input: true}
+      - {key: event, header: What moved it, width: 60, wrap: true}
+      - {key: exit, header: Exit criterion, width: 40, wrap: true}
+    rows:
+      - {stage: Discovery, entered: 2027-01-04, event: <First call>, exit: <Pain and metric confirmed>}
+      - {stage: Scoping, entered: 2027-01-25, event: <Design workshop>, exit: <Estimate agreed>}
+      - {stage: Proposal, entered: 2027-02-15, event: <Proposal presented>, exit: <Verbal yes>}
+      - {stage: Negotiation, entered: 2027-03-01, event: <Redlines started>, exit: <Signed>}

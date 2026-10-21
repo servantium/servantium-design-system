@@ -1,0 +1,29 @@
+# Org chart: a branded organization chart (leaders, departments with headcount, and one team in full) as a Mermaid diagram.
+#
+# Use for a company profile, a project team or a customer's org as we understand it. Leaders use
+# :::primary, their reports :::accent, departments :::soft. Put the team that matters in a subgraph.
+# Write angle brackets in Mermaid labels as #lt; and #gt;, line breaks as <br/>. For a large org,
+# keep the source in a .mmd file beside this spec and use `file: org-chart.mmd` instead of source.
+mermaid: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+title: <The organization in one claim, with its headcount>
+subtitle: <Who leads, every department with its headcount, and the team that matters in full.>
+source: |
+  flowchart TB
+    ceo["#lt;Name#gt;<br/>Chief Executive Officer"]:::primary
+    ceo --> cfo["#lt;Name#gt;<br/>Chief Financial Officer"]:::accent
+    ceo --> coo["#lt;Name#gt;<br/>Chief Operating Officer"]:::accent
+    ceo --> cro["#lt;Name#gt;<br/>Chief Revenue Officer"]:::accent
+    cfo --> fin["Finance<br/>#lt;N#gt; people"]:::soft
+    cro --> sales["Sales<br/>#lt;N#gt; people"]:::soft
+    cro --> cs["Customer Success<br/>#lt;N#gt; people"]:::soft
+    coo --> ps_lead
+    subgraph PS ["#lt;Delivery team#gt;, #lt;N#gt; people"]
+      direction TB
+      ps_lead["#lt;Name#gt;<br/>VP Professional Services"]
+      ps_lead --> pm["#lt;Name#gt;<br/>Project Manager"]
+      ps_lead --> sa["#lt;Name#gt;<br/>Solution Architect"]
+      ps_lead --> eng["#lt;Name#gt;<br/>Integration Engineer"]
+    end
+caption: <Offices and headcount by office, and anything the chart leaves out.>

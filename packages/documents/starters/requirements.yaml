@@ -1,0 +1,110 @@
+# Requirements specification: numbered, testable, risk-classed requirements grouped by area, with approval, scope, references and a glossary, ready to trace to design and test.
+#
+# Every requirement has an ID that never changes (REQ-AREA-001), one testable sentence ("The
+# system shall..."), a risk class and its source (SOW line, workshop, change order). Retired
+# requirements keep their ID and say "Retired". The traceability-matrix workbook reads these IDs.
+document: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+draft: Draft for review
+page_numbers: x_of_y
+footer: "<Document ID> v<version>  ·  {{CLIENT}}  ·  Confidential"
+# prepared_for: {name: {{CLIENT}}, logo: client-logo.png}
+cover:
+  eyebrow: "{{CLIENT}}  ·  Requirements"
+  title: Requirements Specification
+  subtitle: <What the system must do, numbered and risk-classed for traceability to design and test.>
+  meta:
+    - [Document, <Document ID>]
+    - [Version, <0.1>]
+    - [Status, Draft for review]
+    - [Owner, <Name>]
+body:
+  - h2: Approval
+  - table:
+      head: [Meaning, Name, Title, Signed]
+      widths: [1.6, 1.6, 2.4, 1.4]
+      rows:
+        - [Author, <Name>, <Title>, <Date>]
+        - [Business owner approval, <Name>, <Title>, <Date>]
+        - [Quality or technical approval, <Name>, <Title>, <Date>]
+  - h3: Revision history
+  - table:
+      head: [Version, Date, Change, Count]
+      widths: [0.8, 1.2, 4.0, 1.0]
+      rows:
+        - ['0.1', <Date>, First draft from the workshop and SOW, <N>]
+
+  - h2: 1  Purpose
+  - p: <What this document is for, which system and which use it covers.>
+
+  - h2: 2  Scope
+  - p: <In scope and out of scope, in two sentences.>
+  - table:
+      head: [Party or system, Interface, Data]
+      widths: [2.0, 2.0, 3.0]
+      rows:
+        - [<System 1>, <How it connects>, <What flows>]
+        - [<System 2>, <How it connects>, <What flows>]
+
+  - h2: 3  References
+  - table:
+      head: [Reference, Title]
+      widths: [2.0, 5.0]
+      rows:
+        - [<SOW number>, Statement of Work]
+        - [<Document ID>, <Solution design>]
+        - [<Procedure ID>, <Customer procedure this follows>]
+
+  - h2: 4  How to read the requirements
+  - p: Each requirement has an ID, one testable statement, a risk class and its source. Risk sets the test approach.
+  - table:
+      head: [Risk, Means, Test approach]
+      widths: [1.0, 3.2, 2.8]
+      rows:
+        - [High, <A failure affects a regulated or customer-facing result>, Scripted test with evidence]
+        - [Medium, <A failure affects how work is done>, Scripted test]
+        - [Low, <A failure is cosmetic or easily worked around>, Unscripted or vendor evidence]
+
+  - h2: 5  Requirements
+  - h3: "5.1  <Area 1, e.g. Access>"
+  - table:
+      head: [ID, Requirement, Risk, Source]
+      widths: [1.0, 4.2, 0.8, 1.0]
+      size: 9.5
+      rows:
+        - [REQ-ACC-001, The system shall <do one testable thing>., High, <SOW 2>]
+        - [REQ-ACC-002, The system shall <do one testable thing>., Medium, <Workshop>]
+        - [REQ-ACC-003, The system shall <do one testable thing>., Low, <Workshop>]
+  - h3: "5.2  <Area 2, e.g. Data>"
+  - table:
+      head: [ID, Requirement, Risk, Source]
+      widths: [1.0, 4.2, 0.8, 1.0]
+      size: 9.5
+      rows:
+        - [REQ-DAT-001, The system shall <do one testable thing>., High, <SOW 2>]
+        - [REQ-DAT-002, The system shall <do one testable thing>., High, <CO1>]
+        - [REQ-DAT-003, The system shall <do one testable thing>., Medium, <Workshop>]
+  - h3: "5.3  <Area 3, e.g. Integrations>"
+  - table:
+      head: [ID, Requirement, Risk, Source]
+      widths: [1.0, 4.2, 0.8, 1.0]
+      size: 9.5
+      rows:
+        - [REQ-INT-001, The system shall <do one testable thing>., High, <SOW 2>]
+        - [REQ-INT-002, The system shall <do one testable thing>., Medium, <Workshop>]
+  - h3: "5.4  <Area 4, e.g. Reporting>"
+  - table:
+      head: [ID, Requirement, Risk, Source]
+      widths: [1.0, 4.2, 0.8, 1.0]
+      size: 9.5
+      rows:
+        - [REQ-REP-001, The system shall <do one testable thing>., Low, <Workshop>]
+
+  - h2: 6  Glossary
+  - table:
+      head: [Term, Meaning]
+      widths: [1.6, 5.4]
+      rows:
+        - [<Term>, <What it means here>]
+        - [<Term>, <What it means here>]

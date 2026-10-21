@@ -1,0 +1,32 @@
+# A fictional expense report: dated lines by category, less a cash advance, with
+# employee and approver signature lines.
+workbook: Expense Report EXP-0318
+client: Acme Logistics
+date: 2026-10-20
+sheets:
+  - name: Expenses
+    kind: form
+    form: expense_report
+    number: EXP-0318
+    details:
+      - {label: Period, value: "Oct 5 to Oct 16, 2026"}
+      - {label: Submitted, value: 2026-10-19}
+      - {label: Project, value: Acme implementation}
+    parties:
+      - label: Employee
+        lines: [Sam Rivera, Senior Consultant, Delivery]
+      - label: Bill to client
+        lines: [Acme Logistics, Project ACME-IMP-01]
+    items:
+      - {date: 2026-10-05, category: Airfare, description: Round trip to client site, merchant: Example Air, amount: 486.20}
+      - {date: 2026-10-05, category: Lodging, description: "Hotel, 4 nights", merchant: Sample Suites, amount: 812.00}
+      - {date: 2026-10-06, category: Meals, description: Team working dinner (4 people), merchant: Corner Bistro, amount: 164.35}
+      - {date: 2026-10-07, category: Ground, description: Rideshare to and from site, merchant: Rideshare, amount: 58.90}
+      - {date: 2026-10-08, category: Meals, description: Per diem meals, merchant: Various, amount: 96.00}
+      - {date: 2026-10-12, category: Lodging, description: "Hotel, 3 nights", merchant: Sample Suites, amount: 609.00}
+      - {date: 2026-10-14, category: Supplies, description: Workshop materials, merchant: Office Depot Example, amount: 42.17}
+      - {date: 2026-10-16, category: Ground, description: Airport parking, merchant: Airport Parking, amount: 72.00}
+    blank_rows: 2
+    advance: 500
+    terms: Reimbursed in the next payroll run after approval. Receipts are attached for every line over $25.
+    notes: Client-billable expenses are invoiced at cost under the engagement terms.

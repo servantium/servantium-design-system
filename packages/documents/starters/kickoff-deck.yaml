@@ -1,0 +1,195 @@
+# Kickoff deck: the plan, milestones, owners, governance, risks and first 30 days, presented at project kickoff.
+#
+# STORYBOARD (decision to leave with: plan, governance and first-month dates agreed)
+#  1 cover      <Project> goes live on <date>                    meta: meeting date and place
+#  2 table      Agenda                                           timed
+#  3 compare    Why the project exists                           today vs at go-live + one takeaway
+#  4 flow       How work will move                               inputs, the system, the output
+#  5 gantt      The plan, with its gates                         phases across months
+#  6 milestones The milestones that carry a sign-off            four dated milestones
+#  7 approach   Who does what in each phase                      stages across, both teams down
+#  8 table      Each workstream has two owners                   workstream / our owner / their owner
+#  9 cards      How we meet                                      three forums + change control callout
+# 10 table      The risks we watch from day one                  RAID excerpt with owners
+# 11 timeline   The first month                                  four weeks: we do / by Friday
+# 12 closing    What we need from them this week                 four asks
+#
+# Rules: plans are gated and every milestone has a pass test the client can check. Each row of the
+# owners table names a person on both sides. The RAID rows come from the live RAID log.
+deck: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+# prepared_for: {name: {{CLIENT}}, logo: client-logo.png}
+slides:
+  - cover:
+      eyebrow: "{{CLIENT}}  ·  Kickoff"
+      title: <Project name goes live on date>
+      subtitle: <Scope in one line, and the date that matters.>
+      meta: <Meeting date and place, e.g. Tuesday, July 14, Boston>
+      notes: |
+        Room: <their people> and <our people>. Two hours. Leave with the plan, the governance and
+        the first-month dates agreed.
+
+  - content:
+      eyebrow: 120 minutes
+      title: Agenda
+      body:
+        - table:
+            head: [Time, Topic, What happens]
+            widths: [1.6, 4.0, 6.4]
+            rows:
+              - ["0:00", Introductions, <Who does what on both sides>]
+              - ["0:15", Why we are here, <The outcome and how we measure it>]
+              - ["0:30", Plan and milestones, <Dates and what each one needs>]
+              - ["1:00", How we work, "<Owners, forums and change control>"]
+              - ["1:30", Risks and the first month, <What we watch and what happens next>]
+              - ["1:50", Next steps, <What we need this week>]
+      notes: |
+        Keep introductions to one line each.
+
+  - content:
+      eyebrow: Why we are here
+      title: <The step that costs them most today>
+      body:
+        - compare:
+            before:
+              label: Today
+              icon: mail
+              lines: [<How it works now>, <How long it takes>, <What it costs>]
+            after:
+              label: At go-live
+              icon: check_circle
+              lines: [<How it will work>, <How long it will take>, <What it frees up>]
+        - takeaway: {lead: "<The measure we report against.>"}
+      notes: |
+        The success measures from the SOW, in the sponsor's words.
+
+  - content:
+      eyebrow: Design
+      title: <Three sources feed one checked result>
+      body:
+        - flow:
+            inputs:
+              - {icon: database, title: <Source 1>, meta: <How it connects>}
+              - {icon: package, title: <Source 2>, meta: <How it connects>}
+            node: {title: <The system>, verb: receives and checks}
+            output:
+              label: <For whom>
+              title: <The result they use>
+              rows:
+                - {key: <Step>, text: <What happens>}
+                - {key: <Step>, text: <What happens>}
+                - {key: <Step>, text: <What happens>}
+      notes: |
+        The design as sold. Changes since signature go through change control.
+
+  - content:
+      eyebrow: Plan
+      title: <Go-live lands on date, before their deadline>
+      body:
+        - gantt:
+            periods: [<Jul>, <Aug>, <Sep>, <Oct>, <Nov>, <Dec>, <Jan>]
+            rows:
+              - {name: <Initiate and design>, bars: [{from: 1, to: 2, label: <Kickoff to design>}]}
+              - {name: <Configure and integrate>, bars: [{from: 2, to: 4, label: <Build>}]}
+              - {name: <Test>, bars: [{from: 4, to: 5, label: <Acceptance>, tone: forest}]}
+              - {name: <Deploy and train>, bars: [{from: 5, to: 5, label: <Train>}]}
+              - {name: <Hypercare>, bars: [{from: 6, to: 7, label: <Support>, tone: green}]}
+            gates:
+              - {after: 2, label: <Design signed off>}
+              - {after: 5, label: <Go-live>}
+      notes: |
+        Planned dates from the project plan workbook. Say the critical path out loud.
+
+  - content:
+      eyebrow: Milestones
+      title: <Each milestone carries a sign-off you can check>
+      body:
+        - milestones:
+            - {icon: flag, when: <Date>, title: Kickoff, text: <Plan and RAID agreed>, done: true}
+            - {icon: drafting-compass, when: <Date>, title: Design sign-off, text: <Pass test>}
+            - {icon: rocket, when: <Date>, title: Go-live, text: <Pass test>}
+            - {icon: check_circle, when: <Date>, title: Hypercare exit, text: <Pass test>}
+        - takeaway: {lead: "<Closeout on date,>", text: "<with what handed over.>"}
+      notes: |
+        Each milestone is also a billing event if the SOW says so. Say which.
+
+  - content:
+      eyebrow: Roles by phase
+      title: <Both teams have work in every phase>
+      body:
+        - approach:
+            stages: [<Initiate>, <Design>, <Build>, <Test>, <Launch>]
+            rows:
+              - {label: <Us>, tone: record, cells: [<Task>, <Task>, <Task>, <Task>, <Task>]}
+              - {label: <Them>, tone: plain, cells: [<Task>, <Task>, <Task>, <Task>, <Task>]}
+      notes: |
+        What we need from their people, phase by phase, so they can plan their time.
+
+  - content:
+      eyebrow: Owners
+      title: <Workstreams have an owner on both sides>
+      body:
+        - table:
+            head: [Workstream, Our owner, Their owner, Decides]
+            widths: [3.6, 2.8, 2.8, 2.8]
+            rows:
+              - [<Project management>, <Name>, <Name>, <Who signs off>]
+              - [<Design>, <Name>, <Name>, <Who signs off>]
+              - [<Integration>, <Name>, <Name>, <Who signs off>]
+              - [<Testing>, <Name>, <Name>, <Who signs off>]
+              - [<Training>, <Name>, <Name>, <Who signs off>]
+      notes: |
+        From the RACI. Exactly one accountable person per row.
+
+  - content:
+      eyebrow: Governance
+      title: <Three forums keep decisions moving>
+      body:
+        - cards:
+            - {icon: calendar, title: Weekly status, lines: [<Who attends>, <What it decides>]}
+            - {icon: users, title: Working sessions, lines: [<Who attends>, <What it decides>]}
+            - {icon: landmark, title: Monthly steering, lines: [<Who attends>, <What it decides>]}
+        - callout: {label: "Change control:", text: "<every change comes back in N business days, costed.>"}
+      notes: |
+        From the communication plan. Say how fast a problem reaches the sponsor.
+
+  - content:
+      eyebrow: RAID
+      title: <These are the risks we watch from day one>
+      body:
+        - table:
+            head: [ID, Item, Response, Owner]
+            widths: [0.8, 4.8, 4.4, 2.0]
+            pills:
+              - {column: 1, tones: {R1: amber, R2: amber, A1: slate, D1: mint}}
+            rows:
+              - [R1, <What could happen>, <What we do about it>, <Name>]
+              - [R2, <What could happen>, <What we do about it>, <Name>]
+              - [A1, <What we assume>, <How we confirm it>, <Name>]
+              - [D1, <What was decided>, <When and by whom>, <Name>]
+      notes: |
+        From the RAID log, with the same IDs. Every item has one named owner.
+
+  - content:
+      eyebrow: The first 30 days
+      title: <The first month sets up the design gate>
+      body:
+        - timeline:
+            - {icon: flag, when: Week 1, focus_label: We do, focus: <Task>, moves_label: By Friday, moves: <Result>}
+            - {icon: users, when: Week 2, focus_label: We do, focus: <Task>, moves_label: By Friday, moves: <Result>}
+            - {icon: drafting-compass, when: Week 3, focus_label: We do, focus: <Task>, moves_label: By Friday, moves: <Result>}
+            - {icon: check_circle, when: Week 4, focus_label: We do, focus: <Task>, moves_label: By Friday, moves: <Result>}
+      notes: |
+        Week by week, with what is done by each Friday.
+
+  - closing:
+      title: <What we need from them this week>
+      asks:
+        - <Access or accounts, by date>
+        - <Named reviewers and backups>
+        - <Sample data or documents>
+        - <Workshop dates in the calendar>
+      cta: <Confirm the workshop dates>
+      notes: |
+        Four asks at most, each with a date.

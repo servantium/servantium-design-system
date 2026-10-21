@@ -1,0 +1,39 @@
+# The documents engine. Runs only on pull requests that touch it (or Verdant tokens or brand
+# assets) and on documents@ release tags, so it costs nothing on unrelated work.
+name: documents
+
+on:
+  pull_request:
+    paths: ['packages/documents/**', 'packages/verdant/tokens.css', 'packages/brand/**', '.github/workflows/documents.yml']
+  push:
+    tags: ['documents@*']
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/documents
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Brand fonts (measurement depends on real glyph widths)
+        run: |
+          mkdir -p ~/.local/share/fonts
+          curl -sSL -o ~/.local/share/fonts/PlayfairDisplay[wght].ttf "https://github.com/google/fonts/raw/main/ofl/playfairdisplay/PlayfairDisplay%5Bwght%5D.ttf"
+          curl -sSL -o ~/.local/share/fonts/SourceSans3[wght].ttf "https://github.com/google/fonts/raw/main/ofl/sourcesans3/SourceSans3%5Bwght%5D.ttf"
+      - name: Install
+        run: |
+          python -m pip install -q -e . pytest
+          python scripts/fetch_icon_fonts.py
+      - name: Tokens are in sync with Verdant
+        run: |
+          python scripts/sync_tokens.py
+          git diff --exit-code src/servantium_documents/tokens.py
+      - name: Templates
+        run: sv templates
+      - name: Tests
+        run: python -m pytest -q tests

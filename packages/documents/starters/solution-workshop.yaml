@@ -1,0 +1,171 @@
+# Solution workshop readout: what the design workshop found and agreed, sent the next day as the record that feeds the estimate.
+#
+# STORYBOARD
+#  1 cover      Design workshop readout                          meta: the workshop date
+#  2 table      Agenda                                           the workshop as it ran
+#  3 numbers    Where the time goes today                        three findings in their numbers
+#  4 diagram    How work flows today                             Mermaid current-state map
+#  5 flow       How it will flow                                 inputs, the system, the output
+#  6 table      The design choices we agreed                     choice / option chosen / why / owner
+#  7 cards      The checks every item gets                       three or four rules
+#  8 approach   How it gets tested and approved                  stages across, who does what down
+#  9 gantt      Go-live lands before their busy period           phases and the milestone
+# 10 questions  Questions for you                                open items that change the scope
+# 11 closing    An estimate next, then the proposal              dated next steps
+#
+# Rules: this is a record of what was agreed, so every choice names an owner and a date.
+# Keep the Mermaid source in step with any separate current-state diagram.
+deck: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+# prepared_for: {name: {{CLIENT}}, logo: client-logo.png}
+slides:
+  - cover:
+      eyebrow: "{{CLIENT}}  ·  Solution design"
+      title: Design workshop readout
+      subtitle: <What we agreed, and what it means for the estimate.>
+      meta: <Workshop date, e.g. Thursday, April 9>
+      notes: |
+        Sent the day after the workshop. It is the record the estimate is built from.
+
+  - content:
+      eyebrow: <Length, e.g. three hours>
+      title: Agenda
+      body:
+        - table:
+            head: [Time, Topic, What happened]
+            widths: [1.6, 4.0, 6.4]
+            rows:
+              - ["<0:00>", Goals and measures, <The target we agreed>]
+              - ["<0:30>", How it works today, <The current-state walk-through>]
+              - ["<1:15>", Design choices, <Options and the one chosen>]
+              - ["<2:15>", Testing and plan, <Who approves and when>]
+              - ["<2:45>", Open questions, <What we still need>]
+      notes: |
+        Record the workshop as it ran, not as planned.
+
+  - numbers:
+      eyebrow: What we found
+      title: <The bottleneck is the handoff, not the work>
+      stats:
+        - {value: "0 days", label: <The step that takes longest>}
+        - {value: "0", label: <Items handled by hand each month>}
+        - {value: "0 FTE", label: <Time spent on rework>}
+      notes: |
+        Their numbers, with who gave each one. Inferred figures say "about" and carry a basis.
+
+  - content:
+      eyebrow: Today
+      title: <Handoffs happen by email today>
+      body:
+        - diagram:
+            mermaid: |
+              flowchart LR
+                A[#lt;Source 1#gt;] -->|email| C[#lt;Team that reconciles#gt;]
+                B[#lt;Source 2#gt;] -->|spreadsheet| C
+                C --> D{#lt;Check passes?#gt;}
+                D -- no --> A
+                D -- yes --> E[#lt;Where it is filed#gt;]:::primary
+            height: 3.6
+      notes: |
+        Name the process, not the people. Use #lt; and #gt; for angle brackets in Mermaid labels.
+
+  - content:
+      eyebrow: Tomorrow
+      title: "<Sources land in one place, checked on arrival>"
+      body:
+        - flow:
+            inputs:
+              - {icon: database, title: <Source 1>, meta: <How it connects>}
+              - {icon: package, title: <Source 2>, meta: <How it connects>}
+              - {icon: mail, title: <Source 3>, meta: <How it connects>}
+            node: {title: <The system>, verb: matches and checks}
+            output:
+              label: <Who receives it>
+              title: <The checked record>
+              rows:
+                - {key: <Field>, text: <What is matched>}
+                - {key: <Field>, text: <What is checked>}
+                - {key: <Field>, text: <What is filed>}
+      notes: |
+        The connected version of the same steps as the slide before.
+
+  - content:
+      eyebrow: Decisions
+      title: <The design choices we agreed on the day>
+      body:
+        - table:
+            head: ["#", Choice, Agreed, Owner]
+            widths: [0.6, 4.2, 5.0, 2.2]
+            rows:
+              - ["1", <What had to be decided>, <The option chosen and why>, <Name>]
+              - ["2", <What had to be decided>, <The option chosen and why>, <Name>]
+              - ["3", <What had to be decided>, <The option chosen and why>, <Name>]
+              - ["4", <What had to be decided>, <The option chosen and why>, <Name>]
+              - ["5", <What had to be decided>, <The option chosen and why>, <Name>]
+      notes: |
+        Each choice becomes an assumption on the estimate. Open choices go to slide 10.
+
+  - content:
+      eyebrow: Checks
+      title: <Each item gets the same checks>
+      body:
+        - cards:
+            - {icon: search-check, title: <Check 1>, lines: [<What it compares>]}
+            - {icon: calendar-check, title: <Check 2>, lines: [<What it compares>]}
+            - {icon: fact_check, title: <Check 3>, lines: [<What it compares>]}
+        - takeaway: {lead: "<A person accepts every result.>"}
+      notes: |
+        Say which checks are automatic and who accepts the result.
+
+  - content:
+      eyebrow: Testing
+      title: <Their team approves every test>
+      body:
+        - approach:
+            stages: [<Plan>, <Requirements>, <Test 1>, <Test 2>, <Report>]
+            rows:
+              - {label: <Us>, tone: record, cells: [<Our task>, <Our task>, <Our task>, <Our task>, <Our task>]}
+              - {label: <Them>, tone: plain, cells: [<Approves>, <Approves>, <Reviews>, <Witnesses>, <Approves>]}
+      notes: |
+        Under their procedure, if they have one. Name it.
+
+  - content:
+      eyebrow: Plan
+      title: <Go-live lands before the busy period>
+      body:
+        - gantt:
+            periods: [<M1>, <M2>, <M3>, <M4>, <M5>, <M6>]
+            rows:
+              - {name: <Design>, bars: [{from: 1, to: 2, label: <Workshops to sign-off>}]}
+              - {name: <Build>, bars: [{from: 2, to: 4, label: <Configure and connect>}]}
+              - {name: <Test>, bars: [{from: 4, to: 5, label: <Acceptance>, tone: forest}]}
+              - {name: <Their busy period>, bars: [{from: 6, to: 6, label: <Peak>, tone: amber}]}
+            gates:
+              - {after: 5, label: <Go-live>}
+      notes: |
+        A first shape. The proposal confirms it.
+
+  - content:
+      eyebrow: Open items
+      title: Questions for you
+      body:
+        - questions:
+            items:
+              - {q: "<A question that changes the scope>", why: <What it changes>}
+              - {q: "<A question about volume or growth>", why: <What it changes>}
+              - {q: "<A question about who approves>", why: <What it changes>}
+            note: <Your answers go into the estimate on date.>
+      notes: |
+        Ask only what we don't know. Listen for scope.
+
+  - closing:
+      title: <An estimate next week, then the proposal>
+      asks:
+        - <Answers to the open questions by date>
+        - <A sample file or document by date>
+        - <Estimate sent on date>
+        - <Proposal meeting on date>
+      cta: <Book the proposal meeting>
+      notes: |
+        Every date is a commitment; put it in the close plan.

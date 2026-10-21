@@ -1,0 +1,74 @@
+# Mutual NDA: a two-way non-disclosure agreement signed before the prospect shares detail in discovery.
+#
+# A starting draft, not legal advice: have counsel review before first use, and use the other
+# party's paper if they insist. Fill the bracketed facts (entity type, address, governing law,
+# dates). Defined terms in "Quotes" are set bold where defined. {ref:id} prints the clause number.
+document: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+draft: Draft for review
+page_numbers: x_of_y
+footer: "Mutual Non-Disclosure Agreement  ·  {{CLIENT}}  ·  Confidential"
+cover:
+  layout: plain
+  title: Mutual Non-Disclosure Agreement
+  byline: "<Our legal name> and {{CLIENT}}  ·  Effective <date>  ·  <Agreement number>"
+body:
+  - p: This Mutual Non-Disclosure Agreement (the "Agreement") is made as of <date> (the "Effective Date") between **<Our legal name>**, a <state> <entity type> with offices at <address> ("Provider"), and **<{{CLIENT}} legal name>**, a <state> <entity type> with offices at <address> ("Customer"). Each is a "Party" and together the "Parties".
+  - p: The Parties wish to share information to evaluate <a possible engagement for the services or products described in one line> (the "Purpose"). They agree as follows.
+  - clauses:
+      - title: Definitions
+        id: defs
+        clauses:
+          - '"Confidential Information" means any non-public information a Party (the "Discloser") gives the other Party (the "Recipient") in connection with the Purpose, in any form, that is marked confidential or that a reasonable person would understand to be confidential. It includes <the kinds of information you expect to exchange: plans, data, pricing, security reports, source code>.'
+          - '"Representatives" means a Party''s and its Affiliates'' employees, officers, directors, advisors and contractors who need to know the Confidential Information for the Purpose and are bound by duties of confidentiality at least as protective as this Agreement.'
+          - '"Affiliate" means an entity that controls, is controlled by, or is under common control with a Party.'
+      - title: Obligations
+        id: obligations
+        clauses:
+          - The Recipient will use Confidential Information only for the Purpose and will not disclose it to anyone other than its Representatives.
+          - The Recipient will protect Confidential Information with at least the care it uses for its own information of a similar kind, and no less than reasonable care.
+          - The Recipient is responsible for any breach of this Agreement by its Representatives.
+          - The Recipient will tell the Discloser promptly in writing if it learns of any unauthorized use or disclosure.
+      - title: Exclusions
+        id: exclusions
+        text: 'Confidential Information does not include information that the Recipient can show:'
+        clauses:
+          - is or becomes public through no fault of the Recipient;
+          - it already knew without a duty of confidence before receiving it;
+          - it received from a third party with no duty of confidence; or
+          - it developed independently without using the Discloser's Confidential Information.
+      - title: Required disclosure
+        text: If law, regulation or a court requires the Recipient to disclose Confidential Information, it may do so after giving the Discloser prompt notice (where lawful) and reasonable help to seek protective treatment, and only to the extent required.
+      - title: Personal data
+        id: data
+        clauses:
+          - The Parties do not intend to exchange personal data under this Agreement. Any sample data shared for the Purpose will be anonymized, pseudonymized or synthetic.
+          - If either Party needs to process personal data for the other, the Parties will first sign a data processing agreement.
+      - title: Return and destruction
+        text: Within thirty (30) days of the Discloser's written request, or when the Purpose ends, the Recipient will return or destroy the Discloser's Confidential Information, except copies kept in routine backups or required by law, which stay subject to this Agreement.
+      - title: No license and no commitment
+        clauses:
+          - All Confidential Information stays the property of the Discloser. Nothing in this Agreement grants a license under any patent, copyright or other right.
+          - Neither Party must enter into any further agreement. Any purchase will be under a separate written agreement.
+          - Confidential Information is provided "as is", without warranty.
+      - title: Term
+        id: term
+        text: This Agreement covers disclosures made during the <two (2)> years after the Effective Date. The Recipient's duties for each item of Confidential Information last <five (5)> years from disclosure, and for trade secrets for as long as they remain trade secrets.
+      - title: Remedies
+        text: A breach may cause harm that money cannot fully repair. The Discloser may seek injunctive relief in addition to any other remedy, without posting a bond where the law allows.
+      - title: General
+        clauses:
+          - title: Governing law
+            text: This Agreement is governed by the laws of <state or country>. The courts in <county and state> have exclusive jurisdiction.
+          - title: Entire agreement
+            text: This Agreement is the Parties' entire agreement on its subject. It can be changed only in a writing signed by both Parties.
+          - title: Assignment
+            text: Neither Party may assign this Agreement without the other's written consent, except to a successor of its whole business.
+          - title: Counterparts
+            text: This Agreement may be signed electronically and in counterparts, each of which is an original.
+  - signature:
+      intro: Signed by the Parties' authorized representatives as of the Effective Date.
+      parties:
+        - {company: "<{{CLIENT}} legal name>", name: '', title: ''}
+        - {name: '', title: ''}

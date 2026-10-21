@@ -1,0 +1,210 @@
+# Proposal deck: the outcome in the buyer's numbers, the design, the plan and the price, presented before the order form and SOW go out.
+#
+# STORYBOARD (titles alone carry the argument)
+#  1 cover      <Our proposal for the outcome they want>         meta: the meeting date
+#  2 table      Agenda                                           timed; commercials after the demo
+#  3 numbers    The outcome, in their own targets                three numbers from discovery
+#  4 compare    What changes for them                            today vs from go-live
+#  5 hub        What connects                                    their systems either side of ours
+#  6 zoom       The step they asked about most                   one step magnified
+#  7 table      Their decision criteria, met                     criterion / how / where in the SOW
+#  8 approach   Who does what                                    stages across, us and them down
+#  9 gantt      Live on <date>, worked back from their hard date gates at the milestones
+# 10 cards      A named team                                     three or four people or roles
+# 11 section    Commercials
+# 12 numbers    Year 1 in three numbers                          total, recurring, one-time
+# 13 chart      Services are a fixed fee by phase                bar chart with a value axis
+# 14 closing    Signed by <date> keeps <go-live date>            the close plan as asks
+#
+# Rules: sell the outcome, then the cost, then how. Costs live after the Commercials divider.
+# Every number comes from the estimate or quote (bind it with data: when you can) and its basis
+# goes in the notes. Our timeline, not theirs: de-risk, gate the plan, irreversible step last.
+deck: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+# Co-branded: uncomment and put the prospect's logo file beside this spec.
+# prepared_for: {name: {{CLIENT}}, logo: client-logo.png}
+slides:
+  - cover:
+      eyebrow: "{{CLIENT}}  ·  Proposal"
+      title: <The outcome we propose to deliver>
+      subtitle: <One line on scope and the date it lands.>
+      meta: <Meeting date, e.g. Thursday, April 30>
+      notes: |
+        Who is in the room, who presents, who takes the technical questions.
+        Reminder: the order form, SOW and quote go out after the meeting, not before.
+
+  - content:
+      eyebrow: 60 minutes
+      title: Agenda
+      body:
+        - table:
+            head: [Time, Topic, What happens]
+            widths: [1.6, 4.0, 6.4]
+            rows:
+              - ["0 to 10", What changes for {{CLIENT}}, <The outcome in your numbers>]
+              - ["10 to 25", Design and approach, <What we agreed in discovery>]
+              - ["25 to 35", Live demo, <One real example end to end>]
+              - ["35 to 45", Plan and team, <Dates worked back from your hard date>]
+              - ["45 to 60", Commercials and next steps, <The price and the path to signature>]
+      notes: |
+        Keep the commercials until after the demo. If the buyer wants the price early, promise
+        the time on the agenda and keep the promise.
+
+  - numbers:
+      eyebrow: The outcome
+      title: <Their main target, as a claim>
+      stats:
+        - {value: "0 days", label: "<Target 1, in their words>"}
+        - {value: "0", label: "<Target 2, in their words>"}
+        - {value: "0 FTE", label: "<Target 3, in their words>"}
+      notes: |
+        These are the buyer's own targets from discovery. Say where each came from and how we
+        will report against it. Never lead with an estimated time saving we have not measured.
+
+  - content:
+      eyebrow: What changes
+      title: <The manual step that goes away>
+      body:
+        - compare:
+            before:
+              label: Today
+              icon: mail
+              lines: [<How it works now>, <How long it takes>, <Where it breaks>, <Who carries it>]
+            after:
+              label: From <go-live date>
+              icon: layers
+              lines: [<How it works then>, <How long it takes>, <What is checked>, <Who is freed up>]
+        - takeaway: {lead: "<The so-what in one line.>"}
+      notes: |
+        Name the problem as the process, never as the people. Old world, new world.
+
+  - content:
+      eyebrow: Design
+      title: <Each system connects once>
+      body:
+        - hub:
+            left_label: <Their sources>
+            left: [{name: "<Source 1>", icon: database}, {name: "<Source 2>", icon: package}, {name: "<Source 3>", icon: mail}]
+            right_label: <Their systems>
+            right: [{name: "<System 1>", icon: archive}, {name: "<System 2>", icon: key-round}, {name: "<System 3>", icon: history}]
+            caption: <Tier, hosting or edition>
+      notes: |
+        Name their tools; use real logos if they live in the deck folder (logo: file.png).
+
+  - content:
+      eyebrow: <The feature they asked about>
+      title: <The step they worry about, handled>
+      body:
+        - zoom:
+            steps: [<Step 1>, <Step 2>, <Step 3>, <Step 4>, <Step 5>]
+            active: 3
+            title: <What happens inside this step>
+            rows:
+              - {key: "1", title: <Check or task>, text: <Against what>}
+              - {key: "2", title: <Check or task>, text: <Against what>}
+              - {key: "3", title: <Check or task>, text: <Against what>}
+              - {key: "4", title: <Check or task>, text: <Against what>}
+            foot: <Who accepts the result>
+      notes: |
+        The demo follows this slide. Show the artifact the buyer cares about most.
+
+  - content:
+      eyebrow: Your criteria
+      title: <Your decision criteria, each met>
+      body:
+        - table:
+            head: [What you asked for, How we meet it, Where it is in the SOW]
+            widths: [4.6, 4.6, 2.8]
+            rows:
+              - [<Criterion 1 in their words>, <Our deliverable>, <Phase or section>]
+              - [<Criterion 2 in their words>, <Our deliverable>, <Phase or section>]
+              - [<Criterion 3 in their words>, <Our deliverable>, <Phase or section>]
+              - [<Criterion 4 in their words>, <Our deliverable>, <Phase or section>]
+      notes: |
+        Their list, in their order. Each row has a deliverable and an acceptance test in the SOW.
+
+  - content:
+      eyebrow: Approach
+      title: <We do the work and your team approves it>
+      body:
+        - approach:
+            stages: [<Plan>, <Design>, <Build>, <Test>, <Launch>]
+            rows:
+              - {label: <Us>, tone: record, cells: [<Our task>, <Our task>, <Our task>, <Our task>, <Our task>]}
+              - {label: <Them>, tone: plain, cells: [<Their task>, <Their task>, <Their task>, <Their task>, <Their task>]}
+      notes: |
+        Split the work honestly: ours, together, theirs.
+
+  - content:
+      eyebrow: Plan
+      title: <Live on the date that matters to you>
+      body:
+        - gantt:
+            periods: [<M1>, <M2>, <M3>, <M4>, <M5>, <M6>]
+            rows:
+              - {name: <Initiate and design>, bars: [{from: 1, to: 2, label: <Kickoff to design>}]}
+              - {name: <Build>, bars: [{from: 2, to: 4, label: <What gets built>}]}
+              - {name: <Test>, bars: [{from: 4, to: 5, label: <Acceptance>, tone: forest}]}
+              - {name: <Launch and support>, bars: [{from: 5, to: 6, label: <Go-live and hypercare>, tone: green}]}
+            gates:
+              - {after: 2, label: <Design signed off>}
+              - {after: 5, label: <Go-live>}
+      notes: |
+        Work back from their hard date. Say the signature date that keeps go-live, and every
+        milestone date the invoices hang on.
+
+  - content:
+      eyebrow: Your team
+      title: <A named team you meet before you sign>
+      body:
+        - cards:
+            - {icon: user, title: <Name or role>, lines: [<Title>, <What they own>]}
+            - {icon: drafting-compass, title: <Name or role>, lines: [<Title>, <What they own>]}
+            - {icon: shield-check, title: <Name or role>, lines: [<Title>, <What they own>]}
+        - takeaway: {lead: "<Who chairs the steering committee.>"}
+      notes: |
+        Name people where you can; say when the rest are named (at handoff, within N days).
+
+  - section:
+      title: Commercials
+      lede: <Year 1 price and how it is billed.>
+
+  - numbers:
+      eyebrow: Commercials
+      title: <Year 1 covers the full rollout>
+      stats:
+        - {value: "$000,000", label: "<Year 1 total, term>"}
+        - {value: "$000,000", label: "<Recurring, billed when>"}
+        - {value: "$000,000", label: <One-time services by milestone>}
+      notes: |
+        Every figure from the quote. Split one-time from recurring. Name any jump from what they
+        pay today before they do. Basis line here.
+
+  - content:
+      eyebrow: Services
+      title: <Services are a fixed fee paid on milestones>
+      body:
+        - chart:
+            type: bar
+            categories: [<Phase 5>, <Phase 4>, <Phase 3>, <Phase 2>, <Phase 1>]
+            series:
+              - name: Fixed fee by phase
+                values: [10000, 20000, 40000, 30000, 15000]
+            unit: USD
+            format: "$#,##0"
+            height: 3.6
+        - takeaway: {lead: "<Invoiced at N milestones.>"}
+      notes: |
+        Sample values: replace with the estimate. Bar charts draw the first category at the
+        bottom, so list phases in reverse. Hours across roles and the rate card are the basis.
+
+  - closing:
+      title: <Signed by date keeps the go-live date>
+      asks:
+        - <Security or procurement step, by date>
+        - <Contract redlines, by date>
+        - <Signature date, and the kickoff it buys>
+      cta: <Send the paperwork>
+      notes: |
+        Every date here is from the mutual close plan. If a step slips, say what it does to go-live.

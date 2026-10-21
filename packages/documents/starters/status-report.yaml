@@ -1,0 +1,85 @@
+# Status report: the weekly or monthly project status with RAG by area, milestones and billing, hours, RAID items, the decision needed and next week.
+#
+# The title is the week in one line; the subtitle is the color and the one sentence the sponsor
+# can repeat. RAG cells set to Green, Amber or Red render as status chips. Rules for the color are
+# at the end; keep them. Hours come from timesheets at the cut-off, billing from invoices.
+document: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+page_numbers: x_of_y
+footer: "Status report  ·  {{CLIENT}}  ·  Confidential"
+# prepared_for: {name: {{CLIENT}}, logo: client-logo.png}
+cover:
+  layout: plain
+  title: <The week in one line>
+  subtitle: "Week ending <date>. <Color>: <one sentence on what changed and what it does to go-live.>"
+  byline: "<Project ID>  ·  <SOW number>  ·  Owner: <Project manager>"
+body:
+  - h2: 1  Summary
+  - p: <Two or three sentences. Lead with the overall color and the one fact behind it, then what we are doing about it and the date it is fixed by.>
+  - table:
+      head: [Area, This week, Last week, What it means]
+      widths: [1.7, 0.85, 0.85, 3.1]
+      rag: [1, 2]
+      center: [1, 2]
+      size: 9.5
+      rows:
+        - [Overall, Amber, Green, <Worst area sets the color; one line on why.>]
+        - [Scope, Green, Green, <Change orders open or signed.>]
+        - [Schedule, Amber, Green, <Next milestone forecast against plan.>]
+        - [Budget and hours, Green, Green, <Hours to date against plan; billed to date.>]
+        - [Quality, Green, Green, <Tests executed; open defects.>]
+  - callout: {label: "Decision needed:", text: "<The question, who decides, and the date the answer is needed by. Delete when nothing waits on the customer.>"}
+
+  - h2: 2  Milestones and billing
+  - table:
+      head: [ID, Milestone, Planned, Forecast or actual, Billing, Status]
+      widths: [0.35, 2.4, 1.0, 1.0, 0.65, 1.1]
+      rag: [5]
+      center: [0, 4, 5]
+      size: 9.5
+      rows:
+        - [M1, Kickoff and project plan, <Date>, <Date>, 20%, Complete]
+        - [M2, Design signed off, <Date>, <Date>, 20%, On track]
+        - [M3, Build accepted, <Date>, <Date>, 25%, At risk]
+        - [M4, Go-live, <Date>, <Date>, 20%, On track]
+        - [M5, Hypercare exit, <Date>, <Date>, 15%, On track]
+
+  - h2: 3  Hours and billing
+  - table:
+      head: [Measure, To date, Plan to date, Whole project]
+      widths: [2.4, 1.3, 1.3, 1.5]
+      right: [1, 2, 3]
+      size: 9.5
+      rows:
+        - [Services hours, '300', '280', '740']
+        - [Billed to date, "$20,000", "$20,000", "$100,000"]
+  - p: <One line on which roles are over or under plan, and why.>
+
+  - h2: 4  Risks, issues and decisions
+  - table:
+      head: [ID, Item, Owner, Status]
+      widths: [0.5, 3.6, 1.3, 1.1]
+      rag: [3]
+      size: 9.5
+      rows:
+        - [R1, "<What could happen, and the mitigation with its due date.>", <Name>, Amber]
+        - [I1, "<What has happened, and the resolution with its due date.>", <Name>, Red]
+        - [D1, "<What was decided, by whom.>", <Name>, Closed]
+
+  - h2: 5  Next week
+  - bullets:
+      - <What happens, owner, day.>
+      - <What happens, owner, day.>
+      - <What happens, owner, day.>
+
+  - h2: How to set the color
+  - table:
+      head: [Color, Set it when]
+      widths: [1.2, 5.3]
+      size: 9
+      rows:
+        - ["**Green**", "On plan. Every milestone forecast on its planned date, hours within 5% of plan, and no open issue that threatens a milestone."]
+        - ["**Amber**", "At risk, recovery in hand. A milestone forecast up to two weeks late with a recovery plan that holds go-live; or hours 5% to 10% over plan; or a customer decision needed within two weeks."]
+        - ["**Red**", "Needs the steering committee. Go-live or a milestone forecast more than two weeks late, or late with no recovery plan; or hours more than 10% over plan; or an overdue decision on the critical path."]
+  - p: Overall takes the color of the worst area. An area goes back to Green only when the cause is closed and the date it put at risk is met, or the steering committee has agreed a new one. Red does not wait for the next report.

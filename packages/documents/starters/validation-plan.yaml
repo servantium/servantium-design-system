@@ -1,0 +1,128 @@
+# Validation (test) plan: how the system will be tested and accepted, risk-based, with intended use, boundary, roles, deliverables, environments, qualification strategy, deviations, traceability and approval.
+#
+# Written for the approver who signs the final report. Testing effort follows risk: scripted tests
+# where a failure could reach a regulated or customer-facing result, lighter evidence where it
+# cannot. Works for regulated computer system validation (IQ, OQ, PQ) or plain UAT; rename the
+# stages to match the customer's procedure.
+document: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+draft: Draft for review
+page_numbers: x_of_y
+footer: "<Document ID> v<version>  ·  Validation plan  ·  {{CLIENT}}  ·  Confidential"
+# prepared_for: {name: {{CLIENT}}, logo: client-logo.png}
+cover:
+  eyebrow: "{{CLIENT}}  ·  Validation"
+  title: Validation plan for <system and use>
+  subtitle: <Risk-based testing under the customer's procedure, and what has to be true to go live.>
+  meta:
+    - [Document, <Document ID>]
+    - [Version, <1.0>]
+    - [Procedure, <Customer procedure ID>]
+    - [Approver, <Name and role>]
+body:
+  - h3: Revision history
+  - table:
+      head: [Version, Date, Change, Author]
+      widths: [0.8, 1.1, 3.6, 1.5]
+      rows:
+        - ['1.0', <Date>, First issue, <Name>]
+
+  - h1: 1  Purpose and scope
+  - h2: 1.1  Intended use
+  - p: <What the system is used for, by whom, and which decisions rely on it.>
+  - h2: 1.2  System boundary
+  - table:
+      head: [In the validation, How it is treated]
+      widths: [3.0, 4.0]
+      rows:
+        - [<Component>, <Tested by scripts>]
+        - [<Component>, <Covered by vendor evidence>]
+  - table:
+      head: [Outside the validation, Why]
+      widths: [3.0, 4.0]
+      rows:
+        - [<System>, <Validated separately by its owner>]
+  - h2: 1.3  Regulations and guidance
+  - bullets: [<Regulation or standard>, <Guidance followed>, <Customer procedure>]
+
+  - h1: 2  Approach
+  - p: <How risk sets the test approach, in two sentences.>
+  - table:
+      head: [Risk class, Testing, Evidence, Review]
+      widths: [1.2, 2.2, 2.0, 1.6]
+      rows:
+        - [High, Scripted with expected results, Screenshots and records, <Approver>]
+        - [Medium, Scripted, Signed results, <Reviewer>]
+        - [Low, Unscripted or vendor, Summary note, <Reviewer>]
+
+  - h1: 3  Roles and responsibilities
+  - table:
+      head: [Person, Role, Responsibilities]
+      widths: [1.6, 1.6, 3.8]
+      rows:
+        - [<Name>, Validation lead, "<Writes the plan, protocols and report>"]
+        - [<Name>, Tester, <Executes scripts and records evidence>]
+        - [<Name>, Customer approver, "<Approves plan, protocols and report>"]
+
+  - h1: 4  Deliverables
+  - table:
+      head: [Deliverable, Document, Author, Approver]
+      widths: [2.2, 1.6, 1.6, 1.6]
+      rows:
+        - [Validation plan, <ID>, <Name>, <Name>]
+        - [Requirements and risk assessment, <ID>, <Name>, <Name>]
+        - [Test protocols and results, <ID>, <Name>, <Name>]
+        - [Traceability matrix, <ID>, <Name>, <Name>]
+        - [Validation summary report, <ID>, <Name>, <Name>]
+
+  - h1: 5  Environments
+  - table:
+      head: [Environment, Use, Data]
+      widths: [2.0, 3.0, 2.0]
+      rows:
+        - [<Test>, <Dry runs and testing>, <Test data>]
+        - [<Production>, <Final qualification and live use>, <Real>]
+
+  - h1: 6  Qualification and acceptance criteria
+  - h2: 6.1  Installation
+  - p: <What is checked about the installed system, and the pass criterion.>
+  - h2: 6.2  Operation
+  - p: <Which functions are tested by script, and the pass criterion.>
+  - h2: 6.3  Performance in real use
+  - p: <The scenarios that run a whole process on real or representative data, and the pass criterion.>
+  - h2: 6.4  Release to production
+  - p: <What must be complete and approved before go-live.>
+
+  - h1: 7  Deviations
+  - table:
+      head: [Class, Definition, Resolved before]
+      widths: [1.2, 3.8, 2.0]
+      rows:
+        - [Critical, <Affects a regulated or customer result>, Release]
+        - [Major, <Affects a function with a workaround>, Release]
+        - [Minor, <Cosmetic or documentation>, <Next release>]
+
+  - h1: 8  Traceability
+  - p: Every requirement traces to its design section, test scripts and whole-process scenario in the traceability matrix workbook. A requirement without a test is a gap closed before release.
+
+  - h1: 9  Change control
+  - p: <How a change after approval is assessed for validation impact, and which documents move to a new version.>
+
+  - h1: 10  Schedule
+  - table:
+      head: [Activity, Dates, Status]
+      widths: [3.4, 2.0, 1.6]
+      rag: [2]
+      rows:
+        - [Plan approved, <Dates>, Complete]
+        - [Dry runs, <Dates>, On track]
+        - [Operational testing, <Dates>, On track]
+        - [Summary report approved, <Date>, On track]
+
+  - h1: 11  Approvals
+  - signature:
+      intro: Approved before testing starts.
+      parties:
+        - {company: "{{CLIENT}}", name: '<Quality approver>', title: ''}
+        - {name: '<Validation lead>', title: ''}

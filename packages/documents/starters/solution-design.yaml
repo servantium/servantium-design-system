@@ -1,0 +1,117 @@
+# Solution design: how the system is configured for this customer (context, principles, decisions, environments and access, data model, integrations, rules, reporting), versioned and signed at the design gate.
+#
+# Written for the people who build and test it. Every design decision has an ID, a date and an
+# owner; every section points to the requirement IDs it meets. A change order bumps the version
+# and the revision history says what moved. Delete sections that do not apply.
+document: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+draft: Draft for review
+page_numbers: x_of_y
+footer: "<Document ID> v<version>  ·  Solution design  ·  {{CLIENT}}  ·  Confidential"
+# prepared_for: {name: {{CLIENT}}, logo: client-logo.png}
+cover:
+  eyebrow: "{{CLIENT}}  ·  Solution design"
+  title: <What the design does, as one claim>
+  subtitle: <How the system is configured for the customer, and what this version adds.>
+  meta:
+    - [Document, <Document ID>]
+    - [Version, <1.0>]
+    - [Status, Draft for review]
+    - [Approver, <Name and role>]
+body:
+  - h1: Document control
+  - table:
+      head: [Item, Detail]
+      widths: [1.8, 5.2]
+      rows:
+        - [Project, <Project ID>]
+        - [Requirements, <Requirements document ID and version>]
+        - [Author, <Name>]
+        - [Reviewers, <Names>]
+  - h2: Revision history
+  - table:
+      head: [Version, Date, Change, Approved by]
+      widths: [0.8, 1.1, 3.6, 1.5]
+      rows:
+        - ['1.0', <Date>, Signed off at the design gate, <Name>]
+
+  - h1: 1  Purpose and scope
+  - p: <What this document decides, and for whom.>
+  - h2: In scope
+  - bullets: [<Area covered>, <Area covered>, <Area covered>]
+  - h2: Out of scope
+  - bullets: ["<Area not covered, and where it is handled>"]
+
+  - h1: 2  Context and design principles
+  - p: <The business process in three sentences.>
+  - h2: Design principles
+  - numbered:
+      - <A rule every design choice follows, e.g. one record per item.>
+      - <A rule, e.g. configuration over custom code.>
+      - <A rule, e.g. a person accepts every automated result.>
+  - h2: Parties and systems
+  - table:
+      head: [Party or system, Role, What it sends or receives]
+      widths: [1.8, 2.2, 3.0]
+      rows:
+        - [<Party 1>, <Role>, <Data>]
+        - [<Party 2>, <Role>, <Data>]
+  - h2: Design decisions
+  - table:
+      head: [ID, Decision, Decided, Owner]
+      widths: [0.6, 4.0, 1.2, 1.2]
+      rows:
+        - [DD-01, <What was decided and why>, <Date>, <Name>]
+        - [DD-02, <What was decided and why>, <Date>, <Name>]
+
+  - h1: 3  Environments and access
+  - h2: 3.1  Environments
+  - table:
+      head: [Environment, Address, Used for, Data]
+      widths: [1.4, 2.0, 2.0, 1.6]
+      rows:
+        - [Production, <URL>, Live use, Real]
+        - [Test, <URL>, <Testing and training>, <Test or masked>]
+  - h2: 3.2  Sign-on and roles
+  - table:
+      head: [Directory group, Role, Can do, Signs as]
+      widths: [1.8, 1.4, 2.6, 1.2]
+      rows:
+        - [<Group>, <Role>, <Permissions>, <Meaning of signature>]
+        - [<Group>, <Role>, <Permissions>, <None>]
+
+  - h1: 4  Data model
+  - table:
+      head: [Object or field, Type, Rule, Requirement]
+      widths: [1.8, 1.0, 3.0, 1.2]
+      rows:
+        - [<Object.field>, "<Text, number, date>", <Validation or source>, <REQ ID>]
+        - [<Object.field>, <Type>, <Rule>, <REQ ID>]
+
+  - h1: 5  Integrations
+  - table:
+      head: [Feed, Type, Data, Frequency]
+      widths: [1.8, 1.4, 2.6, 1.2]
+      rows:
+        - [<Feed 1>, "<API, SFTP, file>", <What moves>, <How often>]
+        - [<Feed 2>, <Type>, <What moves>, <How often>]
+  - caption: Field-level mapping is in the interface specification.
+
+  - h1: 6  Rules and checks
+  - table:
+      head: [Rule, Checks, Compares, Requirement]
+      widths: [1.0, 2.6, 2.2, 1.2]
+      rows:
+        - [<RULE-01>, <What it checks>, <Against what>, <REQ ID>]
+        - [<RULE-02>, <What it checks>, <Against what>, <REQ ID>]
+
+  - h1: 7  Reporting
+  - bullets: ["<Report, audience and cadence>", "<Report, audience and cadence>"]
+
+  - h1: 8  Approval
+  - signature:
+      intro: Signed off at the design gate.
+      parties:
+        - {company: "{{CLIENT}}", name: '<Business owner>', title: ''}
+        - {name: '<Solution architect>', title: ''}

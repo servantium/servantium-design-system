@@ -1,0 +1,16 @@
+# Servantium: the house brand. Colours and fonts are Verdant's (tokens.py), so no colour
+# roles are restated here. Logos come from @servantium/brand.
+id: servantium
+name: Servantium
+short: Servantium
+company_json: ../../../brand/company.json   # legal name, address, website
+voice: house
+fonts:
+  display: {family: Playfair Display, file: 'PlayfairDisplay[wght].ttf', panose: '02000503000000020004', pitch: '18'}
+  body:    {family: Source Sans 3, file: 'SourceSans3[wght].ttf', panose: '020B0303030403020204', pitch: '34'}
+logos:
+  on_light: ../../../brand/assets/logo/servantium-logo.png
+  on_dark: ../../../brand/assets/logo/servantium-logo-white.png
+  mark_on_dark: ../../../brand/assets/logo/servantium-symbol-white.png
+  mark_on_light: ../../../brand/assets/logo/servantium-symbol-on-light.png
+footer: Servantium  ·  Confidential

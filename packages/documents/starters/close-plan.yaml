@@ -1,0 +1,64 @@
+# Mutual close plan: the steps, owners on both sides and dates from today to signature and go-live, agreed with the buyer and reviewed every week, with a calendar view.
+#
+# Built with the champion and shared with them. Work back from their hard date (go-live, a
+# renewal, a fiscal close). Each step has an owner on each side and a "done when". The Timeline
+# tab is a live Gantt of the same steps. Dates are placeholders.
+workbook: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+prepared_for: "<Champion name>, {{CLIENT}}"
+sheets:
+  - name: Summary
+    kind: summary
+    eyebrow: "{{CLIENT}}  ·  Mutual close plan"
+    title: <Live before the date that matters to them>
+    subtitle: "{{CLIENT}} and we agree the steps, owners and dates from today to go-live. We review it every <day>."
+    metrics:
+      - {label: Steps, value: "=COUNTA([Plan!step])", format: int, note: To go-live}
+      - {label: Done, value: '=COUNTIF([Plan!status],"Done")', format: int, note: As of <date>}
+      - {label: Signature target, value: 2027-03-31, format: date, note: <Documents>}
+      - {label: Go-live target, value: 2027-08-02, format: date, note: <Why this date>}
+    table:
+      columns:
+        - {key: why, header: Why these dates, width: 80, wrap: true}
+      rows:
+        - {why: <The hard date and what happens if it is missed.>}
+        - {why: "<How long implementation takes from signature, so when signature must land.>"}
+    contents: true
+
+  - name: Plan
+    kind: table
+    title: Steps, owners and dates
+    subtitle: One row per step. Status as of <date>.
+    landscape: true
+    columns:
+      - {key: n, header: "#", format: int, width: 5}
+      - {key: step, header: Step, width: 36, wrap: true}
+      - {key: theirs, header: "{{CLIENT}} owner", width: 20, input: true}
+      - {key: ours, header: Our owner, width: 18, input: true}
+      - {key: due, header: Target date, format: date, input: true, width: 13}
+      - {key: status, header: Status, width: 11, input: true}
+      - {key: done_when, header: Done when, width: 40, wrap: true}
+    rows:
+      - {n: 1, step: Discovery complete, theirs: <Name>, ours: <Name>, due: 2027-01-29, status: Done, done_when: <Metrics and criteria confirmed>}
+      - {n: 2, step: Design workshop, theirs: <Name>, ours: <Name>, due: 2027-02-12, status: Done, done_when: <Readout sent>}
+      - {n: 3, step: Proposal presented, theirs: <Name>, ours: <Name>, due: 2027-02-26, status: Open, done_when: <Verbal selection>}
+      - {n: 4, step: Security review, theirs: <Name>, ours: <Name>, due: 2027-03-12, status: Open, done_when: <Questionnaire closed>}
+      - {n: 5, step: Contract redlines, theirs: <Name>, ours: <Name>, due: 2027-03-24, status: Open, done_when: <Final drafts agreed>}
+      - {n: 6, step: Signature, theirs: <Name>, ours: <Name>, due: 2027-03-31, status: Open, done_when: <All documents signed>}
+      - {n: 7, step: Kickoff, theirs: <Name>, ours: <Name>, due: 2027-04-12, status: Open, done_when: <Plan agreed>}
+
+  - name: Timeline
+    kind: gantt
+    title: Close plan on a calendar
+    subtitle: Weeks from discovery to kickoff. Diamonds are dates both sides have committed to.
+    scale: week
+    today: true
+    tasks:
+      - {id: s1, name: Discovery, start: 2027-01-04, end: 2027-01-29, owner: <Name>, percent: 1}
+      - {id: s2, name: Design workshop, start: 2027-02-08, end: 2027-02-12, owner: <Name>, percent: 1}
+      - {id: s3, name: Proposal, depends_on: [s2], duration_days: 10, owner: <Name>}
+      - {id: s4, name: Security review, depends_on: [s3], duration_days: 10, owner: <Name>}
+      - {id: s5, name: Contract redlines, start: 2027-03-08, end: 2027-03-24, owner: <Name>}
+      - {id: s6, name: Signature, start: 2027-03-31, milestone: true}
+      - {id: s7, name: Kickoff, start: 2027-04-12, milestone: true}

@@ -1,0 +1,122 @@
+# A fictional master services agreement: numbered articles, definitions, cross-references,
+# a schedule that restarts numbering, and a two-party signature block.
+# Build: .venv/bin/python -m servantium_documents.docs examples/doc-msa.yaml
+document: Master Services Agreement
+client: Acme Labs
+prepared_for: {name: Acme Labs}
+draft: Draft for review
+page_numbers: x_of_y
+footer: Master Services Agreement  ·  Confidential
+cover:
+  eyebrow: Acme Labs  ·  Agreement
+  title: Master Services Agreement
+  subtitle: The terms under which Acme Labs buys professional services, set once for every statement of work.
+  meta:
+    - [Agreement no., MSA-2026-014]
+    - [Effective date, 'November 1, 2026']
+    - [Status, Draft for review]
+body:
+  - h1: Agreement
+  - p: >-
+      This Master Services Agreement is made between Acme Labs, Inc., a Delaware corporation
+      ("Customer"), and the provider named in the signature block ("Provider"). Each is a
+      "Party" and together the "Parties". The Parties agree as follows.
+  - clauses:
+      - title: Definitions
+        id: defs
+        text: In this Agreement, the following terms have the meanings below.
+        clauses:
+          - '"Agreement" means this Master Services Agreement, its schedules and every Statement of Work.'
+          - '"Affiliate" means any entity that controls, is controlled by, or is under common control with a Party.'
+          - '"Confidential Information" means non-public information a Party discloses that is marked confidential or that a reasonable person would treat as confidential.'
+          - '"Deliverable" means any report, plan, model or other work product Provider delivers under a Statement of Work.'
+          - '"Statement of Work" or "SOW" means a document in the form of {ref:schedule-a}, signed by both Parties.'
+          - '"Fees" means the amounts payable under a Statement of Work.'
+      - title: Services
+        id: services
+        clauses:
+          - title: Statements of Work
+            text: Provider will perform the services described in each Statement of Work. Each SOW incorporates this Agreement.
+          - title: Order of precedence
+            id: precedence
+            text: 'If this Agreement and a SOW conflict, this Agreement governs unless the SOW names the section it overrides.'
+          - title: Personnel
+            text: Provider assigns qualified personnel and may replace them with people of equal skill after notice to Customer.
+      - title: Change control
+        id: change
+        text: Either Party may request a change to a SOW. No change binds either Party until both sign a change order that states the effect on scope, schedule and Fees.
+      - title: Fees and payment
+        id: fees
+        clauses:
+          - title: Fees
+            text: Customer pays the Fees set out in each SOW.
+          - title: Invoices
+            id: invoices
+            text: Provider invoices monthly in arrears unless the SOW says otherwise. Customer pays each undisputed invoice within thirty (30) days of receipt.
+          - title: Disputed amounts
+            text: Customer will notify Provider of any disputed amount within fifteen (15) days, in writing, with its reasons. The Parties will resolve the dispute under {ref:disputes}.
+          - title: Taxes
+            text: Fees exclude sales, use and similar taxes, which Customer pays except taxes on Provider's income.
+      - title: Acceptance
+        id: acceptance
+        clauses:
+          - text: 'Customer reviews each Deliverable within ten (10) business days of delivery and either:'
+            clauses:
+              - accepts it in writing; or
+              - rejects it, describing in writing how it fails the acceptance criteria in the SOW.
+          - text: A Deliverable not rejected within the review period is accepted.
+      - title: Confidentiality
+        id: confidentiality
+        clauses:
+          - text: Each Party will use the other Party's Confidential Information only to perform this Agreement and will protect it with at least reasonable care.
+          - text: 'These obligations do not apply to information that:'
+            clauses:
+              - is or becomes public through no fault of the receiving Party;
+              - the receiving Party already knew without restriction; or
+              - is independently developed without use of the other Party's Confidential Information.
+      - title: Intellectual property
+        clauses:
+          - title: Deliverables
+            text: On payment in full, Customer owns the Deliverables made specifically for it under a SOW.
+          - title: Provider materials
+            text: Provider keeps its pre-existing tools, methods and know-how, and grants Customer a perpetual license to use any that are built into a Deliverable.
+      - title: Warranties and liability
+        id: liability
+        clauses:
+          - title: Warranty
+            text: Provider will perform the services in a professional manner consistent with industry practice.
+          - title: Limitation
+            text: "Except for breach of {ref:confidentiality}, each Party's total liability is limited to the Fees paid in the twelve (12) months before the claim."
+      - title: Term and termination
+        clauses:
+          - title: Term
+            text: This Agreement starts on the effective date and continues until terminated under this section.
+          - title: Termination for convenience
+            text: Either Party may terminate this Agreement or a SOW on thirty (30) days' written notice.
+          - title: Effect
+            text: On termination Customer pays for services performed to the termination date, under {ref:invoices}.
+      - title: General
+        id: disputes
+        clauses:
+          - title: Disputes
+            text: The Parties will first try to resolve any dispute through their executive sponsors within twenty (20) days.
+          - title: Governing law
+            text: This Agreement is governed by the laws of the State of Delaware.
+          - title: Entire agreement
+            text: This Agreement and its SOWs are the Parties' entire agreement on their subject and replace any prior agreement on it.
+  - signature:
+      intro: The Parties have signed this Agreement by their authorized representatives.
+      parties:
+        - {company: 'Acme Labs, Inc.'}
+        - {}
+  - schedule: {label: Schedule A, title: Form of Statement of Work, id: schedule-a}
+  - p: Each Statement of Work under this Agreement contains at least the sections below.
+  - clauses:
+      - title: Scope
+        clauses:
+          - The services, the Deliverables and what is out of scope.
+          - The acceptance criteria for each Deliverable, under {ref:acceptance}.
+      - title: Commercials
+        clauses:
+          - The Fees, the payment schedule and any expenses policy.
+          - The change control contact for each Party, under {ref:change}.

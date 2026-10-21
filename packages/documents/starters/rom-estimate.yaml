@@ -1,0 +1,70 @@
+# ROM estimate: a rough order of magnitude range (low, high, midpoint) by phase, for a buyer to plan a budget around before a quote.
+#
+# Not a quote: say so in the subtitle. Low and high are inputs (blue); midpoints, totals and shares
+# are formulas. The assumptions tab lists what would move the range. Sample numbers are placeholders.
+workbook: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+prepared_for: <Name, title>
+sheets:
+  - name: Summary
+    kind: summary
+    eyebrow: "{{CLIENT}}  ·  Rough order of magnitude"
+    title: <What the range covers, year 1>
+    subtitle: A range to plan a budget around, built from <the workshop or discovery>. Not a quote; the proposal follows by <date>.
+    metrics:
+      - {label: Low, value: "=[ROM!#low]", format: currency, decimals: 0, note: <What the low end assumes>}
+      - {label: High, value: "=[ROM!#high]", format: currency, decimals: 0, note: <What the high end assumes>}
+      - {label: Midpoint, value: "=[ROM!#mid]", format: currency, decimals: 0, note: What we plan to propose}
+      - {label: Valid until, value: 2027-03-31, format: date, note: <Date>}
+    table:
+      columns:
+        - {key: part, header: Part, width: 30}
+        - {key: low, header: Low, format: currency, decimals: 0, total: sum, width: 15}
+        - {key: high, header: High, format: currency, decimals: 0, total: sum, width: 15}
+        - {key: share, header: Share at midpoint, format: percent, decimals: 0, formula: "=([@low]+[@high])/([#low]+[#high])", total: formula, width: 16}
+      rows:
+        - {part: Recurring, low: "=[ROM!#low.recurring]", high: "=[ROM!#high.recurring]"}
+        - {part: Professional services, low: "=[ROM!#low.services]", high: "=[ROM!#high.services]"}
+    notes:
+      - <Rates basis, and what is excluded (travel, taxes).>
+    contents: true
+
+  - name: ROM
+    kind: table
+    title: Range by phase
+    subtitle: Each phase with a low and a high. Blue cells are inputs; the midpoint is a formula.
+    landscape: true
+    columns:
+      - {key: code, header: Code, width: 7}
+      - {key: phase, header: Phase, width: 34, wrap: true}
+      - {key: scope, header: What it covers, width: 50, wrap: true}
+      - {key: low, header: Low, format: currency, decimals: 0, input: true, total: sum, width: 13}
+      - {key: high, header: High, format: currency, decimals: 0, input: true, total: sum, width: 13}
+      - {key: mid, header: Midpoint, format: currency, decimals: 0, formula: "=([@low]+[@high])/2", total: sum, width: 13}
+    groups:
+      - name: Recurring
+        id: recurring
+        rows:
+          - {code: S1, phase: <Platform or subscription>, scope: <Tier and term>, low: 40000, high: 50000}
+          - {code: S2, phase: <Add-ons>, scope: <Units>, low: 10000, high: 15000}
+      - name: Professional services
+        id: services
+        rows:
+          - {code: P1, phase: <Initiate and design>, scope: <Workshops and design>, low: 15000, high: 25000}
+          - {code: P2, phase: <Build>, scope: "<Configuration, integrations, migration>", low: 40000, high: 60000}
+          - {code: P3, phase: <Test and deploy>, scope: "<Testing, training, go-live>", low: 20000, high: 30000}
+          - {code: P4, phase: <Support>, scope: <Hypercare weeks>, low: 5000, high: 10000}
+    total_label: Year 1 range
+
+  - name: Assumptions
+    kind: table
+    title: What would move the range
+    columns:
+      - {key: n, header: "#", format: int, width: 5}
+      - {key: assumption, header: Assumption, width: 52, wrap: true}
+      - {key: effect, header: If it changes, width: 52, wrap: true}
+    rows:
+      - {n: 1, assumption: <Quantity or scope assumed>, effect: <Which end of the range moves and by about how much>}
+      - {n: 2, assumption: <A dependency on the customer>, effect: <Effect>}
+      - {n: 3, assumption: <A third party's part>, effect: <Effect>}

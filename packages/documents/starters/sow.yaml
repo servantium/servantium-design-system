@@ -1,0 +1,161 @@
+# Statement of work: scope, schedule, deliverables with acceptance criteria, fees, rates, assumptions, roles and change control for one engagement under an MSA.
+#
+# Sections in this order: overview and outcome, success measures, scope (in and out), approach
+# and schedule, deliverables and acceptance, fees and payment, contract rates, assumptions, roles,
+# change control, signatures. Every fee, hour and rate comes from the signed estimate or quote:
+# bind them with data: {q: ../quote/data.yaml} and "{{ q.total | money2 }}" rather than retyping.
+# The sample numbers below are placeholders and do not foot to anything real.
+document: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+draft: Draft for review
+page_numbers: x_of_y
+footer: "SOW <number> under the Master Services Agreement  ·  {{CLIENT}}  ·  Confidential"
+# prepared_for: {name: {{CLIENT}}, logo: client-logo.png}
+cover:
+  eyebrow: "{{CLIENT}}  ·  Statement of Work"
+  title: <What this SOW delivers, in one line>
+  subtitle: <The outcome, the scope in a phrase, and the date it lands.>
+  meta:
+    - [SOW no., <SOW number>]
+    - [Agreement, "Master Services Agreement, <date>"]
+    - [Term, <Start date> to <end date>]
+    - [Fixed fee, "$100,000.00"]
+body:
+  - h2: 1  Overview
+  - p: This Statement of Work is made under the Master Services Agreement between <{{CLIENT}} legal name> ("Customer") and <our legal name> ("Provider") dated <date> (the "Agreement"). Terms defined in the Agreement have the same meaning here.
+  - p: <Two or three sentences on how the work runs today, what Provider will change, and why the date matters. Name the process, not the people.>
+  - callout: {label: "Outcome:", text: "<The measurable result and the date, in one sentence.>"}
+  - h3: Success measures
+  - table:
+      head: [Measure, Today, Target, How it is measured]
+      widths: [2.0, 1.3, 1.3, 2.4]
+      rows:
+        - [<Measure 1>, <About N days>, <Under N days>, <Source of the number>]
+        - [<Measure 2>, <Not tracked>, <Zero>, <Report and when>]
+        - [<Measure 3>, <About N FTE>, <N FTE returned>, <Customer time log>]
+
+  - h2: 2  Scope
+  - h3: In scope
+  - table:
+      head: [Area, What Provider delivers]
+      widths: [1.7, 5.3]
+      rows:
+        - [<Area 1>, "<What is configured or built, specifically.>"]
+        - [<Area 2>, "<Integration or connector, with the systems named.>"]
+        - [<Area 3>, "<Data migration, with the volume.>"]
+        - [<Testing>, <Test approach and who executes.>]
+        - [<Training and support>, "<Sessions, materials and the support period after go-live.>"]
+  - h3: Out of scope
+  - bullets:
+      - <Systems, parties or sites not named above. Each is a change order.>
+      - <Changes to Customer's own procedures.>
+      - <Cleaning or re-work of historical data beyond mapping it.>
+      - <Custom reports beyond the standard set.>
+
+  - h2: 3  Approach and schedule
+  - p: Provider runs the work in <N> phases. <Name the stage gates.> Dates are planned from a <start date> start and confirmed in the project plan at kickoff.
+  - table:
+      head: [Phase, What happens, Planned window, Hours]
+      widths: [2.0, 3.0, 1.3, 0.7]
+      right: [3]
+      size: 9
+      rows:
+        - [P1  <Initiate>, "<Kickoff, plan, RAID, current-state review>", <Weeks 1 to 3>, '40']
+        - [P2  <Design>, "<Workshops, solution design, requirements>", <Weeks 2 to 7>, '120']
+        - [P3  <Build>, "<Configuration, integrations, migration>", <Weeks 6 to 14>, '300']
+        - [P4  <Test>, <Test protocols and execution>, <Weeks 12 to 18>, '160']
+        - [P5  <Deploy>, "<Cutover, training, go-live support>", <Weeks 18 to 20>, '80']
+        - [P6  <Hypercare>, <Monitoring and fixes; handover>, <Weeks 20 to 26>, '40']
+      foot:
+        - [Total, '', '', '740']
+
+  - h2: 4  Deliverables and acceptance
+  - p: Customer accepts each Deliverable under the Acceptance section of the Agreement, against the criteria below.
+  - table:
+      head: [ID, Deliverable, Acceptance criteria, Approver]
+      widths: [0.5, 1.9, 3.4, 1.2]
+      size: 9
+      rows:
+        - [D01, Project plan and RAID log, <Plan covers every phase; RAID reviewed at kickoff.>, <Role>]
+        - [D02, Solution design, <Signed off at the design gate.>, <Role>]
+        - [D03, <Configured system>, <Matches D02; passes integration tests.>, <Role>]
+        - [D04, <Migrated data>, <Reconciled to the source files with a migration report.>, <Role>]
+        - [D05, <Executed test protocols>, <Executed with evidence; deviations closed.>, <Role>]
+        - [D06, Training and records, <Sessions delivered; records filed.>, <Role>]
+        - [D07, Go-live approval, <Go/no-go checklist met; approved in writing.>, <Role>]
+        - [D08, Hypercare exit, <Stable; open critical tickets at zero; exit signed.>, <Role>]
+
+  - h2: 5  Fees and payment
+  - p: The fixed fee for this SOW is $100,000.00, built from 740 hours at the contract rates in Section 6. Provider invoices the fee on the milestones below, payable under the Agreement.
+  - table:
+      head: [No., Invoice on, Planned date, Share, Amount]
+      widths: [0.55, 3.15, 1.15, 0.7, 1.45]
+      money: [4]
+      center: [3]
+      rows:
+        - [M1, Kickoff and project plan accepted, <Date>, 20%, 20000]
+        - [M2, Design signed off, <Date>, 20%, 20000]
+        - [M3, Build and migration accepted, <Date>, 25%, 25000]
+        - [M4, Go-live approved, <Date>, 20%, 20000]
+        - [M5, Hypercare exit signed, <Date>, 15%, 15000]
+      foot:
+        - [Total, '', '', 100%, 100000]
+  - p: "Expenses: pre-approved travel for on-site work is billed monthly at cost and capped at $0,000 for the project."
+
+  - h2: 6  Contract rates
+  - p: The rates below priced this SOW and price every change order under it.
+  - table:
+      head: [Role, Hours in this SOW, List rate, Contract rate]
+      widths: [3.4, 1.2, 1.2, 1.2]
+      money: [2, 3]
+      right: [1]
+      rows:
+        - [<Engagement lead>, '60', 250, 225]
+        - [<Solution architect>, '160', 225, 200]
+        - [<Consultant>, '360', 175, 160]
+        - [<Analyst or trainer>, '160', 150, 135]
+      foot:
+        - [Total hours, '740', '', '']
+
+  - h2: 7  Assumptions
+  - p: The fee and schedule rest on these assumptions. If one fails, the Parties agree the effect under Section 9.
+  - numbered:
+      - <Customer provides environment or access X by date.>
+      - <A named third party gives N hours a week of its time.>
+      - <Customer names a reviewer and a backup, and reviews within N business days.>
+      - <Volumes stay within the limit the price assumes.>
+      - <Work is remote except kickoff, workshops and go-live.>
+
+  - h2: 8  Roles
+  - table:
+      head: [Role in this SOW, Customer, Provider]
+      widths: [2.4, 2.3, 2.3]
+      rows:
+        - [Executive sponsor, <Name>, <Name>]
+        - [Business owner, <Name>, <Name>]
+        - [Project manager, <Name>, <Named within N days of signature>]
+        - [Approver for testing, <Name>, <Name>]
+  - table:
+      head: [Forum, Cadence, Who attends, Purpose]
+      widths: [1.6, 1.1, 2.2, 2.1]
+      rows:
+        - [Status call, Weekly, <Who>, <Progress and RAID>]
+        - [Working session, <As needed>, <Who>, <Design and test decisions>]
+        - [Steering committee, Monthly, <Who>, <Milestones and change orders>]
+
+  - h2: 9  Change control
+  - p: Either Party may request a change in writing to the other's change control contact. Provider responds within five (5) business days with a change order that states the effect on scope, schedule and fees. Changes are priced at the contract rates in Section 6. No change takes effect until both Parties sign the change order.
+  - table:
+      head: [Party, Change control contact, Approves fee changes]
+      widths: [1.4, 2.8, 2.8]
+      rows:
+        - [Customer, <Name and role>, <Name and title>]
+        - [Provider, <Name and role>, <Name and title>]
+
+  - h2: 10  Signatures
+  - signature:
+      intro: Signed by the Parties' authorized representatives.
+      parties:
+        - {company: "<{{CLIENT}} legal name>", name: '', title: ''}
+        - {name: '', title: ''}

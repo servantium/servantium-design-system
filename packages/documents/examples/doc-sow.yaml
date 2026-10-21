@@ -1,0 +1,102 @@
+# A fictional statement of work under the master services agreement in doc-msa.yaml:
+# scope, deliverables, assumptions, fees, payment schedule, change control, signatures.
+# Build: .venv/bin/python -m servantium_documents.docs examples/doc-sow.yaml
+document: Statement of Work 01
+client: Acme Labs
+prepared_for: {name: Acme Labs}
+page_numbers: x_of_y
+footer: SOW-01 under MSA-2026-014  ·  Confidential
+cover:
+  eyebrow: Acme Labs  ·  Statement of Work
+  title: Quote-to-Resource Planning Rollout
+  subtitle: Twelve weeks to move Acme's services quotes and staffing plans onto one model.
+  meta:
+    - [SOW no., SOW-01]
+    - [Agreement, Master Services Agreement MSA-2026-014]
+    - [Term, 'November 2, 2026 to January 22, 2027']
+    - [Status, Draft for signature]
+body:
+  - h1: Overview
+  - p: >-
+      This Statement of Work is made under the Master Services Agreement between Acme Labs, Inc.
+      ("Customer") and the provider named below ("Provider"). Terms defined in the Agreement have
+      the same meaning here.
+  - callout: {label: "Outcome:", text: "Every new services quote at Acme is priced from rate cards and turns into a staffing plan without re-keying, by the end of week 12."}
+
+  - h1: Scope
+  - h2: In scope
+  - bullets:
+      - Discovery of the current quoting and staffing process across two practice areas.
+      - Configuration of rate cards, roles and delivery templates for both practices.
+      - Migration of open quotes from the current spreadsheets.
+      - Training for up to 25 quoting and resourcing users.
+  - h2: Out of scope
+  - bullets:
+      - Changes to Acme's finance or payroll systems.
+      - Practice areas other than the two named in the discovery plan.
+
+  - h2: Deliverables
+  - p: Each deliverable is accepted under Section 5 of the Agreement against the criteria below.
+  - table:
+      head: [ID, Deliverable, Acceptance criteria, Week]
+      widths: [0.5, 1.9, 3.2, 0.7]
+      center: [3]
+      rows:
+        - [D1, Discovery plan, Current process mapped for both practices and signed off by the sponsor., 2]
+        - [D2, Rate cards and roles, Every active role priced; two sample quotes reproduce last quarter's totals., 5]
+        - [D3, Delivery templates, Templates for the five most-sold engagement types., 7]
+        - [D4, Migrated quotes, All open quotes moved and reconciled to the source spreadsheets., 9]
+        - [D5, Trained users, 25 users complete training; first live quote issued., 12]
+
+  - h1: Assumptions
+  - numbered:
+      - Acme names a sponsor and a day-to-day lead in week 1, each with authority to approve deliverables.
+      - Acme provides current rate data and open quotes in spreadsheet form by the end of week 2.
+      - Workshops run remotely; on-site days are billed as expenses.
+      - Feedback on each deliverable arrives within the ten business days the Agreement allows.
+
+  - h1: Fees
+  - p: Fees are fixed for the scope above. Expenses are billed at cost and capped at 5% of fees.
+  - table:
+      head: [Phase, Weeks, Team, Fee]
+      widths: [2.6, 0.9, 1.7, 1.3]
+      money: [3]
+      rows:
+        - [Discover, 1 to 2, Lead + analyst, 18000]
+        - [Configure, 3 to 7, Lead + 2 consultants, 46000]
+        - [Migrate, 8 to 9, Consultant + analyst, 14500]
+        - [Train and launch, 10 to 12, Lead + consultant, 16500]
+      foot:
+        - [Total fixed fee, '', '', 95000]
+  - h2: Payment schedule
+  - table:
+      head: [Milestone, Invoice on, Share, Amount]
+      widths: [2.6, 1.7, 0.9, 1.3]
+      money: [3]
+      rows:
+        - [Signature, SOW signature, 20%, 19000]
+        - [D2 accepted, Acceptance, 30%, 28500]
+        - [D4 accepted, Acceptance, 30%, 28500]
+        - [D5 accepted, Acceptance, 20%, 19000]
+      foot:
+        - [Total, '', 100%, 95000]
+  - p: Invoices are payable within thirty (30) days under Section 4.2 of the Agreement.
+
+  - h1: Change control
+  - p: >-
+      Either party may request a change in writing to the other party's change control contact.
+      Provider responds within five business days with the effect on scope, schedule and fees.
+      No change takes effect until both parties sign a change order.
+  - table:
+      head: [Party, Change control contact, Approver]
+      widths: [1.6, 2.6, 2.3]
+      rows:
+        - [Customer, Director of Services Operations, VP Professional Services]
+        - [Provider, Engagement lead, Head of Delivery]
+
+  - h1: Signatures
+  - signature:
+      intro: Signed by the parties' authorized representatives.
+      parties:
+        - {company: 'Acme Labs, Inc.'}
+        - {}

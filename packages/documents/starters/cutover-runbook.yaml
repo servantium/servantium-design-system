@@ -1,0 +1,88 @@
+# Cutover runbook: the go-live checklist (key dates, timed runbook steps with owners and done flags, go/no-go criteria, rollback point and contacts).
+#
+# Every step has an ID, a start time, a duration, an owner and a check that proves it worked. The
+# go/no-go tab lists the criteria and who confirms each; the summary counts what is met and done.
+# Rollback is possible until the stated point. Times and names are placeholders.
+workbook: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+sheets:
+  - name: Summary
+    kind: summary
+    eyebrow: "{{CLIENT}}  ·  Cutover"
+    title: Go-live cutover runbook
+    subtitle: <Production goes live on day and date. The cutover runs from when to when.>
+    metrics:
+      - {label: Go-live, value: 2027-08-02, format: date, note: <First live use>}
+      - {label: Rollback point, value: <Step ID or time>, format: text, note: Forward-fix only after this}
+      - {label: Runbook steps, value: "=COUNTA([Runbook!id])", format: int, note: See the Runbook tab}
+      - {label: Steps done, value: "=SUM([Runbook!done])", format: int, note: Marked done}
+      - {label: Go/no-go criteria met, value: "=SUM([Go no-go!met])", format: int, note: Of the criteria listed}
+      - {label: Window hours, value: "=SUM([Runbook!hours])", format: number, decimals: 1, note: Planned task hours}
+    table:
+      columns:
+        - {key: date, header: Date, format: date, width: 14, input: true}
+        - {key: event, header: Key date, width: 40}
+        - {key: who, header: Decides or leads, width: 30}
+      rows:
+        - {date: 2027-07-26, event: Final go/no-go decision, who: <Sponsor>}
+        - {date: 2027-07-30, event: Cutover starts, who: <Cutover lead>}
+        - {date: 2027-08-02, event: Go-live, who: <Business owner>}
+    contents: true
+
+  - name: Runbook
+    kind: table
+    title: Runbook
+    subtitle: In order. Mark Done with 1 when the check passes. Times are <time zone>.
+    landscape: true
+    columns:
+      - {key: id, header: ID, width: 6}
+      - {key: start, header: Start, width: 14, input: true}
+      - {key: step, header: Step, width: 36, wrap: true}
+      - {key: owner, header: Owner, width: 14, input: true}
+      - {key: hours, header: Hours, format: number, decimals: 1, input: true, total: sum, width: 7}
+      - {key: check, header: Check that proves it worked, width: 34, wrap: true}
+      - {key: done, header: Done, format: int, input: true, total: sum, width: 6, align: center}
+    groups:
+      - name: Before the window
+        rows:
+          - {id: C01, start: "<Fri 09:00>", step: <Freeze changes in the old system>, owner: <Name>, hours: 0.5, check: <Freeze notice sent and confirmed>, done: 0}
+          - {id: C02, start: "<Fri 10:00>", step: <Final backup>, owner: <Name>, hours: 1, check: <Backup restored to test>, done: 0}
+      - name: Migration
+        rows:
+          - {id: C03, start: "<Fri 12:00>", step: <Load migrated data>, owner: <Name>, hours: 4, check: <Counts reconcile to source>, done: 0}
+          - {id: C04, start: "<Fri 17:00>", step: <Switch integrations to production>, owner: <Name>, hours: 2, check: <Test transaction end to end>, done: 0}
+      - name: Verify and open
+        rows:
+          - {id: C05, start: "<Sat 09:00>", step: <Smoke test by key users>, owner: <Name>, hours: 3, check: <Checklist signed>, done: 0}
+          - {id: C06, start: "<Sat 13:00>", step: "<Rollback point, go or roll back>", owner: <Sponsor>, hours: 0.5, check: <Decision recorded>, done: 0}
+          - {id: C07, start: "<Mon 08:00>", step: <Open to all users>, owner: <Name>, hours: 0.5, check: <Announcement sent>, done: 0}
+
+  - name: Go no-go
+    kind: table
+    title: Go/no-go criteria
+    subtitle: Every criterion must be met (1) for a go. Each has one person who confirms it.
+    columns:
+      - {key: n, header: "#", format: int, width: 5}
+      - {key: criterion, header: Criterion, width: 46, wrap: true}
+      - {key: who, header: Confirms, width: 18}
+      - {key: met, header: Met, format: int, input: true, total: sum, width: 6, align: center}
+    rows:
+      - {n: 1, criterion: <Acceptance testing passed with no open critical defects>, who: <Name>, met: 0}
+      - {n: 2, criterion: <Users trained and records filed>, who: <Name>, met: 0}
+      - {n: 3, criterion: <Migration rehearsal reconciled>, who: <Name>, met: 0}
+      - {n: 4, criterion: <Support rota in place for hypercare>, who: <Name>, met: 0}
+
+  - name: Contacts
+    kind: table
+    title: Contacts and on-call rota
+    columns:
+      - {key: name, header: Name, width: 22}
+      - {key: org, header: Organization, width: 16}
+      - {key: role, header: Cutover role, width: 30, wrap: true}
+      - {key: when, header: On call, width: 22, wrap: true}
+      - {key: phone, header: Phone or channel, width: 22}
+    rows:
+      - {name: <Name>, org: <Our company>, role: Cutover lead, when: <Whole window>, phone: <Bridge or number>}
+      - {name: <Name>, org: "{{CLIENT}}", role: Business owner and go decision, when: <Rollback point>, phone: <Number>}
+      - {name: <Name>, org: "{{CLIENT}}", role: IT on call, when: <Whole window>, phone: <Number>}

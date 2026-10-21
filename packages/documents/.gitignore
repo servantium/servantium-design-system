@@ -1,0 +1,10 @@
+.venv/
+dist/
+build/
+*.egg-info/
+__pycache__/
+*.pyc
+.pytest_cache/
+out/
+src/servantium_documents/assets/icons/MaterialSymbolsRounded.ttf
+src/servantium_documents/assets/icons/codepoints-rounded.txt

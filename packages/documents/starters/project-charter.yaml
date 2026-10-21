@@ -1,0 +1,100 @@
+# Project charter: why the project exists, objectives and measures, scope, milestones, budget, organization, decision rights, assumptions, kickoff risks and approval.
+#
+# Signed by both sponsors at kickoff. It restates the SOW in the project's own terms and adds what
+# the SOW does not: how decisions are made and who can stop the project. Keep it to four pages.
+document: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+page_numbers: x_of_y
+footer: "Project charter  ·  {{CLIENT}}  ·  Confidential"
+# prepared_for: {name: {{CLIENT}}, logo: client-logo.png}
+cover:
+  eyebrow: "{{CLIENT}}  ·  Project charter"
+  title: <Project name>
+  subtitle: Why the project exists, what it delivers by <date>, who decides, and how we will know it worked.
+  meta:
+    - [Project, <Project ID>]
+    - [SOW, <SOW number>]
+    - [Sponsors, <Customer sponsor> and <our sponsor>]
+    - [Date, <Kickoff date>]
+body:
+  - h2: 1  Purpose
+  - p: "<Two or three sentences: the problem in the customer's terms, and what changes when the project is done.>"
+
+  - h2: 2  Objectives and success measures
+  - table:
+      head: [Objective, Measure, Target, Owner]
+      widths: [2.2, 2.2, 1.3, 1.3]
+      rows:
+        - [<Objective 1>, <How it is measured>, <Target>, <Name>]
+        - [<Objective 2>, <How it is measured>, <Target>, <Name>]
+        - [<Objective 3>, <How it is measured>, <Target>, <Name>]
+
+  - h2: 3  Scope
+  - p: "**In scope:** <the SOW scope in one paragraph>."
+  - p: "**Out of scope:** <what a reader might expect that is not included>."
+
+  - h2: 4  Milestones
+  - table:
+      head: [ID, Milestone, Planned, Acceptance by]
+      widths: [0.6, 3.2, 1.4, 1.8]
+      rows:
+        - [M1, Kickoff and project plan, <Date>, <Role>]
+        - [M2, Design signed off, <Date>, <Role>]
+        - [M3, Build accepted, <Date>, <Role>]
+        - [M4, Go-live, <Date>, <Role>]
+        - [M5, Hypercare exit, <Date>, <Role>]
+
+  - h2: 5  Budget
+  - table:
+      head: [Item, Basis, Amount]
+      widths: [2.4, 3.2, 1.4]
+      money: [2]
+      rows:
+        - [Professional services, <Fixed fee by milestone>, 100000]
+        - [Subscription or licenses, <Annual>, 65000]
+        - [Expenses, "<At cost, capped>", 5000]
+      foot:
+        - [Total, '', 170000]
+
+  - h2: 6  Organization
+  - table:
+      head: [Role, "{{CLIENT}}", Provider]
+      widths: [2.2, 2.4, 2.4]
+      rows:
+        - [Executive sponsor, <Name>, <Name>]
+        - [Business owner, <Name>, <Name>]
+        - [Project manager, <Name>, <Name>]
+        - [Technical lead, <Name>, <Name>]
+        - [Approver for testing, <Name>, <Name>]
+
+  - h2: 7  How decisions are made
+  - bullets:
+      - "**Day to day:** the two project managers, recorded in the RAID log."
+      - "**Scope, schedule or fees:** a signed change order; Provider responds within <N> business days."
+      - "**Escalation:** project manager, then business owner, then the steering committee, within <N> business days at each level."
+      - "**Stopping the project:** <who can, and how>."
+
+  - h2: 8  Assumptions and constraints
+  - numbered:
+      - <A date or access the plan depends on.>
+      - <A person or team whose time the plan depends on.>
+      - <A constraint: a freeze, a blackout, a regulatory date.>
+
+  - h2: 9  Risks at kickoff
+  - table:
+      head: [Risk, Response, Owner]
+      widths: [2.8, 3.0, 1.2]
+      rows:
+        - [<What could happen>, <What we do about it>, <Name>]
+        - [<What could happen>, <What we do about it>, <Name>]
+        - [<What could happen>, <What we do about it>, <Name>]
+
+  - h2: 10  Approval
+  - signature:
+      intro: Approved by the project sponsors and project managers.
+      parties:
+        - {company: "{{CLIENT}}", name: '<Executive sponsor>', title: ''}
+        - {name: '<Executive sponsor>', title: ''}
+        - {company: "{{CLIENT}}", name: '<Project manager>', title: ''}
+        - {name: '<Project manager>', title: ''}

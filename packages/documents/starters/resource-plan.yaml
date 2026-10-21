@@ -1,0 +1,63 @@
+# Resource plan: planned hours by role by month with assigned people, loaded cost, a check against the plan of record, monthly totals and the peak month.
+#
+# One row per role. Month columns are inputs (blue); Total, Check and Loaded cost are formulas.
+# Plan is the hours in the signed estimate; Check reads OK when the months add up to it. Rename the
+# month keys and headers to the project's months. Sample numbers are placeholders.
+workbook: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+sheets:
+  - name: Summary
+    kind: summary
+    eyebrow: "{{CLIENT}}  ·  Resource plan"
+    title: <The peak month and what drives it>
+    subtitle: Planned hours from the signed estimate. Costs are fully loaded.
+    metrics:
+      - {label: Planned hours, value: "=[Hours!#total]", format: hours, decimals: 0, note: All roles}
+      - {label: Loaded cost, value: "=[Hours!#cost]", format: currency, decimals: 0, note: Hours x cost rate}
+      - {label: Services fee, key: fee, value: 100000, format: currency, decimals: 0, note: <From the SOW>}
+      - {label: Planned margin, value: "=1-[Hours!#cost]/[#fee]", format: percent, decimals: 1, note: <Floor N%>}
+      - {label: Peak month hours, value: "=MAX([Monthly!hours])", format: hours, decimals: 0, note: Highest month}
+      - {label: Rows off plan, value: '=COUNTIF([Hours!check],"Check")', format: int, note: Months do not add up}
+    contents: true
+
+  - name: Hours
+    kind: table
+    title: Planned hours by role and month
+    subtitle: "Blue cells are inputs. Total is a live sum; Check compares it with the plan of record."
+    landscape: true
+    columns:
+      - {key: role, header: Role, width: 22}
+      - {key: people, header: Assigned, width: 22}
+      - {key: rate, header: Cost rate, format: currency, decimals: 0, input: true, width: 10}
+      - {key: m1, header: <Month 1>, format: hours, decimals: 0, input: true, total: sum, width: 9}
+      - {key: m2, header: <Month 2>, format: hours, decimals: 0, input: true, total: sum, width: 9}
+      - {key: m3, header: <Month 3>, format: hours, decimals: 0, input: true, total: sum, width: 9}
+      - {key: m4, header: <Month 4>, format: hours, decimals: 0, input: true, total: sum, width: 9}
+      - {key: m5, header: <Month 5>, format: hours, decimals: 0, input: true, total: sum, width: 9}
+      - {key: m6, header: <Month 6>, format: hours, decimals: 0, input: true, total: sum, width: 9}
+      - {key: total, header: Total, format: hours, decimals: 0, formula: "=SUM([@m1],[@m2],[@m3],[@m4],[@m5],[@m6])", total: sum, width: 8}
+      - {key: plan, header: Plan, format: hours, decimals: 0, input: true, total: sum, width: 7}
+      - {key: check, header: Check, formula: '=IF([@total]=[@plan],"OK","Check")', width: 7, align: center}
+      - {key: cost, header: Loaded cost, format: currency, decimals: 0, formula: "=[@total]*[@rate]", total: sum, width: 12}
+    rows:
+      - {role: <Engagement lead>, people: <Name>, rate: 120, m1: 10, m2: 10, m3: 10, m4: 10, m5: 10, m6: 10, plan: 60}
+      - {role: <Solution architect>, people: <Name>, rate: 100, m1: 40, m2: 50, m3: 30, m4: 20, m5: 10, m6: 10, plan: 160}
+      - {role: <Consultant>, people: <Name and name>, rate: 80, m1: 20, m2: 60, m3: 100, m4: 100, m5: 60, m6: 20, plan: 360}
+      - {role: <Analyst or trainer>, people: <Name>, rate: 60, m1: 20, m2: 30, m3: 30, m4: 30, m5: 30, m6: 20, plan: 160}
+
+  - name: Monthly
+    kind: table
+    title: Hours and cost by month
+    subtitle: Each month reads the Hours tab, so it moves with any change there.
+    columns:
+      - {key: month, header: Month, width: 14}
+      - {key: hours, header: Hours, format: hours, decimals: 0, total: sum, width: 12}
+      - {key: share, header: Share, format: percent, decimals: 0, formula: "=[@hours]/[#hours]", total: formula, width: 10}
+    rows:
+      - {month: <Month 1>, hours: "=[Hours!#m1]"}
+      - {month: <Month 2>, hours: "=[Hours!#m2]"}
+      - {month: <Month 3>, hours: "=[Hours!#m3]"}
+      - {month: <Month 4>, hours: "=[Hours!#m4]"}
+      - {month: <Month 5>, hours: "=[Hours!#m5]"}
+      - {month: <Month 6>, hours: "=[Hours!#m6]"}

@@ -1,0 +1,67 @@
+# Discovery notes: internal record of the discovery meetings (pain and metrics, the process, technical and approval needs), feeding the design workshop.
+#
+# One section per meeting, newest last, then what we now know at the top so a reader can stop
+# after page one. Every finding says which meeting it came from. Numbers are the buyer's, with
+# "about" where they estimated. The open questions feed the workshop agenda.
+document: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+page_numbers: x_of_y
+footer: "{{CLIENT}}  ·  Discovery notes  ·  Internal"
+cover:
+  layout: plain
+  title: "{{CLIENT}} discovery, meetings 1 to 3"
+  subtitle: <The finding that sizes the deal, and the one that shapes the design.>
+  byline: "<Meeting dates>  ·  <Our attendees>  ·  For the design workshop on <date>"
+body:
+  - h1: What we now know
+  - table:
+      head: ['', Finding, Heard in]
+      widths: [0.3, 5.0, 1.2]
+      key: false
+      rows:
+        - ['1', "<The time or cost of the problem today, in their numbers.>", Discovery 1]
+        - ['2', <The people or FTE it consumes.>, Discovery 1]
+        - ['3', <The part of the process that matters most.>, Discovery 2]
+        - ['4', <A check nobody makes today.>, Discovery 2]
+        - ['5', <How they will test and approve the system.>, Discovery 3]
+        - ['6', <A system it must connect to.>, Discovery 3]
+        - ['7', "<Security, sign-on or hosting requirement.>", Discovery 3]
+
+  - h1: "Discovery 1: pain and metrics"
+  - p: "**<Date>.** <Their attendees with titles>. <Our attendees>."
+  - bullets:
+      - <A recent example walked through step by step, with how long it took.>
+      - <Where the time goes: doing, waiting or redoing.>
+      - <The cost they put on it.>
+      - <The target they set.>
+      - <The alternative they have priced, such as building it themselves.>
+  - callout: {label: "Metric agreed:", text: <The success measure in one sentence.>}
+
+  - h1: "Discovery 2: the process"
+  - p: "**<Date>.** <Attendees>."
+  - bullets:
+      - <The record that matters, and the fields that identify it.>
+      - <Where names, codes or formats do not match between parties.>
+      - <What each party sends, how and how often.>
+      - <The checks they want before a person sees the data.>
+      - <Which party or feed is the priority.>
+
+  - h1: "Discovery 3: technical and approval"
+  - p: "**<Date>.** <Attendees>."
+  - bullets:
+      - <How they validate or approve new systems, under which procedure.>
+      - <Audit, signature or record-keeping requirements.>
+      - <Sign-on, hosting and integration requirements.>
+      - <Security review: questionnaire, timing, who sends it.>
+      - <Historical data they want brought in.>
+
+  - h1: Open questions for the design workshop
+  - numbered:
+      - <A question for a third party, and who to ask.>
+      - <A question that sets the testing or approval effort.>
+      - <A question about volume or growth that sets the tier or size.>
+      - <A question about how acceptance will be run.>
+
+  - h1: Where the deal stands
+  - p: <Stage now, who agreed to the next step and its date, and the decision process as we now understand it.>

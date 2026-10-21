@@ -1,0 +1,81 @@
+# RACI matrix with stakeholder register: who is responsible, accountable, consulted and informed for each activity, a check for exactly one A per row, and each stakeholder's influence, interest and approach.
+#
+# Columns are roles (not names) on both sides; the stakeholder register maps names to roles. Blue
+# cells are inputs. The Check column reads OK only when a row has exactly one A (R/A counts as
+# one). Approach is a formula from influence and interest. Rename the role columns to suit.
+workbook: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+sheets:
+  - name: Summary
+    kind: summary
+    eyebrow: "{{CLIENT}}  ·  RACI"
+    title: Every activity has exactly one accountable owner
+    subtitle: The Check column on the RACI tab tests each row. Fix any row that does not read OK.
+    metrics:
+      - {label: Activities, value: "=COUNTA([RACI!activity])", format: int, note: Rows on the RACI tab}
+      - {label: Rows to fix, value: '=COUNTIF([RACI!check],"Fix")', format: int, note: Not exactly one A}
+      - {label: Stakeholders, value: "=COUNTA([Stakeholders!name])", format: int, note: On the register}
+      - {label: Manage closely, value: '=COUNTIF([Stakeholders!approach],"Manage closely")', format: int, note: High influence and interest}
+    table:
+      columns:
+        - {key: letter, header: Letter, width: 9}
+        - {key: meaning, header: Meaning, width: 60}
+      rows:
+        - {letter: R, meaning: Responsible. Does the work.}
+        - {letter: A, meaning: Accountable. Answers for it and signs it off. Exactly one per activity.}
+        - {letter: C, meaning: Consulted. Asked before the work is done.}
+        - {letter: I, meaning: Informed. Told after it is done.}
+    contents: true
+
+  - name: RACI
+    kind: table
+    title: RACI matrix
+    subtitle: "R responsible, A accountable, C consulted, I informed. Check flags any row without exactly one A."
+    landscape: true
+    columns:
+      - {key: activity, header: Activity, width: 34, wrap: true}
+      - {key: phase, header: Phase, width: 8, align: center}
+      - {key: our_pm, header: Our PM, width: 9, align: center, input: true}
+      - {key: our_arch, header: Our architect, width: 10, align: center, input: true}
+      - {key: our_team, header: Our team, width: 9, align: center, input: true}
+      - {key: sponsor, header: Their sponsor, width: 10, align: center, input: true}
+      - {key: owner, header: Their owner, width: 10, align: center, input: true}
+      - {key: their_it, header: Their IT, width: 9, align: center, input: true}
+      - {key: their_qa, header: Their QA, width: 9, align: center, input: true}
+      - key: check
+        header: Check
+        width: 8
+        align: center
+        formula: '=IF(ISNUMBER(SEARCH("A",[@our_pm]))+ISNUMBER(SEARCH("A",[@our_arch]))+ISNUMBER(SEARCH("A",[@our_team]))+ISNUMBER(SEARCH("A",[@sponsor]))+ISNUMBER(SEARCH("A",[@owner]))+ISNUMBER(SEARCH("A",[@their_it]))+ISNUMBER(SEARCH("A",[@their_qa]))=1,"OK","Fix")'
+    totals: false
+    rows:
+      - {activity: Project plan and RAID log, phase: P1, our_pm: R/A, our_arch: C, our_team: I, sponsor: I, owner: C, their_it: I, their_qa: I}
+      - {activity: Requirements, phase: P2, our_pm: C, our_arch: R, our_team: C, sponsor: I, owner: A, their_it: C, their_qa: C}
+      - {activity: Solution design sign-off, phase: P2, our_pm: C, our_arch: R, our_team: I, sponsor: I, owner: A, their_it: C, their_qa: C}
+      - {activity: Configuration and integrations, phase: P3, our_pm: A, our_arch: C, our_team: R, sponsor: I, owner: I, their_it: C, their_qa: I}
+      - {activity: Test approval, phase: P4, our_pm: C, our_arch: C, our_team: R, sponsor: I, owner: C, their_it: I, their_qa: A}
+      - {activity: Go-live decision, phase: P5, our_pm: R, our_arch: C, our_team: I, sponsor: A, owner: R, their_it: C, their_qa: C}
+      - {activity: Change orders, phase: All, our_pm: R, our_arch: C, our_team: I, sponsor: A, owner: C, their_it: I, their_qa: I}
+
+  - name: Stakeholders
+    kind: table
+    title: Stakeholder register
+    subtitle: Influence and interest set how closely each person is managed. Blue cells are reviewed at each steering committee.
+    landscape: true
+    columns:
+      - {key: name, header: Name, width: 20}
+      - {key: org, header: Organization, width: 16}
+      - {key: title, header: Title, width: 26, wrap: true}
+      - {key: role, header: Project role, width: 24, wrap: true}
+      - {key: raci, header: RACI column, width: 14}
+      - {key: influence, header: Influence, width: 10, input: true}
+      - {key: interest, header: Interest, width: 9, input: true}
+      - {key: approach, header: Approach, formula: '=IF(AND([@influence]="High",[@interest]="High"),"Manage closely",IF([@influence]="High","Keep satisfied",IF([@interest]="High","Keep informed","Monitor")))', width: 15}
+      - {key: channel, header: Channel and cadence, width: 24, wrap: true, input: true}
+    rows:
+      - {name: <Name>, org: "{{CLIENT}}", title: <Title>, role: Executive sponsor, raci: Their sponsor, influence: High, interest: High, channel: <Monthly steering>}
+      - {name: <Name>, org: "{{CLIENT}}", title: <Title>, role: Business owner, raci: Their owner, influence: High, interest: High, channel: <Weekly status>}
+      - {name: <Name>, org: "{{CLIENT}}", title: <Title>, role: <Technical owner>, raci: Their IT, influence: Medium, interest: High, channel: <Working sessions>}
+      - {name: <Name>, org: "{{CLIENT}}", title: <Title>, role: <Approver>, raci: Their QA, influence: High, interest: Medium, channel: <Protocol reviews>}
+      - {name: <Name>, org: <Our company>, title: <Title>, role: Project manager, raci: Our PM, influence: Medium, interest: High, channel: <Daily>}

@@ -1,0 +1,29 @@
+# Process flow: a branded flowchart of how a piece of work moves step by step, with decisions, loops back and optional paths, as a Mermaid diagram.
+#
+# Group steps into phases with subgraphs, in the order they happen. Decisions are {diamonds} with
+# labeled yes and no paths; the step that matters most is :::primary, optional paths are dashed
+# (-.->) and :::muted. For swimlanes by team, use the `sv diagram` engine instead (diagram.py).
+mermaid: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+title: <How a request becomes delivered work>
+subtitle: <The steps every request passes through, and where it can loop back.>
+source: |
+  flowchart TB
+    subgraph P1 ["#lt;Phase 1#gt;"]
+      direction LR
+      a(["#lt;Start event#gt;"]) --> b["#lt;Step#gt;"]
+      b --> c["#lt;Step#gt;"]
+      c --> d{"#lt;Decision?#gt;"}
+      d -- no --> b
+      c -.-> x["#lt;Optional step#gt;"]:::muted
+      x -.-> d
+    end
+    subgraph P2 ["#lt;Phase 2#gt;"]
+      direction LR
+      e["#lt;Approval#gt;"]:::primary --> f["#lt;Step#gt;"]:::accent
+      f --> g["#lt;Step#gt;"]
+      g --> h(["#lt;End event#gt;"]):::primary
+    end
+    P1 -- "#lt;Gate passed#gt;" --> P2
+caption: The dashed path is optional; <what re-enters where>.

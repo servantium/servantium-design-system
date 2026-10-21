@@ -1,0 +1,58 @@
+# RAID log: risks, assumptions, issues and decisions with owners, impact x likelihood scores, next review dates and an overdue flag, plus live counts.
+#
+# One row per item with a stable ID (R1, A1, I1, D1) that status reports and steering decks cite.
+# Blue cells are inputs. Score is impact x likelihood (1 to 5 each); Overdue flags open items past
+# their review date. Close items, never delete them. Sample rows are placeholders.
+workbook: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+sheets:
+  - name: Summary
+    kind: summary
+    eyebrow: "{{CLIENT}}  ·  RAID log"
+    title: <How many items are open, and the one that matters>
+    subtitle: Status as of <date>. Counts are live formulas over the RAID tab.
+    metrics:
+      - {label: Open, value: '=COUNTIF([RAID!state],"Open")', format: int, note: All types}
+      - {label: High score, value: '=COUNTIFS([RAID!state],"Open",[RAID!score],">=15")', format: int, note: Score 15 or more}
+      - {label: Overdue, value: '=COUNTIF([RAID!overdue],"Yes")', format: int, note: Past next review}
+      - {label: Closed, value: '=COUNTIF([RAID!state],"Closed")', format: int, note: Kept for the record}
+    table:
+      columns:
+        - {key: type, header: Type, width: 22}
+        - {key: open, header: Open, format: int, formula: '=COUNTIFS([RAID!type],[@type],[RAID!state],"Open")', total: sum}
+        - {key: closed, header: Closed, format: int, formula: '=COUNTIFS([RAID!type],[@type],[RAID!state],"Closed")', total: sum}
+        - {key: total, header: Total, format: int, formula: '=[@open]+[@closed]', total: sum}
+      rows:
+        - {type: Risk}
+        - {type: Assumption}
+        - {type: Issue}
+        - {type: Decision}
+    notes:
+      - Score is impact times likelihood, each 1 (low) to 5 (high). Review anything 15 or more at steering.
+    contents: true
+
+  - name: RAID
+    kind: table
+    title: Risks, assumptions, issues and decisions
+    subtitle: Blue cells are inputs. Score and the overdue flag are formulas.
+    landscape: true
+    columns:
+      - {key: id, header: ID, width: 6}
+      - {key: type, header: Type, width: 11, input: true}
+      - {key: title, header: Item, width: 42, wrap: true, input: true}
+      - {key: raised, header: Raised, format: date, width: 11, input: true}
+      - {key: owner, header: Owner, width: 16, input: true}
+      - {key: impact, header: Impact, format: int, input: true, width: 8, align: center}
+      - {key: likelihood, header: Likelihood, format: int, input: true, width: 10, align: center}
+      - {key: score, header: Score, format: int, formula: '=IF(OR([@impact]="",[@likelihood]=""),"",[@impact]*[@likelihood])', width: 7, align: center}
+      - {key: response, header: Response or resolution, width: 42, wrap: true, input: true}
+      - {key: state, header: State, width: 8, input: true}
+      - {key: review, header: Next review, format: date, input: true, width: 11}
+      - {key: overdue, header: Overdue, formula: '=IF(AND([@state]="Open",N([@review])>0,[@review]<TODAY()),"Yes","")', width: 9, align: center}
+    rows:
+      - {id: R1, type: Risk, title: <What could happen and what it would do to the date or cost>, raised: 2027-01-04, owner: <Name>, impact: 4, likelihood: 3, response: <Mitigation and its due date>, state: Open, review: 2027-02-01}
+      - {id: R2, type: Risk, title: <What could happen>, raised: 2027-01-04, owner: <Name>, impact: 3, likelihood: 2, response: <Mitigation>, state: Open, review: 2027-02-15}
+      - {id: A1, type: Assumption, title: <What the plan assumes>, raised: 2027-01-04, owner: <Name>, response: <How and when it is confirmed>, state: Open, review: 2027-01-25}
+      - {id: I1, type: Issue, title: <What has happened>, raised: 2027-01-18, owner: <Name>, impact: 5, likelihood: 5, response: <Resolution and its due date>, state: Open, review: 2027-01-22}
+      - {id: D1, type: Decision, title: <What was decided>, raised: 2027-01-11, owner: <Name>, response: <Who decided and where it is recorded>, state: Closed}

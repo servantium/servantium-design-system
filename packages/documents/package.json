@@ -1,0 +1,13 @@
+{
+  "name": "@servantium/documents",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Servantium decks, documents and workbooks. Python engine; npm scripts are thin wrappers so the monorepo can drive it.",
+  "scripts": {
+    "tokens": "python3 scripts/sync_tokens.py",
+    "setup": "python3 -m venv .venv && .venv/bin/pip install -q -e . pytest && python3 scripts/fetch_icon_fonts.py && .venv/bin/sv templates",
+    "templates": ".venv/bin/sv templates",
+    "test": ".venv/bin/python -m pytest -q tests",
+    "icons": "python3 scripts/fetch_icon_fonts.py"
+  }
+}

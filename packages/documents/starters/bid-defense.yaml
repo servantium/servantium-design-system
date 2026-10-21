@@ -1,0 +1,156 @@
+# Bid defense deck: a shortlisted bid presented back to the evaluation team, built around the questions they sent.
+#
+# STORYBOARD (each question the buyer sent gets its own slide)
+#  1 cover      <Your project, run by the people in this room>   meta: the meeting date
+#  2 table      Agenda                                           timed, who presents each part
+#  3 questions  Their questions set today's agenda               question, who asked, where answered
+#  4 zoom       Answer to question 1                             the technical risk, magnified
+#  5 gantt      Answer to question 2                             capacity against their window
+#  6 chain      Answer to question 3                             one record from receipt to report
+#  7 flow       How results reach them                           inputs, our review, the output
+#  8 panels     The two leads they would work with               exactly two + a band
+#  9 questions  Questions for you                                what would let us move on price
+# 10 closing    Best and final by <date>                         dated asks
+#
+# Rules: answer in their terms and their order. Commercial discussion goes last and puts no new
+# number on the table; listen for what moves the price. Setbacks are stated once, plainly.
+deck: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+# prepared_for: {name: {{CLIENT}}, logo: client-logo.png}
+slides:
+  - cover:
+      eyebrow: "{{CLIENT}}  ·  Bid defense"
+      title: <Your project, run by the team in this room>
+      subtitle: <The topics their questions cover, in one line.>
+      meta: <Meeting date, e.g. Wednesday, December 3>
+      notes: |
+        Welcome by name. Say that everyone on our side works on the project if we win it.
+
+  - content:
+      eyebrow: <Length, e.g. two hours>
+      title: Agenda
+      body:
+        - table:
+            head: [Time, Topic, Who]
+            widths: [1.8, 6.4, 3.6]
+            rows:
+              - ["<0:00>", Welcome and your questions, <Presenter>]
+              - ["<0:15>", <Question 1 topic>, <Presenter>]
+              - ["<0:45>", <Question 2 topic>, <Presenter>]
+              - ["<1:00>", <Question 3 topic>, <Presenter>]
+              - ["<1:30>", Commercial questions and next steps, <Presenter>]
+      notes: |
+        If the buyer asked for commercials last, keep them last.
+
+  - content:
+      eyebrow: Why we are here
+      title: <Your questions set today's agenda>
+      body:
+        - questions:
+            items:
+              - {q: "<Question 1, in their words>", why: "<Asked by; answered on slide 4>"}
+              - {q: "<Question 2, in their words>", why: "<Asked by; answered on slide 5>"}
+              - {q: "<Question 3, in their words>", why: "<Asked by; answered on slide 6>"}
+            note: <How many written clarifications we answered, and how fast.>
+      notes: |
+        Read their questions back exactly as written. Check them off as you go.
+
+  - content:
+      eyebrow: <Question 1 topic>
+      title: <The risk in question 1 is settled before it bites>
+      body:
+        - zoom:
+            steps: [<Stage 1>, <Stage 2>, <Stage 3>, <Stage 4>, <Stage 5>]
+            active: 2
+            title: <What we test and when>
+            meta: <Before which date>
+            rows:
+              - {key: "1", title: <What we measure>, text: <Why it matters>}
+              - {key: "2", title: <What we compare it with>, text: <Their number>}
+              - {key: "3", title: <The fallback held ready>, text: <What it costs if needed>}
+              - {key: "4", title: Decision, text: "<Agreed with whom, by when>"}
+      notes: |
+        Name the risk before they do. Say what it costs if the fallback is needed.
+
+  - content:
+      eyebrow: <Question 2 topic>
+      title: <Capacity is held for your peak>
+      body:
+        - gantt:
+            periods: [<Q1>, <Q2>, <Q3>, <Q4>, <Q5>, <Q6>]
+            rows:
+              - {name: "<Their workload, part 1>", bars: [{from: 1, to: 2, label: <Volume>}]}
+              - {name: "<Their workload, part 2>", bars: [{from: 3, to: 4, label: <Peak load>, tone: forest}]}
+              - {name: <Capacity we reserve>, bars: [{from: 3, to: 4, label: <Reserved for this project>, tone: amber}]}
+              - {name: "<Their workload, part 3>", bars: [{from: 4, to: 6, label: <Volume>, tone: mint}]}
+      notes: |
+        Say how capacity was checked against their schedule, and how often it is re-checked.
+
+  - content:
+      eyebrow: <Question 3 topic>
+      title: <Your audit finds one record for every item>
+      body:
+        - chain:
+            - {icon: inventory_2, title: <Receipt>, text: <Logged where>}
+            - {icon: fact_check, title: <Work>, text: <Recorded with an audit trail>}
+            - {icon: verified, title: <Review>, text: <Who reviews>}
+            - {icon: description, title: <Report>, text: <Who signs>}
+        - takeaway: {lead: "<The quality claim you can prove.>", text: "<Where the record lives.>"}
+      notes: |
+        A fact nobody can dispute beats a statistic that invites a rebuttal.
+
+  - content:
+      eyebrow: Data
+      title: <Results reach you on one schedule>
+      body:
+        - flow:
+            inputs:
+              - {icon: database, title: <Source 1>, meta: <What it carries>}
+              - {icon: science, title: <Source 2>, meta: <What it carries>}
+            node: {title: <Our review>, verb: checks and transfers}
+            output:
+              label: <To whom>
+              title: <The deliverable format>
+              rows:
+                - {key: First, text: <A test transfer before live data>}
+                - {key: Cadence, text: <How often>}
+                - {key: Option, text: <What could change the cadence>}
+      notes: |
+        If a cadence choice would change the price, say so here and come back to it on slide 9.
+
+  - content:
+      eyebrow: Team
+      title: <You meet both leads today>
+      body:
+        - panels:
+            - {icon: user, title: <Lead 1 name>, tag: <Area>, lines: [<Title>, <What they own>]}
+            - {icon: user, title: <Lead 2 name>, tag: <Area>, lines: [<Title>, <What they own>]}
+        - band: {heading: With them, lead: "<Your project manager.>", text: "<Weekly call, monthly report.>"}
+      notes: |
+        Short bios in the notes: start year, what they have run. Facts, not praise.
+
+  - content:
+      eyebrow: Commercials
+      title: Questions for you
+      body:
+        - questions:
+            items:
+              - {q: "<A choice that would remove cost>", why: <What it removes>}
+              - {q: "<A term that would lower the fixed fee>", why: <Why it matters to us>}
+              - {q: "<Is the volume firm enough to commit?>", why: <A volume price needs counts>}
+            note: <Your answers shape the best and final on date.>
+      notes: |
+        Listen for how firm the volumes are. Don't put a new number on the table today.
+
+  - closing:
+      title: <Best and final by date>
+      asks:
+        - <Confirm a choice by date>
+        - <Send a number we need>
+        - <Name the audit or review dates>
+        - <Award by date for a kickoff on date>
+      cta: <Confirm the choice>
+      notes: |
+        Say when the best and final arrives and that every change from the last quote is listed
+        line by line.

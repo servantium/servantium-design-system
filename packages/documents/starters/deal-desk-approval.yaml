@@ -1,0 +1,83 @@
+# Deal desk approval: the internal record that a quote's price, terms and concessions were checked against the approval matrix and margin floor, and who approved them.
+#
+# The subtitle is the decision. Each concession is a line with its value; each rule in the
+# approval matrix shows the deal's value against it and who approved. Margin is shown against the
+# floor. Approvals made by email are attached to the CRM deal and named here. Placeholders throughout.
+document: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+footer: "{{CLIENT}}  ·  Deal desk approval  ·  Internal"
+cover:
+  layout: plain
+  title: "Deal desk approval, {{CLIENT}}"
+  subtitle: "<Approved, or approved with conditions: the term and value, and the margin against the floor.>"
+  byline: "<DD number>  ·  <Date>  ·  <Deal desk owner>"
+body:
+  - h1: The request
+  - p: <Who asks to send which quote, what changed from the last version, and why the customer asked for it.>
+  - table:
+      head: ['', Last quote, Requested, Change]
+      widths: [2.2, 1.45, 1.45, 1.4]
+      money: [1, 2, 3]
+      rows:
+        - ["Recurring, year 1", 70000, 65000, -5000]
+        - [Professional services, 110000, 100000, -10000]
+      foot:
+        - [Year 1 total, 180000, 165000, -15000]
+
+  - h1: What changes, line by line
+  - table:
+      head: [Concession, Lines, Year 1 value]
+      widths: [3.6, 1.6, 1.3]
+      money: [2]
+      rows:
+        - [<Discount on the platform for a longer term>, <S-01>, 5000]
+        - [<Services discount>, <P1 to P5>, 8000]
+        - ["<Concession, e.g. support at half rate>", <P6>, 2000]
+      foot:
+        - [Total concessions, '', 15000]
+
+  - h1: Checks against the approval matrix
+  - table:
+      head: [Rule, This deal, Approver, Status]
+      widths: [2.0, 2.2, 1.4, 0.9]
+      rag: [3]
+      size: 9.5
+      rows:
+        - [<Recurring discount up to N%>, <N% on S-01>, <Name and role>, Accepted]
+        - [<Services discount up to N%>, <N% across P1 to P5>, <Name and role>, Accepted]
+        - [<Any package discount over N%>, <P6 at N%>, <Name and role>, Accepted]
+        - [<Multi-year term>, <N years with N% uplift cap>, <Name and role>, Accepted]
+        - [<Services margin above floor>, <N% against N%>, <Name and role>, Accepted]
+  - p: <Who approved what, how (email, CRM), and where the record is.>
+
+  - h1: Margin
+  - table:
+      head: ['', Price, Cost, Margin, Floor]
+      widths: [2.0, 1.25, 1.25, 1.0, 1.0]
+      money: [1, 2]
+      rows:
+        - [Professional services, 100000, 62000, 38.0%, 35.0%]
+        - [Recurring, 65000, 13000, 80.0%, 70.0%]
+      foot:
+        - [Blended, 165000, 75000, 54.5%, '']
+
+  - h1: Term and contract value
+  - table:
+      head: [Year, Recurring, Services, Total]
+      widths: [1.6, 1.8, 1.8, 1.8]
+      money: [1, 2, 3]
+      rows:
+        - [Year 1, 65000, 100000, 165000]
+        - [Year 2, 68250, 0, 68250]
+        - [Year 3, 71662.50, 0, 71662.50]
+      foot:
+        - [Total contract value, 204912.50, 100000, 304912.50]
+
+  - h1: Decision
+  - callout: {label: "Approved:", text: "<What is approved, any condition, and how long the approval holds.>"}
+  - signature:
+      intro: Approved by the deal desk and the approvers the matrix requires.
+      parties:
+        - {name: '<Deal desk>', title: ''}
+        - {name: '<Approver>', title: ''}
