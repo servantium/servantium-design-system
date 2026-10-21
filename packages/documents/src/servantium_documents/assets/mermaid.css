@@ -1,0 +1,12 @@
+/* Puppeteer's Chromium will not resolve "Source Sans 3" by family name alone, so
+   the local variable font is declared explicitly. Without this the whole diagram
+   falls back to a serif and stops matching the deck. */
+@font-face {
+  font-family: 'Source Sans 3';
+  src: url('file:///Users/christopherveale/Library/Fonts/SourceSans3[wght].ttf') format('truetype-variations');
+  font-weight: 200 900;
+  font-style: normal;
+}
+svg, svg text, .messageText, .labelText, .noteText, .actor, .sequenceNumber {
+  font-family: 'Source Sans 3', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+}

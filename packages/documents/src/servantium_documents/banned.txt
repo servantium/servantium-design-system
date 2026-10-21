@@ -1,0 +1,102 @@
+# Phrases that mark writing as machine-made. One per line: phrase | what to do instead.
+# The AIISM check makes these errors on a slide and warnings in the notes.
+# Grow this list from real corrections; say which correction added a line in LEARNINGS.md.
+quietly | Cut it. Say what happened.
+seamless | Say what connects to what.
+seamlessly | Say what connects to what.
+robust | Name the property: tested, reconciled, audited.
+leverage | Use "use".
+unlock | Say what they can now do.
+unleash | Say what they can now do.
+delve | Cut it.
+elevate | Say what improves, and by how much.
+empower | Say what they can now do.
+streamline | Say which step goes away.
+game-changer | Cut it; show the change.
+game changer | Cut it; show the change.
+cutting-edge | Cut it.
+holistic | Name the parts.
+synergy | Name the two things and what they do together.
+tapestry | Cut it.
+landscape | Name the market or the competitors.
+navigate | Say what they decide or handle.
+at its core | Cut it.
+in today's | Cut it.
+it's not just | Make the claim directly.
+supercharge | Say what gets faster.
+effortless | Say what step goes away.
+revolutionize | Say what changes.
+transformative | Say what changes.
+the score | Name it: Engagement Score.
+harness | Use "use".
+pivotal | Cut it.
+foster | Say what you do.
+ever-evolving | Cut it.
+a testament to | Cut it.
+plays a vital role | Say what it does.
+
+# From the voice guide (built from the blog), 2026-09-29
+leveraging | using
+empowering | say what they can now do
+game-changing | name the change
+synergies | say what the two do together
+journey | name the stages
+not just | say the one thing it is
+whether you're | name the segment
+effortlessly | say what they no longer do
+crucial | cut it, or say why it matters
+boasts | has
+dive into | look at, walk through
+deep dive | walkthrough, or name what is covered
+stands as | is
+serves as | is
+imagine | open on a real moment instead
+in the world of | cut it
+the bottom line | cut it; state the conclusion
+the future of | say what changes and when
+fast-paced | cut it
+best-in-class | name the comparison
+world-class | name the comparison
+state-of-the-art | name the thing
+next-generation | name the thing
+mission-critical | say what breaks without it
+end-to-end | from the quote to the kickoff, or name both ends
+paradigm | cut it
+ecosystem | name the tools
+actionable insights | name the decision it informs
+friction | name the step that fails; the wedge word is "cannot"
+institutional intelligence | institutional memory
+compounding advantage | say what gets better next time
+substrate | the record, the data
+legible | visible
+load-bearing | say why it matters
+operator stack | name the tools
+unit of truth | the record
+theatre | theater, or cut it
+moreover | cut it
+furthermore | cut it
+in conclusion | cut it; end on the next step
+key takeaways | state the takeaway
+we'd love to | we will, or ask the question
+happy to | we will
+feel free to | cut it
+don't hesitate | cut it
+your call | ask the question and stop
+it's your call | ask the question and stop
+at your convenience | name a date
+just wanted to | cut it
+hope this helps | cut it
+circle back | follow up on a named date
+touch base | meet, call
+start with $ | "Phase 1: $30k to $50k," framed as what it buys
+# From the second round of deck review, 2026-09-30
+the short version | cut the slide; a deck is an argument, not a summary
+tl;dr | cut the slide
+executive summary | cut the slide; the argument carries itself
+on one record | say what happens: the quote becomes the plan
+sit on the record | say how the steps build on each other
+sits on the record | say how the steps build on each other
+firms | teams
+firm's | team's
+set the scope | say what you need from them
+# "agentic" removed 2026-09-30: Christopher uses it for the product ("agentic framework").

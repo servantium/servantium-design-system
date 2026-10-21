@@ -1,0 +1,113 @@
+# Quote: the priced offer (summary at list vs quoted, recurring lines with discounts, services by phase, term schedule and billing milestones), all live formulas.
+#
+# Blue cells are inputs (qty, list price, discount, hours, rates, milestone shares). Every amount,
+# saving and milestone value is a formula, so the quote foots by construction. Version the file
+# (v1, v2) rather than editing a sent quote. Sample numbers are placeholders.
+workbook: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+prepared_for: <Name, title>
+prepared_by: <Account executive>
+sheets:
+  - name: Quote
+    kind: summary
+    eyebrow: "{{CLIENT}}  ·  Quote <version>  ·  Valid until <date>"
+    title: <What is offered, and the term>
+    subtitle: <Tier, scope and term in one line.>
+    metrics:
+      - {label: Year 1 total, value: "=[Recurring!#ext]+[Services!#price]", format: currency, decimals: 0, note: Recurring plus services}
+      - {label: Recurring, value: "=[Recurring!#ext]", format: currency, decimals: 0, note: Billed annually in advance}
+      - {label: Services, value: "=[Services!#price]", format: currency, decimals: 0, note: Fixed fee by milestone}
+      - {label: Contract value, value: "=[Term!#total]", format: currency, decimals: 0, note: Whole term}
+    table:
+      columns:
+        - {key: part, header: Part, width: 30}
+        - {key: list, header: At list, format: currency, decimals: 2, total: sum, width: 16}
+        - {key: quoted, header: Quoted, format: currency, decimals: 2, total: sum, width: 16}
+        - {key: saving, header: Saving, format: currency, decimals: 2, formula: "=[@list]-[@quoted]", total: sum, width: 15}
+        - {key: pct, header: Saving %, format: percent, decimals: 1, formula: "=IFERROR([@saving]/[@list],0)", total: formula, width: 11}
+      rows:
+        - {part: Recurring, list: "=[Recurring!#ext_list]", quoted: "=[Recurring!#ext]"}
+        - {part: Professional services, list: "=[Services!#ext_list]", quoted: "=[Services!#price]"}
+    notes:
+      - <Payment terms. Taxes and travel excluded.>
+      - <What the quote assumes; see the assumptions log.>
+    contents: true
+
+  - name: Recurring
+    kind: table
+    title: Recurring, year 1
+    subtitle: <Period. Who may use it.>
+    columns:
+      - {key: line, header: Line, width: 7}
+      - {key: sku, header: SKU, width: 12}
+      - {key: item, header: Item, width: 44, wrap: true}
+      - {key: qty, header: Qty, format: int, input: true, total: none, width: 6}
+      - {key: list, header: List price, format: currency, decimals: 2, input: true, total: none, width: 13}
+      - {key: ext_list, header: Extended list, format: currency, decimals: 2, formula: "=[@qty]*[@list]", total: sum, width: 14}
+      - {key: disc, header: "Disc. %", format: number, decimals: 0, input: true, total: none, width: 8}
+      - {key: ext, header: Amount, format: currency, decimals: 2, formula: "=[@qty]*[@list]*(1-[@disc]/100)", total: sum, width: 14}
+    rows:
+      - {line: S-01, sku: <SKU-001>, item: <Platform tier>, qty: 1, list: 50000, disc: 10}
+      - {line: S-02, sku: <SKU-002>, item: <Add-on per unit>, qty: 3, list: 5000, disc: 0}
+      - {line: S-03, sku: <SKU-003>, item: <Included item (waived)>, qty: 1, list: 5000, disc: 100}
+
+  - name: Services
+    kind: table
+    title: Professional services, fixed fee
+    subtitle: Hours are the plan behind the fixed fee.
+    landscape: true
+    columns:
+      - {key: line, header: Line, width: 7}
+      - {key: role, header: Role, width: 24, wrap: true}
+      - {key: scope, header: Scope, width: 40, wrap: true}
+      - {key: hours, header: Hours, format: int, input: true, total: sum, width: 7}
+      - {key: list, header: List rate, format: currency, decimals: 2, input: true, total: none, width: 11}
+      - {key: ext_list, header: At list, format: currency, decimals: 2, formula: "=[@hours]*[@list]", total: sum, width: 13}
+      - {key: disc, header: "Disc. %", format: number, decimals: 0, input: true, total: none, width: 8}
+      - {key: price, header: Fee, format: currency, decimals: 2, formula: "=[@hours]*[@list]*(1-[@disc]/100)", total: sum, width: 13}
+    groups:
+      - name: <P1 Initiate and design>
+        rows:
+          - {line: P1-01, role: <Engagement lead>, scope: <Kickoff and plan>, hours: 20, list: 250, disc: 5}
+          - {line: P1-02, role: <Solution architect>, scope: <Design>, hours: 60, list: 225, disc: 5}
+      - name: <P2 Build>
+        rows:
+          - {line: P2-01, role: <Consultant>, scope: <Configuration>, hours: 160, list: 175, disc: 5}
+          - {line: P2-02, role: <Integration engineer>, scope: <Connectors>, hours: 100, list: 200, disc: 5}
+      - name: <P3 Test and deploy>
+        rows:
+          - {line: P3-01, role: <Consultant>, scope: <Testing support>, hours: 60, list: 175, disc: 5}
+          - {line: P3-02, role: <Trainer>, scope: <Training>, hours: 30, list: 150, disc: 5}
+
+  - name: Term
+    kind: table
+    title: Term schedule
+    subtitle: Recurring invoiced each year in advance; later years at the uplift cap. Services fall in year 1.
+    columns:
+      - {key: year, header: Year, width: 10}
+      - {key: period, header: Period, width: 30}
+      - {key: recurring, header: Recurring, format: currency, decimals: 2, total: sum, width: 16}
+      - {key: services, header: Services, format: currency, decimals: 2, total: sum, width: 16}
+      - {key: total, header: Total, format: currency, decimals: 2, formula: "=[@recurring]+[@services]", total: sum, width: 16}
+    rows:
+      - {year: Year 1, period: <Dates>, recurring: "=[Recurring!#ext]", services: "=[Services!#price]"}
+      - {year: Year 2, period: <Dates>, recurring: "=[Recurring!#ext]*1.05", services: 0}
+      - {year: Year 3, period: <Dates>, recurring: "=[Recurring!#ext]*1.05*1.05", services: 0}
+
+  - name: Milestones
+    kind: table
+    title: Services billing milestones
+    subtitle: Each milestone is invoiced when the customer accepts it. Net 30.
+    columns:
+      - {key: m, header: Milestone, width: 11}
+      - {key: name, header: What is accepted, width: 40}
+      - {key: planned, header: Planned, format: date, input: true, width: 14}
+      - {key: pct, header: Share, format: percent, decimals: 0, input: true, total: sum, width: 9}
+      - {key: amount, header: Amount, format: currency, decimals: 2, formula: "=[@pct]*[Services!#price]", total: sum, width: 16}
+    rows:
+      - {m: M1, name: Kickoff and project plan, planned: 2027-04-05, pct: 0.2}
+      - {m: M2, name: Design signed off, planned: 2027-05-14, pct: 0.2}
+      - {m: M3, name: Build accepted, planned: 2027-07-02, pct: 0.25}
+      - {m: M4, name: Go-live, planned: 2027-08-02, pct: 0.2}
+      - {m: M5, name: Hypercare exit, planned: 2027-09-10, pct: 0.15}

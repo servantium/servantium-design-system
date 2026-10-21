@@ -1,0 +1,102 @@
+# Order form: the subscription order under a master agreement, with parties, term, priced SKUs, fees by year, services reference, billing, renewal and special terms.
+#
+# One order form per term. Line items, discounts and years 2 and 3 come from the signed quote:
+# bind them with data: rather than retyping. Special terms state every concession the deal desk
+# approved, so nothing lives only in an email. Sample numbers are placeholders.
+document: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+draft: Draft for review
+page_numbers: x_of_y
+footer: "Order Form <number>  ·  {{CLIENT}}  ·  Confidential"
+# prepared_for: {name: {{CLIENT}}, logo: client-logo.png}
+cover:
+  layout: plain
+  title: Order Form
+  subtitle: <The product, tier and term in one line.>
+  byline: "No. <order form number>  ·  <our legal name>  ·  <date>"
+body:
+  - p: This Order Form is made under the Master Agreement between the parties dated <date> (the "Agreement"). Terms defined in the Agreement have the same meaning here. Where this Order Form names a section of the Agreement it overrides, this Order Form governs.
+
+  - h2: 1  The parties
+  - table:
+      head: ['', Customer, Provider]
+      widths: [1.5, 2.75, 2.75]
+      rows:
+        - [Legal name, "<{{CLIENT}} legal name>", <Our legal name>]
+        - [Address, <Address>, <Address>]
+        - [Order contact, <Name and title>, <Name and title>]
+        - [Billing contact, <Name and title; portal if any>, <Name and title>]
+
+  - h2: 2  Order details
+  - table:
+      head: [Item, Detail]
+      widths: [2.0, 5.0]
+      rows:
+        - [Quote reference, <Quote version and date; opportunity ID>]
+        - [Subscription start, <Date>]
+        - [Subscription end, <Date>]
+        - [Initial term, <N years>]
+        - [Tier, <Tier and what it allows>]
+        - [Hosting region, <Region>]
+        - [Users, <Who may use it and any limits>]
+        - [Customer purchase order, <Issued before the first invoice and quoted on every invoice.>]
+
+  - h2: 3  Subscription, year 1
+  - p: Year 1 runs from <date> to <date>. Fees are annual and in US dollars.
+  - table:
+      head: [SKU, Subscription item, Qty, List per year, Disc., Net per year]
+      widths: [1.2, 2.55, 0.4, 1.05, 0.55, 1.15]
+      money: [3, 5]
+      center: [2, 4]
+      size: 9
+      rows:
+        - [<SKU-001>, <Platform tier>, '1', 50000, 10%, 45000]
+        - [<SKU-002>, <Add-on per unit>, '3', 5000, 0%, 15000]
+        - [<SKU-003>, <Add-on>, '1', 10000, 50%, 5000]
+        - [<SKU-004>, <Included item (waived)>, '1', 5000, 100%, 0]
+      foot:
+        - ['', Year 1 subscription fees, '', '', '', 65000]
+
+  - h2: 4  Subscription fees by year
+  - p: Years 2 and 3 apply the <N%> annual increase the Agreement allows. Provider invoices each year's fees on its first day.
+  - table:
+      head: [Subscription year, Period, Invoice date, Annual fee]
+      widths: [2.0, 2.4, 1.2, 1.4]
+      money: [3]
+      rows:
+        - [Year 1, <Dates>, <Date>, 65000]
+        - [Year 2, <Dates>, <Date>, 68250]
+        - [Year 3, <Dates>, <Date>, 71662.50]
+      foot:
+        - [Total subscription fees, '', '', 204912.50]
+
+  - h2: 5  Professional services
+  - p: Provider delivers the implementation under Statement of Work <number>, signed with this Order Form, for a fixed fee of $100,000.00 invoiced on milestones. Travel is billed at cost and capped at $0,000.
+
+  - h2: 6  Order summary
+  - table:
+      head: [Component, Basis, Amount]
+      widths: [2.4, 3.2, 1.4]
+      money: [2]
+      rows:
+        - [Subscription, "<Three years, annually in advance>", 204912.50]
+        - [Professional services, "<Fixed fee under the SOW, by milestone>", 100000]
+      foot:
+        - [Total contract value, Excludes expenses and taxes, 304912.50]
+
+  - h2: 7  Billing and renewal
+  - p: "**Invoicing.** Subscription fees are invoiced annually in advance. Professional services fees are invoiced as the SOW states."
+  - p: "**Payment.** Net thirty (30) days from the invoice date, in US dollars, quoting Customer's purchase order number."
+  - p: "**Renewal.** After the initial term, this Order Form renews for successive twelve (12) month terms unless either party gives notice at least <sixty (60)> days before the term ends. Renewal fees may increase by no more than <N%> over the prior year."
+  - p: "**Taxes.** Fees exclude applicable sales and use taxes, which Provider adds to invoices where required."
+
+  - h2: 8  Special terms
+  - p: "**<Price hold>.** <What Customer may add during the term, at what price.>"
+  - p: "**<Concession>.** <What was given, why, and what Customer does in return.>"
+
+  - signature:
+      intro: Signed by the parties' authorized representatives.
+      parties:
+        - {company: "<{{CLIENT}} legal name>", name: '', title: ''}
+        - {name: '', title: ''}

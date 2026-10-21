@@ -1,0 +1,42 @@
+# Lattica: FICTIONAL demo company (life-sciences SaaS). Not a real business.
+# Brand kit notes and usage rules: BRAND.md in this folder.
+id: lattica
+name: Lattica
+legal_name: Lattica, Inc.
+short: Lattica
+website: lattica.example
+address:
+  - 88 Seaport Boulevard, 6th Floor
+  - Boston, MA 02210
+voice: client
+colors:
+  primary:        '#4A48EE'   # Lattice Indigo: actions, the filled cells in the mark
+  primary_strong: '#3734D0'   # links, eyebrows
+  primary_soft:   '#BDBCFF'   # light indigo fills
+  dark:           '#0E1121'   # Midnight: dark grounds, headline ink
+  darker:         '#070913'   # deepest ground
+  tint:           '#EEEEFF'   # pale indigo panel fill
+  tint_soft:      '#F6F6FF'   # palest fill
+  ink:            '#10131F'
+  ink_soft:       '#2E3347'
+  muted:          '#626880'
+  line:           '#E1E3EC'
+  surface:        '#F4F5F9'
+  on_dark:        '#F2F3FA'
+  on_dark_muted:  '#A2A7BF'
+  accent_1:       '#12A2C4'   # signal cyan (the shared cell in the mark)
+  accent_2:       '#D6408C'   # magenta
+  accent_3:       '#EAA632'   # amber
+  accent_4:       '#2EA67C'   # teal green
+  danger:         '#D92D20'
+  warning:        '#C77A0A'
+  info:           '#0E86B0'
+fonts:
+  display: {family: Sora, file: 'Sora[wght].ttf', panose: '00000000000000000000', pitch: '34'}
+  body:    {family: Geist, file: 'Geist[wght].ttf', panose: '00000000000000000000', pitch: '34'}
+logos:
+  on_light: logo.png
+  on_dark: logo-white.png
+  mark_on_dark: symbol-white.png
+  mark_on_light: symbol.png
+footer: Lattica  ·  Confidential

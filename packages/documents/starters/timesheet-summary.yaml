@@ -1,0 +1,51 @@
+# Timesheet summary: actual hours against plan by role and by month, with variance, remaining hours and what drove each variance.
+#
+# Actuals come from timesheets at the cut-off, never from memory. Blue cells are inputs; variance,
+# variance %, remaining and the summary are formulas. Every month with a variance names its cause.
+workbook: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+sheets:
+  - name: Summary
+    kind: summary
+    eyebrow: "{{CLIENT}}  ·  Hours through <month>"
+    title: <Hours run N% over plan, and why>
+    subtitle: <The one or two causes of the variance.>
+    metrics:
+      - {label: Planned to date, value: "=[By role!#plan_td]", format: hours, decimals: 0, note: <From and to>}
+      - {label: Actual to date, value: "=[By role!#actual_td]", format: hours, decimals: 0, note: From timesheets}
+      - {label: Variance, value: "=[By role!#actual_td]/[By role!#plan_td]-1", format: percent, decimals: 1, note: Over or under plan}
+      - {label: Plan remaining, value: "=[By role!#total]-[By role!#actual_td]", format: hours, decimals: 0, note: To the end of the project}
+    contents: true
+
+  - name: By role
+    kind: table
+    title: Hours by role to date
+    subtitle: Blue cells are inputs. Variance is actual minus planned to date; remaining is the full plan minus actual.
+    columns:
+      - {key: role, header: Role, width: 28}
+      - {key: total, header: Full plan, format: int, input: true, total: sum, width: 11}
+      - {key: plan_td, header: Planned to date, format: int, input: true, total: sum, width: 13}
+      - {key: actual_td, header: Actual to date, format: int, input: true, total: sum, width: 13}
+      - {key: variance, header: Variance, format: int, formula: "=[@actual_td]-[@plan_td]", total: sum, width: 10}
+      - {key: variance_pct, header: Variance %, format: percent, decimals: 1, formula: "=IFERROR([@actual_td]/[@plan_td]-1,0)", total: formula, width: 11}
+      - {key: remaining, header: Remaining, format: int, formula: "=[@total]-[@actual_td]", total: sum, width: 11}
+    rows:
+      - {role: <Engagement lead>, total: 60, plan_td: 30, actual_td: 32}
+      - {role: <Solution architect>, total: 160, plan_td: 110, actual_td: 104}
+      - {role: <Consultant>, total: 360, plan_td: 180, actual_td: 205}
+      - {role: <Analyst or trainer>, total: 160, plan_td: 70, actual_td: 72}
+
+  - name: By month
+    kind: table
+    title: Hours by month, all roles
+    columns:
+      - {key: month, header: Month, width: 14}
+      - {key: plan, header: Planned, format: int, input: true, total: sum, width: 10}
+      - {key: actual, header: Actual, format: int, input: true, total: sum, width: 10}
+      - {key: variance, header: Variance, format: int, formula: "=[@actual]-[@plan]", total: sum, width: 10}
+      - {key: note, header: What drove it, width: 52, wrap: true, input: true}
+    rows:
+      - {month: <Month 1>, plan: 120, actual: 118, note: <On plan>}
+      - {month: <Month 2>, plan: 130, actual: 140, note: "<The cause, named>"}
+      - {month: <Month 3>, plan: 140, actual: 155, note: "<The cause, named>"}

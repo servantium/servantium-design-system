@@ -1,0 +1,42 @@
+# Merrow Therapeutics: FICTIONAL demo company (clinical-stage immunology biotech). Not a real business.
+# Brand kit notes and usage rules: BRAND.md in this folder.
+id: merrow
+name: Merrow Therapeutics
+legal_name: Merrow Therapeutics, Inc.
+short: Merrow
+website: merrow.example
+address:
+  - 400 Totten Pond Road
+  - Waltham, MA 02451
+voice: client
+colors:
+  primary:        '#0F6F8F'   # Harbor Teal: actions, highlights, the left arm of the mark
+  primary_strong: '#0B5872'   # links, eyebrows
+  primary_soft:   '#A3D3E2'   # light teal fills
+  dark:           '#0C2533'   # Deep Harbor: dark grounds, headline ink
+  darker:         '#06161F'   # deepest ground
+  tint:           '#E8F2F5'   # pale teal panel fill
+  tint_soft:      '#F4F9FA'   # palest fill
+  ink:            '#121C22'
+  ink_soft:       '#2F3D45'
+  muted:          '#5E6C74'
+  line:           '#DCE4E8'
+  surface:        '#F2F5F7'
+  on_dark:        '#EFF5F8'
+  on_dark_muted:  '#9DB3BF'
+  accent_1:       '#E3684A'   # coral (the right arm of the mark)
+  accent_2:       '#E3A533'   # saffron
+  accent_3:       '#8C5E96'   # mulberry
+  accent_4:       '#6E9E5A'   # leaf
+  danger:         '#C0362C'
+  warning:        '#B7791F'
+  info:           '#2F6FB0'
+fonts:
+  display: {family: Plus Jakarta Sans, file: 'PlusJakartaSans[wght].ttf', panose: '00000000000000000000', pitch: '34'}
+  body:    {family: Albert Sans, file: 'AlbertSans[wght].ttf', panose: '00000000000000000000', pitch: '34'}
+logos:
+  on_light: logo.png
+  on_dark: logo-white.png
+  mark_on_dark: symbol-white.png
+  mark_on_light: symbol.png
+footer: Merrow Therapeutics  ·  Confidential

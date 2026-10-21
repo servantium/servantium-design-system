@@ -1,0 +1,23 @@
+# A fictional twelve-week rollout plan as a Mermaid Gantt chart.
+# Build: .venv/bin/python -m servantium_documents.mermaid examples/mermaid-gantt.yaml
+mermaid: Rollout Plan
+client: Acme Labs
+date: 2026-10-20
+title: Twelve weeks from kickoff to the first live quote
+source: |
+  gantt
+    dateFormat YYYY-MM-DD
+    axisFormat %b %d
+    tickInterval 1week
+    section Discover
+      Kickoff and interviews      :done, d1, 2026-11-02, 1w
+      Discovery plan (D1)         :done, d2, after d1, 1w
+    section Configure
+      Rate cards and roles (D2)   :active, c1, 2026-11-16, 3w
+      Delivery templates (D3)     :c2, after c1, 2w
+    section Migrate
+      Migrate open quotes (D4)    :crit, m1, 2026-12-21, 2w
+    section Launch
+      Training                    :t1, 2027-01-04, 2w
+      First live quote (D5)       :milestone, t2, 2027-01-22, 0d
+caption: Figure 2. Migration is on the critical path; it needs the source files by December 16.

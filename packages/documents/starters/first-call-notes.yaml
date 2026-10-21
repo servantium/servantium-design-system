@@ -1,0 +1,62 @@
+# First call notes: internal notes from the first conversation with a prospect, what we heard, what they asked, a first MEDDPICC read and next steps.
+#
+# Internal document in our voice. Write it the same day. The subtitle is the one line a manager
+# would repeat: the pain, and why the timing is real. Quote the buyer once, in their own words.
+document: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+footer: "{{CLIENT}}  ·  First call notes  ·  Internal"
+cover:
+  layout: plain
+  title: "{{CLIENT}}, first call"
+  subtitle: <The pain in one sentence, and why the timing is real.>
+  byline: "<Date>  ·  <Video call or place, length>  ·  Notes by <Name>"
+body:
+  - table:
+      head: ['', Who]
+      widths: [1.2, 5.3]
+      rows:
+        - ["{{CLIENT}}", "<Name (Title)>, <Name (Title)>"]
+        - [Us, "<Name (Title)>, <Name (Title)>"]
+        - [How it came in, "<Referral, inbound form, event or outbound>"]
+
+  - h1: What we heard
+  - bullets:
+      - <What they do and the program or project that matters this year.>
+      - <How the work runs today, and who carries it.>
+      - <Where it breaks, with a number if they gave one.>
+      - <What happened last time this went wrong.>
+      - <What they want checked, faster or visible.>
+  - callout: {label: "In their words:", text: '"<A short quote from the buyer.>" (<Name>)'}
+
+  - h1: What they asked
+  - numbered:
+      - <Question 1, as they asked it.>
+      - <Question 2, as they asked it.>
+      - <Question 3, as they asked it.>
+  - p: <Which we answered on the call, and which we held for discovery and why.>
+
+  - h1: First read on MEDDPICC
+  - table:
+      head: [Field, What we know, Confidence]
+      widths: [1.4, 4.0, 1.1]
+      rows:
+        - [Metrics, <The number they would measure success by; or not yet>, "<Strong, Partial or Unknown>"]
+        - [Economic buyer, <Who owns the budget; signing threshold>, <Confidence>]
+        - [Decision criteria, <What they must see>, <Confidence>]
+        - [Decision process, <Who else will want a look>, <Confidence>]
+        - [Paper process, <Whose paper; procurement steps>, <Confidence>]
+        - [Identify pain, <Who owns the pain>, <Confidence>]
+        - [Champion, <Who asked for the next meeting>, <Confidence>]
+        - [Competition, "<Build it themselves, incumbent, other vendors>", <Confidence>]
+
+  - h1: Next steps
+  - table:
+      head: [Action, Owner, By]
+      widths: [4.0, 1.5, 1.0]
+      rows:
+        - [<Send the NDA so they can share detail>, <Name>, <Date>]
+        - [<Book discovery; add the people we have not met>, <Name>, <Date>]
+        - [<Send the demo recording or material promised>, <Name>, <Date>]
+        - [<Create the opportunity in the CRM; stage Discovery>, <Name>, <Date>]
+  - p: "**Opportunity:** <ID>, stage Discovery."

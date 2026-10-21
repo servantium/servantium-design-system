@@ -1,0 +1,94 @@
+# Training plan: who is trained on what, when and how, with sessions by role, materials, the evidence rule before access, missed sessions and support after go-live.
+#
+# Sessions are by role, not by feature. The rule that matters: nobody gets production access (or
+# signing rights) until their training record is filed. Dates come from the project plan.
+document: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+page_numbers: x_of_y
+footer: "Training plan  ·  {{CLIENT}}  ·  Confidential"
+# prepared_for: {name: {{CLIENT}}, logo: client-logo.png}
+cover:
+  eyebrow: "{{CLIENT}}  ·  <Project ID>  ·  Deploy"
+  title: Training plan for go-live
+  subtitle: <N role-based sessions in the weeks before go-live. Nobody works in production until their training record is filed.>
+  meta:
+    - [Project, <Project ID>]
+    - [Owner, <Trainer>]
+    - [Go-live, <Date>]
+body:
+  - h1: 1  Purpose
+  - p: <What this plan covers and what it does not.>
+
+  - h1: 2  How we train
+  - bullets:
+      - <Live sessions by role, on the test environment with realistic data.>
+      - <Hands-on exercises that mirror the first week of real work.>
+      - <Super users trained first, to support their teams.>
+  - callout: {label: "The rule:", text: "<No production access until the training record is filed.>"}
+
+  - h1: 3  Who is trained
+  - table:
+      head: [Role, Who, What they do, Signs]
+      widths: [1.6, 1.8, 2.6, 1.0]
+      rows:
+        - [<Role 1>, <Team and count>, <Tasks in the system>, <Yes or No>]
+        - [<Role 2>, <Team and count>, <Tasks in the system>, <Yes or No>]
+        - [<Role 3>, <Team and count>, <Tasks in the system>, <Yes or No>]
+        - [Administrator, <Names>, <Users and settings>, <No>]
+
+  - h1: 4  Schedule
+  - table:
+      head: [ID, Date, Time, Audience, Min, Seats]
+      widths: [0.6, 1.1, 1.1, 2.6, 0.6, 0.6]
+      size: 9.5
+      rows:
+        - [T1, <Date>, <Time>, <Role 1>, '90', '12']
+        - [T2, <Date>, <Time>, <Role 2>, '60', '10']
+        - [T3, <Date>, <Time>, <Role 3>, '60', '8']
+        - [T4, <Date>, <Time>, Administrators, '90', '4']
+        - [T5, <Date>, <Time>, Super users (train the trainer), '120', '6']
+
+  - h1: 5  What each role learns
+  - h3: <Role 1> (T1)
+  - bullets: [<Task they can do afterwards>, <Task>, <Task>]
+  - h3: <Role 2> (T2)
+  - bullets: [<Task>, <Task>]
+  - h3: Administrators (T4)
+  - bullets: [<Task>, <Task>]
+
+  - h1: 6  Materials
+  - table:
+      head: [Material, What it is, Owner, Ready by]
+      widths: [1.8, 2.8, 1.2, 1.2]
+      rows:
+        - [<Quick reference>, <One page per role>, <Name>, <Date>]
+        - [<Exercises>, <Scripted practice on test data>, <Name>, <Date>]
+        - [<Recordings>, <Each session recorded>, <Name>, <Date>]
+
+  - h1: 7  Evidence and access
+  - table:
+      head: [Step, Who, When]
+      widths: [3.6, 1.8, 1.6]
+      rows:
+        - [Attendance and exercise recorded, <Trainer>, <Same day>]
+        - [Training record filed, <Customer owner>, <Within N days>]
+        - [Production access granted, <Administrator>, <After the record>]
+
+  - h1: 8  Missed sessions and new joiners
+  - p: <How someone who missed a session is trained, and who trains people who join after go-live.>
+
+  - h1: 9  After go-live
+  - table:
+      head: [When, What, Who]
+      widths: [1.4, 4.0, 1.6]
+      rows:
+        - [Week 1, <Floor support or office hours>, <Name>]
+        - [Week 4, <Refresher on what people found hard>, <Name>]
+
+  - h1: 10  Approval
+  - signature:
+      intro: Approved by the business owner and the trainer.
+      parties:
+        - {company: "{{CLIENT}}", name: '<Business owner>', title: ''}
+        - {name: '<Trainer>', title: ''}

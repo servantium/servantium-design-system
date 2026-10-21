@@ -1,0 +1,36 @@
+# A fictional invoice. Quantities, rates and the tax rate are blue inputs; line amounts,
+# subtotal, discount, tax and the total are live formulas.
+workbook: Invoice INV-1042
+client: Acme Logistics
+date: 2026-10-20
+sheets:
+  - name: Invoice
+    kind: form
+    form: invoice
+    number: INV-1042
+    details:
+      - {label: Invoice date, value: 2026-10-20}
+      - {label: Due date, value: 2026-11-19}
+      - {label: PO reference, value: ACME-PO-7781}
+      - {label: Engagement, value: Implementation}
+    parties:
+      - label: Bill to
+        lines: [Acme Logistics, Accounts Payable, 100 Example Way, Springfield, ST 00000]
+      - label: Attention
+        lines: [Jordan Lee, VP Operations, jordan.lee@acme.example]
+    items:
+      - {description: "Discover phase: interviews, current-state review, target design", qty: 1, unit: phase, rate: 24000}
+      - {description: Configuration sprint 1 (consultant), qty: 80, unit: hr, rate: 185}
+      - {description: Configuration sprint 1 (integration engineer), qty: 60, unit: hr, rate: 195}
+      - {description: Solution architecture, qty: 30, unit: hr, rate: 225}
+      - {description: Steering and change control, qty: 12, unit: hr, rate: 240}
+      - {description: Sandbox environment (October), qty: 1, unit: month, rate: 650}
+    blank_rows: 2
+    discount_rate: 0.05
+    tax_rate: 0.0825
+    tax_label: Sales tax
+    terms: Net 30. A late fee of 1% a month applies after the due date.
+    payment:
+      - "ACH: Example Bank, routing 000000000, account 0000000000"
+      - "Reference INV-1042 with your payment."
+    notes: Thank you for your business. Questions about this invoice go to billing@example.com; please quote the invoice number.

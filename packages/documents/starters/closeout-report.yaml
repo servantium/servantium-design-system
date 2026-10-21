@@ -1,0 +1,128 @@
+# Closeout report: the project's result against what was sold, scope delivered, schedule, hours and margin, billing, RAID at close, lessons learned and sign-off.
+#
+# Numbers come from the delivery record (plan of record, timesheets, invoices), never from memory.
+# Lessons learned are specific: each one is a heading that says what to do differently, then what
+# happened, what it cost and the rule it becomes. Sample numbers are placeholders.
+document: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+page_numbers: x_of_y
+footer: "Closeout report  ·  {{CLIENT}}  ·  Internal"
+cover:
+  eyebrow: "{{CLIENT}}  ·  <Project ID>  ·  Closeout"
+  title: <Project> closeout and lessons learned
+  subtitle: "<The result in one sentence: on the date or not, inside the margin or not, and the lesson that matters most.>"
+  meta:
+    - [Project, <Project ID>]
+    - [Closed, <Date>]
+    - [Prepared by, <Project manager>]
+body:
+  - h1: 1  Result
+  - table:
+      head: [Area, Status, Closeout position]
+      widths: [1.4, 0.9, 4.7]
+      rag: [1]
+      center: [1]
+      rows:
+        - [Schedule, Green, <Go-live planned and actual dates.>]
+        - [Scope, Green, <Delivered as sold plus N change orders.>]
+        - [Margin, Amber, <Plan and actual margin against the floor.>]
+        - [Billing, Green, <Every invoice issued; amount outstanding.>]
+        - [Customer, Green, <Sponsor's view at the closeout meeting.>]
+
+  - h1: 2  Outcome against the metrics we sold
+  - table:
+      head: [Metric, Baseline, Target, At closeout, Status]
+      widths: [2.2, 1.2, 1.2, 1.4, 1.0]
+      rag: [4]
+      center: [4]
+      rows:
+        - [<Metric 1>, <Baseline>, <Target>, <Measured>, Green]
+        - [<Metric 2>, <Baseline>, <Target>, <Measured>, Green]
+        - [<Metric 3>, <Baseline>, <Target>, <Not yet measured>, Amber]
+  - caption: Source for each measure, and when it was taken.
+
+  - h1: 3  Scope delivered
+  - table:
+      head: [Area, Delivered, Evidence]
+      widths: [1.6, 3.4, 2.0]
+      rows:
+        - [<Area 1>, <What was delivered>, <Acceptance certificate or test report>]
+        - [<Area 2>, <What was delivered>, <Evidence>]
+        - [<Change order 1>, <What it added>, <Evidence>]
+
+  - h1: 4  Schedule
+  - table:
+      head: [Milestone, Planned, Actual, Variance, Billing share]
+      widths: [2.4, 1.2, 1.2, 1.0, 1.2]
+      rows:
+        - [M1  Kickoff, <Date>, <Date>, 0 days, 20%]
+        - [M2  Design, <Date>, <Date>, +5 days, 20%]
+        - [M3  Build, <Date>, <Date>, +3 days, 25%]
+        - [M4  Go-live, <Date>, <Date>, 0 days, 20%]
+        - [M5  Hypercare exit, <Date>, <Date>, 0 days, 15%]
+
+  - h1: 5  Hours and margin
+  - h3: Hours by role
+  - table:
+      head: [Role, Plan, Actual, Var., Rate, Plan cost, Actual cost]
+      widths: [1.8, 0.7, 0.7, 0.6, 0.8, 1.2, 1.2]
+      money: [4, 5, 6]
+      size: 9
+      rows:
+        - [<Engagement lead>, '60', '64', '+4', 120, 7200, 7680]
+        - [<Solution architect>, '160', '150', '-10', 100, 16000, 15000]
+        - [<Consultant>, '360', '400', '+40', 80, 28800, 32000]
+        - [<Analyst>, '160', '170', '+10', 60, 9600, 10200]
+      foot:
+        - [Total, '740', '784', '+44', '', 61600, 64880]
+  - h3: Services margin
+  - table:
+      head: ['', Plan, Actual]
+      widths: [3.0, 2.0, 2.0]
+      money: [1, 2]
+      rows:
+        - [Services fee, 100000, 100000]
+        - [Delivery cost, 61600, 64880]
+      foot:
+        - [Margin, 38.4%, 35.1%]
+
+  - h1: 6  Billing
+  - table:
+      head: [Invoice, Date, For, Amount, Status]
+      widths: [1.3, 1.1, 2.4, 1.2, 1.0]
+      money: [3]
+      rag: [4]
+      rows:
+        - [<INV-0001>, <Date>, M1 kickoff, 20000, Closed]
+        - [<INV-0002>, <Date>, M2 design, 20000, Closed]
+        - [<INV-0003>, <Date>, M3 build, 25000, Closed]
+        - [<INV-0004>, <Date>, M4 go-live, 20000, Closed]
+        - [<INV-0005>, <Date>, M5 hypercare exit, 15000, At risk]
+      foot:
+        - [Total, '', '', 100000, '']
+
+  - h1: 7  RAID log at close
+  - table:
+      head: [ID, Item, Status at close]
+      widths: [0.6, 4.0, 2.4]
+      rows:
+        - [R1, <Risk>, <Closed; did not occur>]
+        - [I1, <Issue>, <Resolved on date; how>]
+        - [A1, <Assumption>, <Held or failed; effect>]
+
+  - h1: 8  Lessons learned
+  - p: Each lesson is what to do differently next time, then what happened and what it cost.
+  - h3: <Do this differently, as an instruction>
+  - p: "**What happened.** <The facts, without blame.> **Cost.** <Days, hours or money.> **Rule from now on.** <The change to the method, template or checklist.>"
+  - h3: <Do this differently, as an instruction>
+  - p: "**What happened.** <The facts.> **Cost.** <Days, hours or money.> **Rule from now on.** <The change.>"
+  - h3: <Keep doing this>
+  - p: "**What happened.** <What worked.> **Why it worked.** <The reason, so it can be repeated.>"
+
+  - h1: 9  Sign-off
+  - signature:
+      intro: The project is closed. Approved by the delivery lead and the engagement owner.
+      parties:
+        - {name: '<Project manager>', title: ''}
+        - {name: '<Delivery director>', title: ''}

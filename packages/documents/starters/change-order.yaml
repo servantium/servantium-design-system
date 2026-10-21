@@ -1,0 +1,85 @@
+# Change order: a priced change to a signed SOW, with reason, scope added and excluded, pricing basis, schedule and approval impact, billing and signatures.
+#
+# Priced at the contract rates in the SOW. Sections in the order a reviewer asks: why, what is
+# added, what is not, how it is priced, what it does to the schedule and to approvals, how it
+# bills, what it does to later years and the purchase order. The form adds up the lines and
+# prints original, this change and revised value. Sample numbers are placeholders.
+document: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+page_numbers: x_of_y
+footer: "Change Order <number> to SOW <number>  ·  {{CLIENT}}  ·  Confidential"
+# prepared_for: {name: {{CLIENT}}, logo: client-logo.png}
+cover:
+  eyebrow: "{{CLIENT}}  ·  Change Order <N>"
+  title: <What changes, and that the date holds>
+  subtitle: <The change in one line, priced at contract rates, with its effect on go-live.>
+  meta:
+    - [Change order, <CO number>]
+    - [Amends, SOW <number>]
+    - [This change, "$10,000.00"]
+    - [Status, Issued for signature]
+body:
+  - form:
+      type: change_order
+      number: <CO number>
+      status: Issued for signature
+      fields:
+        - [Issued, <Date>]
+        - [Offer valid until, <Date>]
+        - [Project, <Project ID>]
+        - [Agreement, "MSA, signed <date>"]
+        - [Statement of work, <SOW number>]
+        - [Customer PO, <PO number>]
+        - [Prepared by, <Name>]
+      parties:
+        - {label: Customer, name: "<{{CLIENT}} legal name>", lines: ["Attn: <Name>", <Address line 1>, <Address line 2>]}
+        - {label: Supplier}
+      sections:
+        - title: Reason for change
+          text:
+            - <What changed outside the original scope, who asked, and when.>
+        - title: Scope added
+          text:
+            - "**<Item 1>.** <What is added, specifically.>"
+            - "**<Item 2>.** <What is added, specifically.>"
+        - title: Scope not included
+          text:
+            - <What a reader might assume is included and is not.>
+        - title: Pricing basis
+          text:
+            - Contract rates in Section 6 of the SOW. <N> hours for a fixed fee of $10,000.00.
+        - title: Schedule impact
+          text:
+            - <None to go-live, or the milestones that move and by how much.>
+        - title: Approval or validation impact
+          text:
+            - <Documents that move to a new version, and who approves them before the change goes live.>
+        - title: Billing
+          text:
+            - <When each part is invoiced. Net 30.>
+        - title: Purchase order
+          text:
+            - <The PO revision Customer raises on signature, and the new PO total.>
+      items_title: Priced lines
+      items:
+        head: [Line, Change, Hours, Rate, Amount]
+        widths: [0.5, 3.8, 0.6, 0.9, 1.0]
+        money: [3, 4]
+        size: 9
+        rows:
+          - [C-01, <Change line (role)>, 20, 200, 4000]
+          - [C-02, <Change line (role)>, 20, 175, 3500]
+          - [C-03, <Change line (role)>, 10, 250, 2500]
+      totals: {original: 100000}
+      statement: <One line that ties the total to the hours and the original value.>
+      terms:
+        - "1.  **Agreement.** This Change Order amends SOW <number> under the Master Services Agreement. Nothing else changes; on a conflict, this Change Order governs only for the lines above."
+        - "2.  **Fees.** The lines above are a fixed fee built from the hours shown at the SOW contract rates."
+        - "3.  **Payment.** Invoices are payable under the Agreement (Net 30) and quote the revised PO."
+        - "4.  **Effective date.** This Change Order takes effect on the later signature date below."
+      approvals_title: Approval
+      approvals_intro: Signed by the authorized representatives of each party.
+      approvals:
+        - {company: "<{{CLIENT}} legal name>", name: '', title: ''}
+        - {company: '', name: '', title: ''}

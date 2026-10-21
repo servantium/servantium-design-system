@@ -1,0 +1,34 @@
+# A fictional invoice, built as a form: issuer header, fields grid, bill-to,
+# line items with computed amounts, totals, terms.
+# Build: .venv/bin/python -m servantium_documents.docs examples/doc-invoice.yaml
+document: Invoice INV-2026-0142
+client: Acme Labs
+footer: Invoice INV-2026-0142
+page_numbers: x_of_y
+cover: {layout: none, title: Invoice INV-2026-0142}
+body:
+  - form:
+      type: invoice
+      number: INV-2026-0142
+      fields:
+        - [Invoice date, 'December 4, 2026']
+        - [Due date, 'January 3, 2027']
+        - [Payment terms, Net 30]
+        - [Agreement, MSA-2026-014]
+        - [Statement of work, SOW-01]
+        - [Customer PO, PO-88412]
+      parties:
+        - {label: Bill to, name: 'Acme Labs, Inc.', lines: [Accounts Payable, 100 Example Way, 'Springfield, IL 62701']}
+        - {label: Project, name: Quote-to-Resource Planning Rollout, lines: ['Milestone: D2 rate cards and roles accepted', 'Accepted December 3, 2026']}
+      items:
+        rows:
+          - [Milestone 2 of 4, 'D2 accepted (30% of fixed fee)', 1, 28500]
+          - [Expenses, On-site workshop travel at cost, 1, 1240.60]
+        head: [Item, Description, Qty, Rate, Amount]
+        widths: [1.5, 2.6, 0.6, 0.9, 0.9]
+        money: [3, 4]
+      totals:
+        tax: {label: Sales tax, rate: 0}
+      terms:
+        - Payment is due within thirty (30) days of the invoice date, under Section 4.2 of the Agreement.
+        - Please quote the invoice number on your remittance. Payment details are on file with Acme Accounts Payable.

@@ -1,0 +1,75 @@
+# Services estimate: role x hours x rate by phase, live, with cost, margin against the floor and a summary by phase.
+#
+# Blue cells are inputs: hours, list rate, discount and cost rate per line. Price, cost, margin and
+# every subtotal are formulas, so change an hour and the summary follows. One group per phase; add
+# rows by role. The margin floor is a summary metric the check reads. Sample numbers are placeholders.
+workbook: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+prepared_for: <Name, title>
+prepared_by: <Estimator>
+sheets:
+  - name: Summary
+    kind: summary
+    eyebrow: "{{CLIENT}}  ·  Services estimate"
+    title: <Engagement name, version>
+    subtitle: <The scope in one line, and what it was sized for.>
+    metrics:
+      - {label: Price, value: "=[Estimate!#price]", format: currency, decimals: 0, note: After discount}
+      - {label: Hours, value: "=[Estimate!#hours]", format: hours, decimals: 0, note: All roles}
+      - {label: Margin, value: "=1-[Estimate!#cost]/[Estimate!#price]", format: percent, decimals: 1, note: Price less loaded cost}
+      - {label: Margin floor, key: floor, value: 0.35, format: percent, decimals: 0, note: Deal desk rule}
+      - {label: Blended rate, value: "=[Estimate!#price]/[Estimate!#hours]", format: currency, decimals: 0, note: Price over hours}
+      - {label: Floor check, value: '=IF([#margin]>=[#floor],"Above floor","Below floor")', format: text, note: Needs deal desk if below}
+    table:
+      columns:
+        - {key: phase, header: Phase, width: 30}
+        - {key: hours, header: Hours, format: int, total: sum, width: 10}
+        - {key: price, header: Price, format: currency, decimals: 0, total: sum, width: 14}
+        - {key: cost, header: Cost, format: currency, decimals: 0, total: sum, width: 14}
+        - {key: margin, header: Margin, format: percent, decimals: 1, formula: "=IFERROR(1-[@cost]/[@price],0)", total: formula, width: 10}
+      rows:
+        - {phase: <Initiate and design>, hours: "=[Estimate!#hours.design]", price: "=[Estimate!#price.design]", cost: "=[Estimate!#cost.design]"}
+        - {phase: <Build>, hours: "=[Estimate!#hours.build]", price: "=[Estimate!#price.build]", cost: "=[Estimate!#cost.build]"}
+        - {phase: <Test and deploy>, hours: "=[Estimate!#hours.deploy]", price: "=[Estimate!#price.deploy]", cost: "=[Estimate!#cost.deploy]"}
+    notes:
+      - <Rate card and version used. Travel billed at cost, not included.>
+      - <Valid for N days.>
+    contents: true
+
+  - name: Estimate
+    kind: table
+    title: Estimate by phase and role
+    subtitle: Hours times list rate, less discount, gives price. Hours times cost rate gives cost. Blue cells are inputs.
+    landscape: true
+    columns:
+      - {key: role, header: Role, width: 24}
+      - {key: scope, header: Scope, width: 40, wrap: true}
+      - {key: hours, header: Hours, format: int, input: true, total: sum, width: 8}
+      - {key: rate, header: List rate, format: currency, decimals: 0, input: true, total: none, width: 10}
+      - {key: disc, header: "Disc. %", format: number, decimals: 0, input: true, total: none, width: 8}
+      - {key: price, header: Price, format: currency, decimals: 0, formula: "=[@hours]*[@rate]*(1-[@disc]/100)", total: sum, width: 13}
+      - {key: cost_rate, header: Cost rate, format: currency, decimals: 0, input: true, total: none, width: 10}
+      - {key: cost, header: Cost, format: currency, decimals: 0, formula: "=[@hours]*[@cost_rate]", total: sum, width: 12}
+      - {key: margin, header: Margin, format: percent, decimals: 1, formula: "=IFERROR(1-[@cost]/[@price],0)", total: formula, width: 9}
+    total_label: Total estimate
+    groups:
+      - name: <Initiate and design>
+        id: design
+        rows:
+          - {role: <Engagement lead>, scope: "<Kickoff, goals, plan>", hours: 20, rate: 250, disc: 0, cost_rate: 120}
+          - {role: <Solution architect>, scope: <Design workshops and document>, hours: 60, rate: 225, disc: 0, cost_rate: 100}
+          - {role: <Business analyst>, scope: <Requirements>, hours: 40, rate: 150, disc: 0, cost_rate: 60}
+      - name: <Build>
+        id: build
+        rows:
+          - {role: <Consultant>, scope: <Configuration>, hours: 160, rate: 175, disc: 0, cost_rate: 80}
+          - {role: <Integration engineer>, scope: <Connectors>, hours: 100, rate: 200, disc: 0, cost_rate: 90}
+          - {role: <Engagement lead>, scope: <Status and change control>, hours: 20, rate: 250, disc: 0, cost_rate: 120}
+      - name: <Test and deploy>
+        id: deploy
+        rows:
+          - {role: <Consultant>, scope: <Testing support>, hours: 60, rate: 175, disc: 0, cost_rate: 80}
+          - {role: <Trainer>, scope: <Training and materials>, hours: 30, rate: 150, disc: 0, cost_rate: 60}
+          - {role: <Engagement lead>, scope: <Go-live and handover>, hours: 10, rate: 250, disc: 0, cost_rate: 120}
+    note: Hours are planning figures; the fee is fixed at signature. Add a group per phase and a row per role.

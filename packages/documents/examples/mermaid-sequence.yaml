@@ -1,0 +1,24 @@
+# A fictional approval sequence between the people and the system that prices a quote.
+# Build: .venv/bin/python -m servantium_documents.mermaid examples/mermaid-sequence.yaml
+mermaid: Quote Approval Sequence
+client: Acme Labs
+title: Who touches a quote before the customer sees it
+source: |
+  sequenceDiagram
+    autonumber
+    actor Seller
+    participant Q as Quote model
+    actor Lead as Delivery lead
+    actor Fin as Finance
+    Seller->>Q: Build quote from rate cards
+    Q-->>Seller: Price, margin and staffing plan
+    Seller->>Lead: Request delivery review
+    Lead->>Q: Adjust roles and weeks
+    alt Margin below floor
+      Q->>Fin: Route for pricing approval
+      Fin-->>Seller: Approve or return with notes
+    else Margin at or above floor
+      Q-->>Seller: Ready to send
+    end
+    Note over Seller,Fin: Every change is versioned on the quote
+caption: Figure 3. Finance sees only the quotes that fall below the margin floor.

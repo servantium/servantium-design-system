@@ -1,0 +1,57 @@
+# A fictional weekly status report: RAG summary, milestones, RAID excerpt, decisions.
+# Build: .venv/bin/python -m servantium_documents.docs examples/doc-status.yaml
+document: Status Report Week 6
+client: Acme Labs
+prepared_for: {name: Acme Labs}
+cover:
+  layout: plain
+  title: Rollout status, week 6
+  subtitle: Configuration is on plan; migration starts late because two source files are missing.
+  byline: Week ending December 11, 2026  ·  For the Acme steering group
+body:
+  - h1: Summary
+  - table:
+      head: [Area, Status, Last week, Note]
+      widths: [1.4, 0.9, 0.9, 3.3]
+      rag: [1, 2]
+      center: [1, 2]
+      rows:
+        - [Overall, Amber, Green, Migration start moves a week; launch date holds if files arrive by Dec 16.]
+        - [Scope, Green, Green, No change requests open.]
+        - [Schedule, Amber, Green, D4 migration starts week 9 instead of week 8.]
+        - [Budget, Green, Green, 41% of fees invoiced against 45% of the plan.]
+        - [People, Green, Amber, Second consultant joined on Monday.]
+  - callout: {label: "Decision needed:", text: "Confirm by Wednesday that Finance will send the two missing rate files by December 16, or approve a one-week move of the launch."}
+
+  - h1: Milestones
+  - table:
+      head: [Milestone, Owner, Due, Status]
+      widths: [3.0, 1.3, 1.1, 1.1]
+      rag: [3]
+      center: [3]
+      rows:
+        - [D1 Discovery plan, Engagement lead, Nov 13, Complete]
+        - [D2 Rate cards and roles, Engagement lead, Dec 4, Complete]
+        - [D3 Delivery templates, Consultant, Dec 18, On track]
+        - [D4 Migrated quotes, Analyst, Jan 8, At risk]
+        - [D5 Trained users, Engagement lead, Jan 22, On track]
+
+  - h1: Risks, issues and dependencies
+  - p: The open items that could move a date. The full log is in the shared project folder.
+  - table:
+      head: [ID, Type, Description, Owner, Status]
+      widths: [0.5, 0.9, 3.0, 1.2, 0.9]
+      size: 9.5
+      rag: [4]
+      center: [4]
+      rows:
+        - [R4, Risk, Two practices price the same role differently; one rate card may not fit both., Acme sponsor, Amber]
+        - [I2, Issue, Rate files for the advisory practice have not arrived., Acme Finance, Red]
+        - [D1, Dependency, Single sign-on set up by Acme IT before training in week 10., Acme IT, Green]
+        - [R2, Risk, Holiday leave in weeks 8 and 9 reduces workshop slots., Engagement lead, Amber]
+
+  - h1: Next week
+  - bullets:
+      - Finish delivery templates for the three remaining engagement types.
+      - Run the reconciliation dry run on the files already received.
+      - Book training rooms and invite the first 12 users.

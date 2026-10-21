@@ -21,7 +21,8 @@ servantium-design-system/
 │   ├── verdant/          tokens.css, base.css
 │   ├── grove/            one .astro file per component
 │   ├── grove-email/      HANDOVER.md, src/emails/ (one .mdx per email), src/components/ (one file per component), docs/
-│   └── brand/            assets/, company.json, assets.manifest.json, docs/
+│   ├── brand/            assets/, company.json, assets.manifest.json, docs/
+│   └── documents/        the sv engine: decks, documents, workbooks, diagrams in any brand (Python)
 ├── .github/workflows/
 │   ├── publish.yml       publishes Verdant and Grove on v* tags
 │   └── grove-email.yml   builds and tests the emails; releases them on grove-email@ tags
@@ -42,6 +43,7 @@ Every package has its own version, in its `package.json`. A release is a git tag
 |---|---|---|
 | `grove-email@X.Y.Z` | Runs the email release: a GitHub release with the Postmark-ready templates and the field contract. The tag must match the package version. | [CHANGELOG](./packages/grove-email/CHANGELOG.md) |
 | `brand@X.Y.Z` | Marks a version of the asset library and `company.json`. The files themselves are published to `assets.servantium.com` when they change. | [CHANGELOG](./packages/brand/CHANGELOG.md) |
+| `documents@X.Y.Z` | Marks a version of the documents engine; installs pin it. Runs the documents tests. | [README](./packages/documents/README.md) |
 | `grove@X.Y.Z`, `verdant@X.Y.Z` | The versions the sites pin in `.design-system-ref`. | Commit history |
 
 `publish.yml` publishes Verdant and Grove to GitHub Packages on any tag starting with `v`. That catches `verdant@…` but not `grove@…`, so the last publish was at `verdant@0.5.0` in April 2026. Realigning it is the first step of [docs/going-private.md](./docs/going-private.md).

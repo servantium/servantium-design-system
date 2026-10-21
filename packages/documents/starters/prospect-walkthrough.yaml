@@ -1,0 +1,217 @@
+# Prospect walkthrough: a Servantium deck co-branded for a prospect, replaying one of their own engagements on Servantium.
+#
+# STORYBOARD (45 minutes; the example is the prospect's own engagement, every number theirs)
+#  1 cover      Servantium for <Client>                          co-brand lockup, meeting date
+#  2 table      Agenda                                           timed, demo block included
+#  3 panels     How we read their business                       what they sell, two sides
+#  4 compare    Where the work breaks today                      today vs with Servantium
+#  5 processmap Their stages on one map                          live / build / later, what it replaces
+#  6 flow       One engagement priced by role                    inputs, Servantium, the estimate
+#  7 gantt      The staffing collision, seen early               people across weeks + callout
+#  8 table      A change order re-priced                         line, before, after, why
+#  9 hub        Their tools feed one engagement                  systems either side
+# 10 approach   What changes for each team                       stages across, teams down
+# 11 timeline   The first 30 days                                we do / by Friday + what we need
+# 12 gantt      Their weekly rhythm                              the meetings they keep, Mon to Fri
+# 13 closing    The first live estimate                          dated asks
+#
+# Rules: Servantium's voice, co-branded. Claim tiers go in the notes on every slide: baseline
+# (works today) or commitment (an extension we deliver, with a date). No outcome numbers that are
+# not the prospect's own. Name their tools with real logos (files beside this spec, never in a repo).
+# Name problems as the process, never as the people. AI and agents come last, if at all.
+deck: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+prepared_for:
+  name: {{CLIENT}}
+  # logo: client-logo.png      # the prospect's logo, saved beside this spec in the workspace
+slides:
+  - cover:
+      eyebrow: "Servantium  ·  {{CLIENT}}"
+      title: Servantium for {{CLIENT}}
+      subtitle: <Their engagement, from estimate to delivery.>
+      meta: <Meeting date, e.g. Tuesday, October 20>
+      notes: |
+        Everything today uses their own work: their rate card, their stages, and one engagement
+        their team knows well, replayed as if it had run on Servantium. Invite them to stop us.
+
+  - content:
+      eyebrow: 45 minutes
+      title: Agenda
+      body:
+        - table:
+            head: [Time, Topic, What happens]
+            widths: [1.4, 3.6, 6.8]
+            rows:
+              - ["0:00", Welcome, What you leave with today]
+              - ["0:03", Your business, <Where it breaks>]
+              - ["0:10", The map, <Your stages on one page>]
+              - ["0:14", <Engagement ID> live, "<Estimate, staffing and a change, in the product>"]
+              - ["0:32", Your stack and team, "<What connects, who it changes>"]
+              - ["0:38", The first 30 days, <Four weeks and your weekly rhythm>]
+              - ["0:43", Next steps, <The first live estimate>]
+      notes: |
+        Reminder: the demo runs on a demo org loaded from their profile. Have the engagement open.
+
+  - content:
+      eyebrow: How we read your business
+      title: <They sell a product and the people who deliver it>
+      body:
+        - panels:
+            - {icon: hub, title: <What they sell 1>, tag: <Recurring>, tone: green, lines: [<How it is priced>, <What it includes>]}
+            - {icon: groups, title: <What they sell 2>, tag: <Services>, tone: green, lines: [<How it is priced>, <Who delivers it>]}
+        - takeaway: {lead: "<Share of revenue priced by people.>", text: "<The half we are built for.>"}
+      notes: |
+        Basis: their price list, rate card and published revenue mix. Tier: baseline.
+
+  - content:
+      eyebrow: Where the work breaks today
+      title: <Their CRM prices the product and a sheet prices the people>
+      body:
+        - compare:
+            before:
+              label: Today
+              icon: file-spreadsheet
+              lines: [<Services as one lump sum>, <Hours in one tool and costs in another>, <Margin seen at quarter close>, <Collisions found at the review>]
+            after:
+              label: With Servantium
+              icon: check_circle
+              lines: [<Services priced by role>, <Hours and costs on one engagement>, <Margin on the quote>, <Overlaps seen weeks ahead>]
+        - takeaway: {lead: "<The step that starts from scratch.>", text: "<Usually the change order.>"}
+      notes: |
+        None of this is anyone doing their job badly. Name the process.
+
+  - content:
+      eyebrow: The map
+      title: <Their deal and delivery stages on one map>
+      body:
+        - processmap:
+            groups:
+              - {label: Selling, from: 1, to: 4, tone: sales}
+              - {label: Delivering, from: 5, to: 7, tone: plain}
+            stages:
+              - {title: <Stage 1>, text: <What happens>, live: [<Live today>]}
+              - {title: <Stage 2>, text: <What happens>, live: [<Live today>], build: [<We build>]}
+              - {title: <Stage 3>, text: <What happens>, live: [<Live today>]}
+              - {title: <Stage 4>, text: <What happens>, build: [<We build>]}
+              - {title: <Stage 5>, text: <What happens>, live: [<Live today>]}
+              - {title: <Stage 6>, text: <What happens>, build: [<We build>], later: [<Later>]}
+              - {title: <Stage 7>, text: <What happens>, later: [<Later>]}
+            loop: <Real hours price the next estimate>
+      notes: |
+        Their stage names, left to right. replaces: [logo.png] shows the tool each stage retires.
+        Tiers: live = baseline, build = commitment with a date, later = not promised.
+
+  - content:
+      eyebrow: <Engagement ID>
+      title: <Their services estimate is priced by role>
+      body:
+        - flow:
+            inputs:
+              - {icon: request_quote, title: <Rate card>, meta: <N roles>}
+              - {icon: inventory_2, title: <Service packages>, meta: <N packages>}
+              - {icon: draw, title: <Design notes>, meta: <From discovery>}
+            node: {title: Servantium, verb: prices and checks}
+            output:
+              label: <Estimate version>
+              title: <Engagement name>
+              rows:
+                - {key: Hours, text: <Total by role>}
+                - {key: Price, text: "<Total, with discount>"}
+                - {key: Margin, text: <Against their floor>}
+      notes: |
+        Every number is theirs. The test: it foots to the figure they signed.
+
+  - content:
+      eyebrow: Staffing
+      title: <PS sees the collision two weeks out>
+      body:
+        - gantt:
+            periods: [<Wk 1>, <Wk 2>, <Wk 3>, <Wk 4>, <Wk 5>, <Wk 6>]
+            rows:
+              - {name: <Person or role>, note: <Project A>, bars: [{from: 1, to: 4, label: <Project A>}]}
+              - {name: <Person or role>, note: <Project B>, bars: [{from: 3, to: 6, label: <Project B>, tone: amber}]}
+              - {name: <Person or role>, note: <Open deal>, bars: [{from: 4, to: 6, label: <If the deal closes>, tone: slate}]}
+        - callout: {label: "Flag:", text: "<Over-allocated in weeks 3 and 4.>"}
+      notes: |
+        The resource plan and capacity grid. Tier: baseline, flag: commitment if not live.
+
+  - content:
+      eyebrow: Change
+      title: <A change order re-priced as a new version>
+      body:
+        - table:
+            head: [Line, Before, After, Why]
+            widths: [3.4, 2.0, 2.0, 4.6]
+            rows:
+              - [<Line 1>, "$00,000", "$00,000", <Reason>]
+              - [<Line 2>, "$00,000", "$00,000", <Reason>]
+              - [<Line 3>, "$0", "$00,000", <Added scope>]
+              - [Total, "$000,000", "$000,000", <Net change>]
+      notes: |
+        Sample values: replace with their own change order.
+
+  - content:
+      eyebrow: Your stack
+      title: <Their tools feed the same engagement>
+      body:
+        - hub:
+            left_label: <Selling>
+            left: [{name: "<CRM>", icon: handshake}, {name: "<Signature tool>", icon: draw}, {name: "<Quote tool>", icon: request_quote}]
+            right_label: <Delivering>
+            right: [{name: "<Time tracking>", icon: schedule}, {name: "<Finance>", icon: receipt}, {name: "<Project tool>", icon: list-checks}]
+            caption: <Single sign-on through their identity provider>
+      notes: |
+        Each connector is baseline or a commitment; say which, and when.
+
+  - content:
+      eyebrow: What changes for whom
+      title: <Each team stops retyping what was sold>
+      body:
+        - approach:
+            stages: [Estimate, Approve, Hand off, Staff, Change]
+            rows:
+              - {label: <Team 1>, cells: [<What changes>, <What changes>, <What changes>, <What changes>, <What changes>]}
+              - {label: <Team 2>, tone: record, cells: [<What changes>, <What changes>, <What changes>, <What changes>, <What changes>]}
+              - {label: <Team 3>, cells: [<What changes>, <What changes>, <What changes>, <What changes>, <What changes>]}
+      notes: |
+        Same teams, same jobs, less retyping. Name the people on each team in the notes.
+
+  - content:
+      eyebrow: The first 30 days
+      title: <The first month runs on their own engagement>
+      body:
+        - timeline:
+            - {icon: request_quote, when: Week 1, focus_label: We do, focus: <Load the rate card>, moves_label: By Friday, moves: <Roles priced>}
+            - {icon: calculate, when: Week 2, focus_label: We do, focus: <Rebuild the engagement>, moves_label: By Friday, moves: <Foots to the signed total>}
+            - {icon: cloud_sync, when: Week 3, focus_label: We do, focus: <Connect two tools>, moves_label: By Friday, moves: <Data syncs daily>}
+            - {icon: send, when: Week 4, focus_label: We do, focus: <A live estimate>, moves_label: By Friday, moves: <First estimate sent>}
+        - callout: {label: "We need:", text: "<The estimator, the source files, one admin.>", icon: inventory_2}
+      notes: |
+        The switch-off test: the old estimator stops for new deals when the live estimate goes out clean.
+
+  - content:
+      eyebrow: Your weekly rhythm
+      title: <The staffing review starts from live data>
+      body:
+        - gantt:
+            periods: [Mon, Tue, Wed, Thu, Fri]
+            rows:
+              - {name: <Staffing review>, note: <Who attends>, bars: [{from: 2, to: 2, label: <Weeks ahead>, tone: forest}]}
+              - {name: <Deal estimates>, note: <Who prices>, bars: [{from: 1, to: 5, label: <Priced as they land>, tone: mint}]}
+              - {name: <Status calls>, note: <Project managers>, bars: [{from: 3, to: 4, label: <Burn against plan>}]}
+              - {name: <Status report>, note: <Project managers>, bars: [{from: 5, to: 5, label: <Drafted from the plan>, tone: slate}]}
+        - takeaway: {lead: "<The meetings stay.>", text: "<They open on the plan.>"}
+      notes: |
+        CONFIRM: the days their meetings actually run.
+
+  - closing:
+      title: <The next estimate is built in Servantium>
+      asks:
+        - <Their estimator, by date>
+        - <The source files for one engagement>
+        - <One admin from their team>
+        - <The next proposal date>
+      cta: <Book week one>
+      notes: |
+        If the rebuild does not foot to their total, we stop and fix it before anything touches a live deal.

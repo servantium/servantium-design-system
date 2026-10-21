@@ -1,0 +1,52 @@
+# Expense report: project expenses as a form (date, category, description, merchant, amount, less advance) plus a cap tracker against the project's expense cap.
+#
+# One line per receipt; receipts are attached separately. The cap tracker reads the form's total,
+# so remaining cap is always live. Amounts are placeholders.
+workbook: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+sheets:
+  - name: Expenses
+    kind: form
+    form: expense_report
+    title: Expense Report
+    number: <EXP-0000>
+    details:
+      - {label: Submitted, value: 2027-02-01, format: date}
+      - {label: Period, value: <From and to>}
+      - {label: Project, value: <Project ID>}
+      - {label: Customer PO, value: <PO number>}
+      - {label: Employee, value: <Name>}
+    parties:
+      - {label: Submitted by, lines: [<Name>, <Title>]}
+      - {label: Bill to, lines: ["{{CLIENT}}", <Accounts payable contact>]}
+    items:
+      - {date: 2027-01-12, category: Airfare, description: <Trip purpose>, merchant: <Airline>, amount: 450.00}
+      - {date: 2027-01-12, category: Lodging, description: <Two nights>, merchant: <Hotel>, amount: 380.00}
+      - {date: 2027-01-13, category: Meals, description: <Workshop lunch>, merchant: <Restaurant>, amount: 120.00}
+      - {date: 2027-01-14, category: Ground transport, description: <Airport to site>, merchant: <Taxi>, amount: 65.00}
+    blank_rows: 3
+    advance: 0
+    notes: Receipts attached for every line. Billed to the customer at cost under the SOW expense terms.
+    signatures: [Submitted by, Approved by, Date]
+
+  - name: Cap tracker
+    kind: summary
+    eyebrow: "{{CLIENT}}  ·  Expenses"
+    title: <Expenses stay inside the cap>
+    subtitle: Expense invoices against the project cap. Change a status or an amount and every figure follows.
+    metrics:
+      - {label: Expense cap, key: cap, value: 5000, format: currency, decimals: 2, note: <SOW section>}
+      - {label: This report, value: "=[Expenses!#total]", format: currency, decimals: 2, note: Expense report total}
+      - {label: Invoiced, value: "=[#billed]", format: currency, decimals: 2, note: Issued or paid}
+      - {label: Remaining, value: "=[#cap]-[#billed]", format: currency, decimals: 2, note: Cap less invoiced}
+    table:
+      columns:
+        - {key: invoice, header: Invoice, width: 18}
+        - {key: period, header: Covers, width: 16}
+        - {key: status, header: Status, width: 14, input: true}
+        - {key: amount, header: Amount, format: currency, decimals: 2, total: sum, input: true, width: 13}
+        - {key: billed, header: Invoiced, format: currency, decimals: 2, formula: '=IF([@status]="Planned",0,[@amount])', total: sum, width: 13}
+      rows:
+        - {invoice: <INV-0001>, period: <Month 1>, status: Paid, amount: 1015.00}
+        - {invoice: <INV-0002>, period: <Month 2>, status: Planned, amount: 800.00}

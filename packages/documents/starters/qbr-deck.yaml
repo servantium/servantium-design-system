@@ -1,0 +1,162 @@
+# Quarterly business review deck: results against the metrics sold, usage, support, what is next and the renewal path.
+#
+# STORYBOARD (60 minutes; figures bind to the delivery record for the quarter)
+#  1 cover      <Client>'s quarter on <product or service>       meta: the meeting date
+#  2 table      Agenda                                           timed
+#  3 numbers    The metric we sold, now measured                 three numbers against target
+#  4 chart      The volume trend                                 monthly columns, a legend
+#  5 stats      Adoption                                         users, sites, filings + takeaway
+#  6 chart      What the checks caught                           raised vs real, by type
+#  7 table      Support closed this quarter                      ticket / what / fixed / what changed
+#  8 gantt      What joins next quarter                          new scope and the renewal gate
+#  9 milestones The renewal path                                 dated steps to renewal
+# 10 questions  Questions for you                                three questions that shape next quarter
+# 11 closing    What we need by <date>                           asks + next check-in
+#
+# Rules: outcomes in their measurement terms, from the record, never estimated. Unmeasured
+# results are labeled. Year-over-year or plan-against-actual comparisons only, never a lone number.
+deck: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+# prepared_for: {name: {{CLIENT}}, logo: client-logo.png}
+slides:
+  - cover:
+      eyebrow: "{{CLIENT}}  ·  Quarterly business review"
+      title: <The client's first quarter on the service>
+      subtitle: <The period covered, in one line.>
+      meta: <Meeting date, e.g. Thursday, February 18>
+      notes: |
+        In the room: <their people>, <our people>. Data period: <from> to <to>.
+
+  - content:
+      eyebrow: 60 minutes
+      title: Agenda
+      body:
+        - table:
+            head: [Time, Topic, What happens]
+            widths: [1.6, 4.0, 6.4]
+            rows:
+              - ["0 to 15", Results, <Against the metrics we sold>]
+              - ["15 to 30", Usage and support, <Who uses it and what broke>]
+              - ["30 to 45", Next quarter, <What joins and when>]
+              - ["45 to 60", Renewal and questions, <The path and what we need>]
+      notes: |
+        Results first, in their numbers.
+
+  - numbers:
+      eyebrow: Results
+      title: <The main metric now beats its target>
+      stats:
+        - {value: "0.0 days", label: <Metric 1 against target>}
+        - {value: "0", label: <Metric 2 against target>}
+        - {value: "000", label: <Volume handled this quarter>}
+      notes: |
+        Baseline, target and actual for each, with the source. Say how it was measured.
+
+  - content:
+      eyebrow: Volume
+      title: <Volume holds at about N a month>
+      body:
+        - chart:
+            type: stacked
+            categories: [<Month 1>, <Month 2>, <Month 3>]
+            series:
+              - {name: <Source A>, values: [20, 22, 21]}
+              - {name: <Source B>, values: [15, 16, 18]}
+              - {name: <Source C>, values: [10, 11, 9]}
+            unit: items
+            height: 3.4
+        - takeaway: {lead: "<What the trend says.>"}
+      notes: |
+        Sample values: replace from the record. Mark a partial month as partial.
+
+  - content:
+      eyebrow: Adoption
+      title: <Every trained user is working in it>
+      body:
+        - stats:
+            - {value: "00", label: Active users, note: <Of how many trained>}
+            - {value: "0 of 00", label: <Sites or teams live>}
+            - {value: "0", label: <Outputs filed>}
+        - takeaway: {lead: "<The rule that keeps it that way.>"}
+      notes: |
+        Show the best practice, never "adoption" or "compliance" about their people.
+
+  - content:
+      eyebrow: Quality
+      title: <One flag in N was a real issue>
+      body:
+        - chart:
+            type: bar
+            categories: [<Type 4>, <Type 3>, <Type 2>, <Type 1>]
+            series:
+              - {name: Raised, values: [12, 20, 30, 40]}
+              - {name: Real issue, values: [1, 3, 4, 6]}
+            unit: flags
+            height: 3.4
+      notes: |
+        Sample values. Say what we will tune next quarter.
+
+  - content:
+      eyebrow: Support
+      title: <Support closed with no critical ticket>
+      body:
+        - table:
+            head: [Ticket, What happened, Fixed, What changed]
+            widths: [1.6, 4.6, 1.8, 4.0]
+            rows:
+              - [<P2-001>, <What broke>, <Date>, <So it does not recur>]
+              - [<P2-002>, <What broke>, <Date>, <So it does not recur>]
+              - [<P3-003>, <What broke>, <Date>, <So it does not recur>]
+      notes: |
+        Each ticket stated once, plainly.
+
+  - content:
+      eyebrow: Next quarter
+      title: <The next scope joins in month N>
+      body:
+        - gantt:
+            periods: [<M1>, <M2>, <M3>, <M4>, <M5>, <M6>]
+            rows:
+              - {name: <New scope 1>, bars: [{from: 2, to: 3, label: <Onboard>}]}
+              - {name: <New scope 2>, bars: [{from: 3, to: 5, label: <Build>, tone: forest}]}
+              - {name: <Option under review>, bars: [{from: 4, to: 5, label: <Decide>, tone: amber}]}
+            gates:
+              - {after: 6, label: <Renewal>}
+      notes: |
+        Optional scope is labeled optional.
+
+  - content:
+      eyebrow: Renewal
+      title: <The next term renews on date>
+      body:
+        - milestones:
+            - {icon: calendar, when: <Date>, title: <Usage review>, text: <What we check>}
+            - {icon: layers, when: <Date>, title: <Tier check>, text: <What could change>}
+            - {icon: receipt, when: <Date>, title: <Purchase order>, text: <Who raises it>}
+            - {icon: check_circle, when: <Date>, title: <Renewal invoice>, text: <Amount basis>}
+      notes: |
+        The renewal path as dates, not as a pitch.
+
+  - content:
+      eyebrow: Next quarter
+      title: Questions for you
+      body:
+        - questions:
+            items:
+              - {q: "<A question about what joins next>", why: <What it changes>}
+              - {q: "<A question about their own measure>", why: <What it changes>}
+              - {q: "<A question about the renewal>", why: <What it changes>}
+            note: <Your answers shape next quarter's plan.>
+      notes: |
+        Listen for new scope and for who now owns the budget.
+
+  - closing:
+      title: <Three things we need by date>
+      asks:
+        - <Ask 1, with a date>
+        - <Ask 2, with a date>
+        - <Ask 3, with a date>
+      cta: <Book the next review>
+      notes: |
+        Name the next check-in date.

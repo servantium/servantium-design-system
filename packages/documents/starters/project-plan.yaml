@@ -1,0 +1,44 @@
+# Project plan: a live Gantt plan by phase with tasks, owners, durations, dependencies, milestones and percent complete, where bars and phase dates move when a date changes.
+#
+# Leaves take a start (or depends_on) and duration_days (working days). Phases roll up their
+# children; milestones are diamonds. Change a start date or a duration and every dependent task,
+# phase date and bar follows. Dates below are placeholders: set the kickoff date first.
+workbook: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+sheets:
+  - name: Plan
+    kind: gantt
+    title: <Project> delivery plan
+    subtitle: <N weeks, N phases.> Bars follow the dates; phase rows roll up their tasks.
+    scale: week
+    today: true
+    tasks:
+      - {id: initiate, name: <Initiate>}
+      - {id: kickoff, name: Kickoff, parent: initiate, start: 2027-04-05, milestone: true}
+      - {id: plan, name: Project plan and RAID, parent: initiate, start: 2027-04-05, duration_days: 5, owner: <PM>}
+      - {id: current, name: Current-state review, parent: initiate, start: 2027-04-06, duration_days: 5, owner: <Architect>}
+
+      - {id: design, name: <Design>}
+      - {id: workshops, name: Design workshops, parent: design, depends_on: [current], duration_days: 8, owner: <Architect>}
+      - {id: reqs, name: Requirements, parent: design, depends_on: [workshops], duration_days: 5, owner: <Analyst>}
+      - {id: sdd, name: Solution design, parent: design, depends_on: [workshops], duration_days: 7, owner: <Architect>}
+      - {id: design_gate, name: Design signed off, parent: design, depends_on: [reqs, sdd], milestone: true}
+
+      - {id: build, name: <Build>}
+      - {id: config, name: Configuration, parent: build, depends_on: [design_gate], duration_days: 15, owner: <Consultant>}
+      - {id: integ, name: Integrations, parent: build, depends_on: [design_gate], duration_days: 12, owner: <Engineer>}
+      - {id: migrate, name: Data migration, parent: build, depends_on: [config], duration_days: 6, owner: <Engineer>}
+      - {id: build_done, name: Build complete, parent: build, depends_on: [integ, migrate], milestone: true}
+
+      - {id: test, name: <Test>}
+      - {id: sit, name: System testing, parent: test, depends_on: [build_done], duration_days: 8, owner: <Consultant>}
+      - {id: uat, name: User acceptance testing, parent: test, depends_on: [sit], duration_days: 6, owner: <Their owner>}
+      - {id: go_decision, name: Go / no-go decision, parent: test, depends_on: [uat], milestone: true}
+
+      - {id: launch, name: <Launch and hypercare>}
+      - {id: training, name: Training, parent: launch, depends_on: [sit], duration_days: 4, owner: <Trainer>}
+      - {id: cutover, name: Cutover, parent: launch, depends_on: [go_decision], duration_days: 2, owner: <Engineer>}
+      - {id: golive, name: Go-live, parent: launch, depends_on: [cutover], milestone: true}
+      - {id: hypercare, name: Hypercare, parent: launch, depends_on: [cutover], duration_days: 15, owner: <PM>}
+      - {id: handover, name: Handover to support, parent: launch, depends_on: [hypercare], milestone: true}

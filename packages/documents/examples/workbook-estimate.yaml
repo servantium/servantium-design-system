@@ -1,0 +1,69 @@
+# A fictional implementation estimate: a summary tab over a live estimate.
+# Change any blue cell (hours, rates) and every subtotal, total and summary card follows.
+workbook: Implementation Estimate
+client: Acme Logistics
+date: 2026-10-20
+prepared_for: Jordan Lee, VP Operations
+prepared_by: Delivery team, Professional Services
+sheets:
+  - name: Summary
+    kind: summary
+    eyebrow: Acme Logistics  ·  Estimate
+    title: Implementation estimate
+    subtitle: Twelve weeks from kickoff to go-live, priced by role and phase.
+    metrics:
+      - {label: Total fees, value: "=[Estimate!#fees]", format: currency, decimals: 0, note: "Fixed fee, billed monthly"}
+      - {label: Total hours, value: "=[Estimate!#hours]", format: hours, decimals: 0, note: Across five roles}
+      - {label: Blended rate, value: "=[Estimate!#fees]/[Estimate!#hours]", format: currency, decimals: 0, note: Fees over hours}
+      - {label: Phases, value: 4, format: int, note: Discover to hypercare}
+    table:
+      columns:
+        - {key: phase, header: Phase, width: 26}
+        - {key: weeks, header: Weeks, format: int, total: sum}
+        - {key: fees, header: Fees, format: currency, decimals: 0, total: sum, width: 16}
+        - {key: share, header: Share, format: percent, formula: "=[@fees]/[#fees]", total: formula}
+      rows:
+        - {phase: Discover, weeks: 2, fees: "=[Estimate!#fees.discover]"}
+        - {phase: Configure, weeks: 5, fees: "=[Estimate!#fees.configure]"}
+        - {phase: Migrate and test, weeks: 3, fees: "=[Estimate!#fees.migrate_and_test]"}
+        - {phase: Launch and hypercare, weeks: 2, fees: "=[Estimate!#fees.launch_and_hypercare]"}
+    notes:
+      - Rates are the 2026 standard rate card. Travel is billed at cost and is not included.
+      - The estimate assumes one production environment and up to three source systems.
+    contents: true
+
+  - name: Estimate
+    kind: table
+    title: Estimate by phase and role
+    subtitle: Blue cells are inputs. Hours times rate gives fees; subtotals and totals are live sums.
+    columns:
+      - {key: role, header: Role, width: 30}
+      - {key: scope, header: Scope, width: 40}
+      - {key: hours, header: Hours, format: hours, decimals: 0, total: sum, input: true}
+      - {key: rate, header: Rate, format: currency, decimals: 0, input: true, total: formula, formula: "=IFERROR([@fees]/[@hours],0)"}
+      - {key: fees, header: Fees, format: currency, decimals: 0, formula: "=[@hours]*[@rate]", total: sum, width: 17}
+    total_label: Total estimate
+    groups:
+      - name: Discover
+        rows:
+          - {role: Engagement lead, scope: "Kickoff, goals, success measures", hours: 24, rate: 240}
+          - {role: Solution architect, scope: Current-state review and target design, hours: 40, rate: 225}
+          - {role: Business analyst, scope: Process interviews and requirements, hours: 56, rate: 165}
+      - name: Configure
+        rows:
+          - {role: Solution architect, scope: Data model and integration design, hours: 60, rate: 225}
+          - {role: Consultant, scope: "Configuration, workflows, rules", hours: 160, rate: 185}
+          - {role: Integration engineer, scope: Connectors to three source systems, hours: 120, rate: 195}
+          - {role: Engagement lead, scope: Weekly steering and change control, hours: 30, rate: 240}
+      - name: Migrate and test
+        rows:
+          - {role: Integration engineer, scope: Data migration and reconciliation, hours: 80, rate: 195}
+          - {role: Consultant, scope: System and integration testing, hours: 72, rate: 185}
+          - {role: Business analyst, scope: User acceptance testing support, hours: 48, rate: 165}
+          - {role: Engagement lead, scope: Readiness review, hours: 12, rate: 240}
+      - name: Launch and hypercare
+        rows:
+          - {role: Consultant, scope: Cutover and go-live support, hours: 40, rate: 185}
+          - {role: Business analyst, scope: Training and job aids, hours: 32, rate: 165}
+          - {role: Engagement lead, scope: Hypercare and handover, hours: 16, rate: 240}
+    note: Estimate valid for 60 days. Hours are planning figures; fees are fixed at signature.

@@ -1,0 +1,27 @@
+# Data flow diagram: how records and data move between parties and systems (sources, the system of record, checks and destinations), as a Mermaid diagram.
+#
+# Solid arrows carry the main flow; dashed arrows (-.->) carry data that is optional or added by a
+# change order. Label each arrow with what moves and how (API, SFTP, email). The system of record
+# is :::primary; out-of-scope parties are :::muted. Angle brackets in labels are #lt; and #gt;.
+mermaid: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+title: <Every source lands in one place, and every result leaves one way>
+subtitle: <The parties, the systems and what moves between them, as agreed on date.>
+source: |
+  flowchart LR
+    subgraph SRC ["Sources"]
+      direction TB
+      s1["#lt;Source 1#gt;"]
+      s2["#lt;Source 2#gt;"]
+      s3["#lt;Source 3#gt;"]:::muted
+    end
+    s1 -- "#lt;What, via API#gt;" --> sor
+    s2 -- "#lt;What, via SFTP#gt;" --> sor
+    s3 -. "#lt;Added later#gt;" .-> sor
+    sor["#lt;System of record#gt;"]:::primary --> chk{"#lt;Checks pass?#gt;"}
+    chk -- no --> rev["#lt;Reviewer queue#gt;"]:::warn
+    rev --> sor
+    chk -- yes --> d1["#lt;Destination 1#gt;"]:::accent
+    chk -- yes --> d2["#lt;Destination 2#gt;"]:::soft
+caption: Solid lines are in scope today; the dashed line is <optional or added by change order>.

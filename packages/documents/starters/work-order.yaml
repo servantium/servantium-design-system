@@ -1,0 +1,137 @@
+# Work order: a priced, unit-based order of services under an MSA, with the budget by phase, payment schedule, milestones and priced lines in an appendix.
+#
+# Use a work order when the price is units times rates from a quote (tests, days, deliverables)
+# rather than a fixed-fee project; use the sow starter for a fixed-fee project. Line items come
+# from the signed quote: bind them with data: rather than retyping. Sample numbers are placeholders.
+document: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+draft: Draft for review
+page_numbers: x_of_y
+footer: "Work Order <number> under the Master Services Agreement  ·  {{CLIENT}}  ·  Confidential"
+# prepared_for: {name: {{CLIENT}}, logo: client-logo.png}
+cover:
+  eyebrow: "{{CLIENT}}  ·  Work Order"
+  title: "Work Order <number>: <what it covers>"
+  subtitle: <The services, for which program, priced at which quote's rates.>
+  meta:
+    - [Work order no., <Number>]
+    - [Agreement, "Master Services Agreement, <date>"]
+    - [Quote, <Quote reference and date>]
+    - [Value, "$100,000.00"]
+body:
+  - h1: 1  Purpose
+  - p: This Work Order is made under the Master Services Agreement between <{{CLIENT}} legal name> ("Customer") and <our legal name> ("Provider") dated <date>. It orders the services below at the prices in <quote reference>.
+  - callout: {label: "Outcome:", text: "<What Customer has at the end, and by when.>"}
+
+  - h1: 2  The program
+  - table:
+      head: [Item, Detail]
+      widths: [2.0, 5.0]
+      rows:
+        - [Program, <Name or code>]
+        - [Location, <Where the work is done>]
+        - [Customer lead, <Name and title>]
+        - [Provider lead, <Name and title>]
+        - [Start and end, <Dates>]
+
+  - h1: 3  Services
+  - h2: In scope
+  - bullets:
+      - <Service 1, with the quantity.>
+      - <Service 2, with the quantity.>
+      - <Reporting or data delivery, with the cadence.>
+  - h2: Out of scope
+  - bullets:
+      - <Work priced separately on request from the price list.>
+      - <Third-party costs passed through at cost.>
+
+  - h1: 4  Budget
+  - table:
+      head: [Phase, Scope, Lines, Amount]
+      widths: [1.8, 3.2, 0.8, 1.2]
+      money: [3]
+      rows:
+        - [P1  <Setup>, <What it covers>, '3', 15000]
+        - [P2  <Main work>, <What it covers>, '5', 60000]
+        - [P3  <Reporting>, <What it covers>, '2', 15000]
+        - [P4  <Project management>, <Monthly fee>, '1', 10000]
+      foot:
+        - [Total, '', '', 100000]
+
+  - h1: 5  Payment schedule
+  - p: Provider invoices as each phase delivers, Net 30, under the Agreement.
+  - table:
+      head: [Phase, Invoiced when, Amount]
+      widths: [1.8, 3.9, 1.3]
+      money: [2]
+      rows:
+        - [P1, <On delivery of the setup report>, 15000]
+        - [P2, <Monthly as units complete>, 60000]
+        - [P3, <On delivery of each report>, 15000]
+        - [P4, <Monthly in arrears>, 10000]
+      foot:
+        - [Total, '', 100000]
+
+  - h1: 6  Milestones
+  - table:
+      head: [ID, Milestone, Planned date]
+      widths: [0.6, 4.6, 1.8]
+      rows:
+        - [M1, <Kickoff>, <Date>]
+        - [M2, <Setup complete>, <Date>]
+        - [M3, <First units delivered>, <Date>]
+        - [M4, <Final report>, <Date>]
+
+  - h1: 7  Assumptions and Customer materials
+  - numbered:
+      - <Quantities the price assumes; units beyond them are priced from the price list.>
+      - <Materials Customer supplies, and by when.>
+      - <Turnaround times, from receipt of complete materials.>
+  - h2: Subcontractors
+  - p: <Any subcontractor, what it does, and that Provider manages it. Or "None".>
+
+  - h1: 8  People and change control
+  - table:
+      head: [Role, Provider, Customer]
+      widths: [2.4, 2.3, 2.3]
+      rows:
+        - [Lead, <Name>, <Name>]
+        - [Project manager, <Name>, <Name>]
+        - [Quality, <Name>, <Name>]
+        - [Contracts, <Name>, <Name>]
+  - p: Changes to quantities or scope follow the change control section of the Agreement and are priced at the rates in this Work Order.
+
+  - h1: 9  Signatures
+  - signature:
+      intro: Signed by the Parties' authorized representatives.
+      parties:
+        - {company: "<{{CLIENT}} legal name>", name: '', title: ''}
+        - {name: '', title: ''}
+
+  - schedule: {label: Appendix A, title: Priced lines, id: lines}
+  - h2: P1  <Setup>
+  - table:
+      head: [Line, Description, Qty, Unit, Unit price, Amount]
+      widths: [0.5, 2.9, 0.5, 0.8, 1.0, 1.0]
+      money: [4, 5]
+      size: 9
+      rows:
+        - [P1-01, <Line description>, '1', <each>, 5000, 5000]
+        - [P1-02, <Line description>, '2', <day>, 2500, 5000]
+        - [P1-03, <Line description>, '1', <each>, 5000, 5000]
+      foot:
+        - [Subtotal, '', '', '', '', 15000]
+  - h2: P2  <Main work>
+  - table:
+      head: [Line, Description, Qty, Unit, Unit price, Amount]
+      widths: [0.5, 2.9, 0.5, 0.8, 1.0, 1.0]
+      money: [4, 5]
+      size: 9
+      rows:
+        - [P2-01, <Line description>, '100', <unit>, 300, 30000]
+        - [P2-02, <Line description>, '50', <unit>, 400, 20000]
+        - [P2-03, <Line description>, '10', <unit>, 1000, 10000]
+      foot:
+        - [Subtotal, '', '', '', '', 60000]
+  - caption: Add one table per phase, in the same columns as the quote.

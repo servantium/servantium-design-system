@@ -1,0 +1,47 @@
+# Assumptions log: every quantity and condition a quote or estimate depends on, where it came from, what happens if it changes, and who owns it.
+#
+# Issued with the quote. Group assumptions by what they drive (volumes, methods or scope, timeline
+# and fees). Each has an ID that the quote and SOW can cite, a basis (who said it, when), and the
+# effect on price or date if it is wrong. Agree these and the quote is firm.
+document: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+page_numbers: x_of_y
+footer: "Assumptions log  ·  {{CLIENT}}  ·  Confidential"
+cover:
+  layout: plain
+  title: <Assumptions behind the quote version>
+  subtitle: Every quantity the price depends on, where it came from, and what happens if it changes. Agree these and the quote is firm.
+  byline: "Issued with <quote version> on <date>  ·  Owner <name>"
+body:
+  - h1: Volumes and quantities
+  - table:
+      head: [ID, Assumption, Basis, If it changes, Owner]
+      widths: [0.5, 2.1, 1.6, 1.8, 1.0]
+      size: 9.5
+      rows:
+        - [A-01, <Quantity N of unit>, <Who said it and when>, <Priced per unit from the rate card>, <Name>]
+        - [A-02, <Quantity N of unit>, <Source document>, <Effect on price>, <Name>]
+        - [A-03, <Number of sites or parties>, <Source>, <Each extra is a change order>, <Name>]
+  - h1: Methods and scope
+  - table:
+      head: [ID, Assumption, Basis, If it changes, Owner]
+      widths: [0.5, 2.1, 1.6, 1.8, 1.0]
+      size: 9.5
+      rows:
+        - [A-04, <Approach or method assumed>, <Workshop or document>, <Effect on effort>, <Name>]
+        - [A-05, <What the customer supplies>, <Source>, <Effect if late or missing>, <Name>]
+  - h1: Timeline, reporting and fees
+  - table:
+      head: [ID, Assumption, Basis, If it changes, Owner]
+      widths: [0.5, 2.1, 1.6, 1.8, 1.0]
+      size: 9.5
+      rows:
+        - [A-06, <Start date>, <Close plan>, <Effect on go-live>, <Name>]
+        - [A-07, <Review turnaround of N business days>, <SOW>, <Effect on the plan>, <Name>]
+        - [A-08, <Reports or meetings included>, <Quote>, <Extra priced from the rate card>, <Name>]
+  - h1: How to change an assumption
+  - numbered:
+      - Tell <owner> in writing which assumption changes and the new value.
+      - We return the effect on price and dates within <N> business days.
+      - Before signature, the quote is reissued; after it, a change order is raised.

@@ -1,0 +1,146 @@
+# Master services agreement: the standing terms set once for every SOW, work order and order form that follows.
+#
+# A starting draft, not legal advice: counsel reviews before first use, and the customer's paper
+# wins if they insist. Articles run in the usual order; schedules restart numbering. Use {ref:id}
+# for cross-references so numbers stay right when an article moves. The provider's signature block
+# defaults to the brand's legal name.
+document: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+draft: Draft for review
+page_numbers: x_of_y
+footer: "Master Services Agreement  ·  {{CLIENT}}  ·  Confidential"
+cover:
+  eyebrow: "{{CLIENT}}  ·  Agreement"
+  title: Master Services Agreement
+  subtitle: The terms under which {{CLIENT}} buys professional services, set once for every statement of work.
+  meta:
+    - [Agreement no., <MSA number>]
+    - [Effective date, <Date>]
+    - [Status, Draft for review]
+body:
+  - h1: Agreement
+  - p: This Master Services Agreement is made between <{{CLIENT}} legal name>, a <state> <entity type> ("Customer"), and the provider named in the signature block ("Provider"). Each is a "Party" and together the "Parties". The Parties agree as follows.
+  - clauses:
+      - title: Definitions
+        id: defs
+        text: In this Agreement, the following terms have the meanings below.
+        clauses:
+          - '"Agreement" means this Master Services Agreement, its schedules and every Statement of Work.'
+          - '"Affiliate" means any entity that controls, is controlled by, or is under common control with a Party.'
+          - '"Confidential Information" means non-public information a Party discloses that is marked confidential or that a reasonable person would treat as confidential.'
+          - '"Deliverable" means any report, plan, configuration, model or other work product Provider delivers under a Statement of Work.'
+          - '"Statement of Work" or "SOW" means a document in the form of {ref:schedule-a}, signed by both Parties.'
+          - '"Fees" means the amounts payable under a Statement of Work.'
+      - title: Services
+        id: services
+        clauses:
+          - title: Statements of Work
+            text: Provider will perform the services described in each Statement of Work. Each SOW incorporates this Agreement.
+          - title: Order of precedence
+            id: precedence
+            text: If this Agreement and a SOW conflict, this Agreement governs unless the SOW names the section it overrides.
+          - title: Personnel
+            text: Provider assigns qualified personnel and may replace them with people of equal skill after notice to Customer.
+          - title: Subcontractors
+            text: Provider may use subcontractors with Customer's written consent and remains responsible for their work.
+          - title: Customer cooperation
+            text: Customer provides timely access, information, decisions and reviewers as each SOW states. Provider is not responsible for delay caused by a missed Customer dependency.
+      - title: Acceptance
+        id: acceptance
+        clauses:
+          - Customer reviews each Deliverable against the acceptance criteria in the SOW within <ten (10)> business days of delivery.
+          - Customer accepts the Deliverable in writing or gives a written list of the criteria not met. Provider corrects and resubmits, and the review period restarts.
+          - A Deliverable is accepted if Customer does not respond within the review period or uses it in production.
+      - title: Change control
+        id: change
+        text: Either Party may request a change to a SOW. Provider responds within <five (5)> business days with a change order stating the effect on scope, schedule and Fees. No change binds either Party until both sign the change order.
+      - title: Fees and payment
+        id: fees
+        clauses:
+          - title: Fees
+            text: Customer pays the Fees set out in each SOW.
+          - title: Expenses
+            text: Customer reimburses pre-approved, reasonable travel expenses at cost, within any cap the SOW sets.
+          - title: Invoices
+            id: invoices
+            text: Provider invoices as the SOW states, or monthly in arrears if it is silent. Customer pays each undisputed invoice within <thirty (30)> days of receipt.
+          - title: Disputed amounts
+            text: Customer will notify Provider of any disputed amount within <fifteen (15)> days, in writing, with its reasons, and pays the undisputed part on time.
+          - title: Taxes
+            text: Fees exclude sales, use and similar taxes, which Customer pays, except taxes on Provider's income.
+      - title: Intellectual property
+        id: ip
+        clauses:
+          - title: Deliverables
+            text: On payment in full, Customer owns the Deliverables created specifically for it, excluding Provider Materials.
+          - title: Provider Materials
+            text: Provider keeps all rights in its tools, templates, methods and know-how ("Provider Materials") and grants Customer a non-exclusive, perpetual license to use any Provider Materials embedded in a Deliverable for its internal business.
+      - title: Confidentiality
+        id: confidentiality
+        text: Each Party uses the other's Confidential Information only to perform or receive the services, protects it with reasonable care, and discloses it only to those who need to know and are bound by similar duties. These duties last <five (5)> years after the Agreement ends.
+      - title: Data protection and security
+        id: data
+        text: Where Provider processes personal data for Customer, the Parties sign a data processing agreement. Provider follows the security requirements in the SOW and its information security program.
+      - title: Warranties
+        id: warranties
+        clauses:
+          - title: Services
+            text: Provider will perform the services in a professional manner consistent with industry standards. Customer's remedy for a breach of this warranty, notified within <thirty (30)> days, is re-performance or a refund of the Fees for the non-conforming services.
+          - title: Disclaimer
+            text: Except as stated in this Agreement, neither Party makes any warranty, express or implied.
+      - title: Indemnification
+        id: indemnity
+        text: Each Party will defend the other against third-party claims arising from its gross negligence, willful misconduct or infringement of intellectual property, and pay the resulting damages, provided the other Party gives prompt notice and reasonable help.
+      - title: Limitation of liability
+        id: liability
+        clauses:
+          - title: Cap
+            text: Each Party's total liability under this Agreement is limited to the Fees paid or payable under the SOW giving rise to the claim in the <twelve (12)> months before the claim.
+          - title: Exclusions
+            text: Neither Party is liable for indirect, consequential or lost-profit damages. The cap and exclusions do not apply to breaches of confidentiality, indemnification duties or amounts owed.
+      - title: Term and termination
+        id: term
+        clauses:
+          - title: Term
+            text: This Agreement starts on the Effective Date and continues until terminated. Each SOW has the term it states.
+          - title: Termination for convenience
+            text: Either Party may end this Agreement on <thirty (30)> days' written notice. SOWs in progress continue unless also ended.
+          - title: Termination for cause
+            text: Either Party may end this Agreement or a SOW if the other materially breaches it and does not cure the breach within <thirty (30)> days of written notice.
+          - title: Effect of termination
+            text: Customer pays for services performed and expenses incurred to the termination date. Each Party returns the other's Confidential Information.
+      - title: General
+        id: general
+        clauses:
+          - title: Notices
+            text: Notices are in writing to the contacts in {ref:schedule-b}.
+          - title: Assignment
+            text: Neither Party may assign this Agreement without the other's written consent, except to a successor of its whole business.
+          - title: Force majeure
+            text: Neither Party is liable for delay caused by events beyond its reasonable control.
+          - title: Governing law
+            text: This Agreement is governed by the laws of <state or country>, and the courts of <venue> have exclusive jurisdiction.
+          - title: Entire agreement
+            text: This Agreement is the Parties' entire agreement on its subject and can be changed only in a writing signed by both Parties. It may be signed electronically and in counterparts.
+  - signature:
+      intro: The Parties have signed this Agreement on the dates below.
+      parties:
+        - {company: "<{{CLIENT}} legal name>", name: '', title: ''}
+        - {name: '', title: ''}
+  - schedule: {label: Schedule A, title: Form of Statement of Work, id: schedule-a}
+  - p: 'Each Statement of Work states, at least:'
+  - numbered:
+      - Scope of services, in scope and out of scope.
+      - Deliverables and the acceptance criteria for each.
+      - Schedule, milestones and the dependencies on Customer.
+      - Fees, the payment schedule and any expense cap.
+      - Assumptions, roles and the change control contacts.
+  - schedule: {label: Schedule B, title: Notices and contract contacts, id: schedule-b}
+  - table:
+      head: ['', Customer, Provider]
+      widths: [1.6, 2.7, 2.7]
+      rows:
+        - [Legal notices, "<Name, title, address>", "<Name, title, address>"]
+        - [Contract owner, <Name and email>, <Name and email>]
+        - [Billing contact, <Name and email>, <Name and email>]

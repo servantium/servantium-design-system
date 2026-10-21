@@ -1,0 +1,41 @@
+# Purchase order: an order we issue to a supplier or subcontractor (or a customer PO to us), with lines, terms and approvals.
+#
+# Set brand to the issuing company: ours for a PO to a subcontractor, the customer's for a
+# customer PO in a demo. Every line names the contract it is ordered under. Approvals show who
+# released it and at what threshold. Sample numbers are placeholders.
+document: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+page_numbers: x_of_y
+footer: "Purchase Order <number>"
+cover: {layout: none, title: "{{NAME}}"}
+body:
+  - form:
+      type: purchase_order
+      number: <PO-0000>
+      status: Issued
+      fields:
+        - [PO date, <Date>]
+        - [Payment terms, "Net 30, USD"]
+        - [Requested by, <Name>]
+        - [Project, <Project ID>]
+        - [Contract, <Agreement or quote reference>]
+      parties:
+        - {label: Supplier, name: <Supplier legal name>, lines: [<Address line 1>, <Address line 2>, "Attn: <Name>"]}
+        - {label: Bill to, name: <Our legal name>, lines: [Accounts Payable, <Address or portal>, "Deliver to: <Name>"]}
+      items:
+        head: [Line, Description, Qty, Unit price, Amount]
+        widths: [0.45, 3.65, 0.5, 1.1, 1.1]
+        money: [3, 4]
+        rows:
+          - ['1', "<Service or item, period and basis>", 1, 25000]
+          - ['2', "<Service or item, period and basis>", 40, 150]
+          - ['3', "<Travel at cost, not to exceed>", 1, 2000]
+      totals:
+        label: PO total
+      approvals_title: Approved
+      approval_fields: [Name, Date]
+      approvals:
+        - {company: <Procurement>, name: '', title: ''}
+        - {company: "<Finance (over the approval threshold)>", name: '', title: ''}
+  - p: "**Terms.** Issued under <the agreement>; no other supplier terms apply. Invoices quote this PO number and the line they bill."

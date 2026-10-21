@@ -1,0 +1,182 @@
+# Capabilities deck: who we are, what we deliver and how we work, for a first meeting with a new prospect.
+#
+# STORYBOARD (titles alone carry the argument; agree them before writing a word)
+#  1 cover      The promise to this buyer, in one line             meta: the meeting date
+#  2 table      Agenda                                             timed table for the real meeting length
+#  3 numbers    Who we are, in three true numbers                  the strongest true number first
+#  4 approach   Where we work across the buyer's lifecycle         stages across, what we do and what they get
+#  5 zoom       One service, magnified                             a real step, not a list of offerings
+#  6 stack      How the work is recorded                           tools on a foundation of records
+#  7 panels     Two practices (or sites) on one method             exactly two panels + one callout
+#  8 gantt      A typical engagement on a calendar                 phases as bars, milestones as gates
+#  9 table      How pricing works                                  unit, basis and what moves the price
+# 10 steps      How you hear from us                               cadence + who you talk to
+# 11 milestones How we got here                                    three or four dated moments
+# 12 closing    Tell us about your project                         two to four asks, one call to action
+#
+# Rules: short one-line claim titles (no colons, no slogans); never two rows of boxes back to back;
+# the talk lives in the notes; every figure has a basis in the notes, never on the slide.
+# Co-brand for a prospect: keep brand {{BRAND}} and add prepared_for (see prospect-walkthrough).
+deck: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+slides:
+  - cover:
+      eyebrow: "{{CLIENT}}  ·  Capabilities"
+      title: <What we do for teams like yours, as one claim>
+      subtitle: <One line on who this is for and what they get.>
+      meta: <Meeting date, e.g. Thursday, March 4>
+      notes: |
+        Open with who is in the room and the one thing they should leave knowing.
+        Reminder: the cover meta line is the meeting date and nothing else.
+
+  - content:
+      eyebrow: 45 minutes
+      title: Agenda
+      body:
+        - table:
+            head: [Time, Topic, What happens]
+            widths: [1.6, 4.0, 6.4]
+            rows:
+              - ["0 to 5", Welcome, <What you leave with today>]
+              - ["5 to 15", Who we are, <The numbers and the work behind them>]
+              - ["15 to 30", How we work, <One service end to end>]
+              - ["30 to 40", Timing and pricing, <A typical engagement and its basis>]
+              - ["40 to 45", Next steps, <The one thing we ask for>]
+      notes: |
+        Size the table to the real meeting length, demo included. Keep pricing after the
+        method so the room has seen the work before the number.
+
+  - numbers:
+      eyebrow: Who we are
+      title: <Our strongest true number, as a claim>
+      stats:
+        - {value: "00", label: "<Years, people or projects>"}
+        - {value: "0", label: "<Locations, practices or credentials>"}
+        - {value: "00%", label: "<A result you can prove>"}
+      notes: |
+        Lead with the number that lands, then qualities. Turn a small count into the credential
+        behind it. Basis for each figure goes here, never on the slide.
+        CONFIRM: every figure against the record before this deck leaves the building.
+
+  - content:
+      eyebrow: Where we work
+      title: <We carry the work from first step to last>
+      body:
+        - approach:
+            stages: [<Stage 1>, <Stage 2>, <Stage 3>, <Stage 4>, <Stage 5>]
+            rows:
+              - {label: We do, tone: record, cells: [<Our work>, <Our work>, <Our work>, <Our work>, <Our work>]}
+              - {label: You get, tone: plain, cells: [<Deliverable>, <Deliverable>, <Deliverable>, <Deliverable>, <Deliverable>]}
+      notes: |
+        Use the buyer's own stage names if they have them. Each cell is two to four words.
+
+  - content:
+      eyebrow: One service, close up
+      title: <The step where we make the biggest difference>
+      body:
+        - zoom:
+            steps: [<Step 1>, <Step 2>, <Step 3>, <Step 4>, <Step 5>]
+            active: 3
+            title: <What happens inside this step>
+            rows:
+              - {key: "1", title: <First check or task>, text: <What it protects against>}
+              - {key: "2", title: <Second check or task>, text: <What it protects against>}
+              - {key: "3", title: <Third check or task>, text: <What it protects against>}
+            foot: <Who signs it off>
+      notes: |
+        Show one real instance, not an abstraction. Pick the step the buyer worries about most.
+
+  - content:
+      eyebrow: Records
+      title: <Every result lives in one record>
+      body:
+        - stack:
+            tiers:
+              - label: <Where work is coordinated>
+                items: [{name: <Tool>, icon: layers}, {name: <Tool>, icon: calendar}, {name: <Tool>, icon: mail}]
+              - label: <Where work is done>
+                items: [{name: <Tool>, icon: fact_check}, {name: <Tool>, icon: database}, {name: <Tool>, icon: shield-check}]
+            foundation:
+              title: <The record every step writes to>
+              text: <One line on why it matters to the buyer>
+              chips: [<Audit trail>, <Approvals>, <Versions>, <Reports>]
+      notes: |
+        Name the real tools. Label the layers in the buyer's words.
+
+  - content:
+      eyebrow: Practices
+      title: <Two teams share one way of working>
+      body:
+        - panels:
+            - {icon: groups, title: <Practice or site A>, tag: <Tag>, lines: [<What it does>, <Who leads it>]}
+            - {icon: groups, title: <Practice or site B>, tag: <Tag>, lines: [<What it does>, <Who leads it>]}
+        - callout: {label: "At both:", text: "<the same method, tools and checks>"}
+      notes: |
+        Panels take exactly two. If you have one practice, change this slide to a different shape.
+
+  - content:
+      eyebrow: Timing
+      title: <A typical engagement runs about N months>
+      body:
+        - gantt:
+            periods: [Month 1, Month 2, Month 3, Month 4, Month 5, Month 6]
+            rows:
+              - {name: <Phase 1>, bars: [{from: 1, to: 1, label: <What happens>}]}
+              - {name: <Phase 2>, bars: [{from: 2, to: 3, label: <What happens>}]}
+              - {name: <Phase 3>, bars: [{from: 3, to: 5, label: <What happens>, tone: forest}]}
+              - {name: <Phase 4>, bars: [{from: 6, to: 6, label: <What happens>, tone: green}]}
+            gates:
+              - {after: 1, label: <First milestone>}
+              - {after: 5, label: <Go-live or report>}
+      notes: |
+        A typical shape, not a promise. Say what moves it longer or shorter.
+
+  - content:
+      eyebrow: Pricing
+      title: <Each price has a unit and a quantity>
+      body:
+        - table:
+            head: [What you buy, Unit, Basis, What moves it]
+            widths: [3.6, 2.0, 3.0, 3.4]
+            rows:
+              - [<Service 1>, "<Per day or per unit>", <Rate card>, <Volume or complexity>]
+              - [<Service 2>, <Fixed fee>, <Hours by role>, <Scope changes>]
+              - [<Service 3>, <Per month>, <Subscription>, <Users or sites>]
+              - [Expenses, At cost, <Capped per project>, <Travel needed>]
+      notes: |
+        No prices on this slide unless the buyer asked; show how a price is built.
+
+  - content:
+      eyebrow: Working together
+      title: <You hear from us every week>
+      body:
+        - steps:
+            - {lead: Weekly, text: <Status call and a written note>}
+            - {lead: Monthly, text: <Report and steering review>}
+            - {lead: Same day, text: <Anything that moves a date or a cost>}
+        - band: {heading: Who you talk to, lead: <Your named lead and project manager.>, text: <From kickoff to the final report.>}
+      notes: |
+        Name the forum, the cadence and the person. A principle with no owner is talk.
+
+  - content:
+      eyebrow: Our history
+      title: <We added one capability at a time>
+      body:
+        - milestones:
+            - {icon: flag, when: <Year>, title: <Founded>, text: <What we started with>, done: true}
+            - {icon: trending-up, when: <Year>, title: <First expansion>, text: <What it added>, done: true}
+            - {icon: award, when: <Year>, title: <A credential>, text: <What it proves>, done: true}
+            - {icon: rocket, when: <Year>, title: <What is next>, text: <What it means for clients>}
+      notes: |
+        Three or four dated moments. Leave out anything you can't date.
+
+  - closing:
+      title: Tell us about your project
+      asks:
+        - <The material you would like to see>
+        - <A second meeting with the people who decide>
+        - <A date that matters to them>
+      cta: <Book the next call>
+      notes: |
+        End on one next step, not a signature.

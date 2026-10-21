@@ -1,0 +1,27 @@
+# A fictional quote-to-delivery flowchart, in the brand's theme and frame.
+# Build: .venv/bin/python -m servantium_documents.mermaid examples/mermaid-flow.yaml
+mermaid: Quote to Delivery
+client: Acme Labs
+date: 2026-10-20
+title: From a signed quote to a staffed project
+subtitle: The five steps every Acme services deal passes through, and where it can loop back.
+source: |
+  flowchart TB
+    subgraph SELL [Sell]
+      direction LR
+      A([Opportunity qualified]) --> B[Scope and estimate]
+      B --> C[Price from rate cards]
+      C --> D{Margin above floor?}
+      D -- Below floor --> B
+      C -.-> X[Discount request]:::muted
+      X -.-> D
+    end
+    subgraph DELIVER [Deliver]
+      direction LR
+      E[Quote approved]:::primary --> F[Customer signs SOW]:::accent
+      F --> G[Resource plan created]
+      G --> H[Team staffed]
+      H --> I([Delivery kicks off]):::primary
+    end
+    SELL -- Margin cleared --> DELIVER
+caption: Figure 1. The dashed path is optional; a discount request re-enters the margin check.

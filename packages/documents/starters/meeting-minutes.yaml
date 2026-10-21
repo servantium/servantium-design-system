@@ -1,0 +1,62 @@
+# Meeting minutes: the record of a decision meeting, with attendees, agenda, what was discussed, options weighed, decisions taken and actions with owners.
+#
+# Issued within one working day. The subtitle states the decision and what is on hold, so a reader
+# who stops there has the outcome. Minutes record decisions and reasons, not a transcript.
+document: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+page_numbers: x_of_y
+footer: "Minutes  ·  {{CLIENT}}  ·  Confidential"
+cover:
+  layout: plain
+  title: <The subject of the meeting>
+  subtitle: <What was decided, what is on hold, and what happens next.>
+  byline: "Minutes of the meeting held <date>, <start> to <end>, <place or call>  ·  Issued <date>"
+body:
+  - table:
+      head: ["{{CLIENT}}", <Our company>]
+      widths: [3.5, 3.5]
+      key: false
+      rows:
+        - ["<Name, title>", "<Name, title>"]
+        - ["<Name, title>", "<Name, title>"]
+        - ["<Name, title>", "<Name, title (minutes)>"]
+
+  - h1: Agenda
+  - numbered:
+      - <Item 1>
+      - <Item 2>
+      - <Item 3>
+
+  - h1: 1. <What we looked at>
+  - p: <The facts presented, with the numbers and their source.>
+  - callout: {label: "Status:", text: "<What is on hold or in place while the decision takes effect.>"}
+
+  - h1: 2. <Cause and scope>
+  - bullets:
+      - <What caused it, as far as is known.>
+      - <What is affected, and what is not.>
+
+  - h1: 3. Options
+  - table:
+      head: [Option, What it means, Time, View]
+      widths: [1.3, 2.9, 0.9, 1.9]
+      rows:
+        - [A  <Option>, <What happens if chosen>, <N weeks>, <Who favored it and why>]
+        - [B  <Option>, <What happens if chosen>, <N weeks>, <Who favored it and why>]
+        - [C  <Option>, <What happens if chosen>, <N weeks>, <Who favored it and why>]
+
+  - h1: 4. Decisions
+  - numbered:
+      - "**<Decision 1>.** <Who decided, and the reason.>"
+      - "**<Decision 2>.** <Who decided, and the reason.>"
+
+  - h1: Actions
+  - table:
+      head: ["#", Action, Owner, Due]
+      widths: [0.4, 4.2, 1.4, 1.0]
+      rows:
+        - ['1', <What happens>, <Name>, <Date>]
+        - ['2', <What happens>, <Name>, <Date>]
+        - ['3', <What happens>, <Name>, <Date>]
+  - p: "**Next meeting:** <date and purpose>. Corrections to these minutes to <name> by <date>."

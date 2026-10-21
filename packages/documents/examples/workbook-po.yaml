@@ -1,0 +1,37 @@
+# A fictional purchase order with SKUs, units, shipping and tax, and approval lines.
+workbook: Purchase Order PO-2207
+client: Acme Logistics
+date: 2026-10-20
+sheets:
+  - name: Purchase order
+    kind: form
+    form: purchase_order
+    number: PO-2207
+    details:
+      - {label: Order date, value: 2026-10-20}
+      - {label: Required by, value: 2026-11-06}
+      - {label: Requested by, value: Delivery team}
+      - {label: Cost center, value: CC-410 Implementation}
+    parties:
+      - label: Vendor
+        lines: [Northwind Hardware Supply, Sales Desk, 42 Sample Road, Rivertown, ST 00000]
+      - label: Ship to
+        lines: [Acme Logistics, Receiving Dock 3, 100 Example Way, Springfield, ST 00000]
+      - label: Bill to
+        lines: [Acme Logistics Accounts Payable, ap@acme.example, 100 Example Way, Springfield, ST 00000]
+    items:
+      - {sku: NW-SC-210, description: Handheld barcode scanner with charging cradle, qty: 24, unit: ea, rate: 389}
+      - {sku: NW-LP-044, description: "Thermal label printer, 4 inch", qty: 6, unit: ea, rate: 512.5}
+      - {sku: NW-LB-400, description: "Thermal labels, 4 x 6, roll of 500", qty: 40, unit: roll, rate: 18.75}
+      - {sku: NW-WM-100, description: Wall mount kit for printers, qty: 6, unit: ea, rate: 64}
+      - {sku: NW-SV-CFG, description: Device configuration and staging, qty: 30, unit: ea, rate: 22}
+    blank_rows: 2
+    tax_rate: 0.0725
+    shipping: 145
+    terms: Net 45 from receipt of goods and a correct invoice quoting this PO number.
+    payment:
+      - Invoice to accounts payable at ap@acme.example
+      - Partial shipments accepted with notice.
+    notes:
+      - Deliver Monday to Friday, 8am to 3pm. Call receiving on arrival.
+      - Prices are fixed for the life of this order. Changes need a revised PO.

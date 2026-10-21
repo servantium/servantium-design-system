@@ -1,0 +1,70 @@
+# Traceability matrix: every requirement traced to its design section, test scripts and whole-process scenario, with risk counts, a test register and live coverage figures.
+#
+# One row per requirement ID from the requirements spec. A requirement with no test reads "Gap"
+# in the Covered column; fix every gap before release. The Tests tab is the script register with
+# status; the summary counts executed, passed and deviations. Rows are placeholders.
+workbook: {{NAME}}
+client: {{CLIENT}}
+brand: {{BRAND}}
+sheets:
+  - name: Summary
+    kind: summary
+    eyebrow: "{{CLIENT}}  ·  Traceability"
+    title: <N of N requirements trace to a passed test>
+    subtitle: Requirements from <document ID and version>, traced to design and test.
+    metrics:
+      - {label: Requirements, value: "=COUNTA([RTM!id])", format: int, note: <Requirements document>}
+      - {label: Gaps, value: '=COUNTIF([RTM!covered],"Gap")', format: int, note: No test yet}
+      - {label: Scripts, value: "=COUNTA([Tests!id])", format: int, note: <Protocol ID>}
+      - {label: Executed, value: '=COUNTIF([Tests!status],"Pass")+COUNTIF([Tests!status],"Fail")', format: int, note: Pass or fail}
+      - {label: Passed, value: '=COUNTIF([Tests!status],"Pass")', format: int, note: First time}
+      - {label: Deviations, value: '=COUNTIF([Tests!status],"Fail")', format: int, note: Executed and not passed}
+    table:
+      columns:
+        - {key: risk, header: Risk class, width: 20}
+        - {key: reqs, header: Requirements, format: int, total: sum, width: 16}
+      rows:
+        - {risk: High, reqs: '=COUNTIF([RTM!risk],"High")'}
+        - {risk: Medium, reqs: '=COUNTIF([RTM!risk],"Medium")'}
+        - {risk: Low, reqs: '=COUNTIF([RTM!risk],"Low")'}
+    contents: true
+
+  - name: RTM
+    kind: table
+    title: Requirements to design and test
+    subtitle: One row per requirement. Covered reads Gap when no test script is named.
+    landscape: true
+    columns:
+      - {key: id, header: Req ID, width: 12}
+      - {key: area, header: Area, width: 12}
+      - {key: risk, header: Risk, width: 9, input: true}
+      - {key: text, header: Requirement, width: 46, wrap: true}
+      - {key: design, header: Design §, width: 9, align: center, input: true}
+      - {key: tests, header: Test scripts, width: 18, wrap: true, input: true}
+      - {key: scenario, header: Scenario, width: 12, input: true}
+      - {key: covered, header: Covered, formula: '=IF([@tests]="","Gap","Yes")', width: 9, align: center}
+    rows:
+      - {id: REQ-ACC-001, area: Access, risk: High, text: <The requirement as written>, design: "3.2", tests: "TS-001, TS-002", scenario: <SC-01>}
+      - {id: REQ-ACC-002, area: Access, risk: Medium, text: <The requirement as written>, design: "3.2", tests: TS-003, scenario: n/a}
+      - {id: REQ-DAT-001, area: Data, risk: High, text: <The requirement as written>, design: "4", tests: "TS-010, TS-011", scenario: <SC-02>}
+      - {id: REQ-INT-001, area: Integrations, risk: High, text: <The requirement as written>, design: "5", tests: TS-020, scenario: <SC-02>}
+      - {id: REQ-REP-001, area: Reporting, risk: Low, text: <The requirement as written>, design: "7", tests: "", scenario: n/a}
+
+  - name: Tests
+    kind: table
+    title: Test script register
+    subtitle: Status is Not run, Pass or Fail. A Fail opens a deviation.
+    columns:
+      - {key: id, header: Script, width: 10}
+      - {key: req, header: Req ID, width: 14}
+      - {key: title, header: What it tests, width: 40, wrap: true}
+      - {key: tester, header: Tester, width: 14, input: true}
+      - {key: run, header: Run on, format: date, width: 12, input: true}
+      - {key: status, header: Status, width: 10, input: true}
+    rows:
+      - {id: TS-001, req: REQ-ACC-001, title: <What the script proves>, tester: <Name>, run: 2027-06-07, status: Pass}
+      - {id: TS-002, req: REQ-ACC-001, title: <What the script proves>, tester: <Name>, run: 2027-06-07, status: Pass}
+      - {id: TS-003, req: REQ-ACC-002, title: <What the script proves>, tester: <Name>, status: Not run}
+      - {id: TS-010, req: REQ-DAT-001, title: <What the script proves>, tester: <Name>, run: 2027-06-08, status: Fail}
+      - {id: TS-011, req: REQ-DAT-001, title: <What the script proves>, tester: <Name>, status: Not run}
+      - {id: TS-020, req: REQ-INT-001, title: <What the script proves>, tester: <Name>, status: Not run}
